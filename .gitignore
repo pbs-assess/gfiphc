@@ -1,0 +1,14 @@
+.Rproj.user
+.Rproj.user
+.Rhistory
+.RData
+*.pdf
+*.aux
+*.log
+*~
+*.dll
+*.o
+*.so
+*.aux
+*.log
+*chunk*

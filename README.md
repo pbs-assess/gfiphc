@@ -4,7 +4,7 @@ The International Pacific Halibut Commission (IPHC) conducts an annual stock ass
 
 The gfiphc package contains functions for driving relative biomass index trends for other groundfish species in British Columbia waters. It is used as part of the [groundfish synopsis report](https://github.com/pbs-assess/gfsynopsis) and is also useable on its own.
 
-The functions in this package were originally part of gfplot and have now been separated out into their own package.
+The functions in this package were originally part of gfplot and have now been split out into their own package.
 
 ## Installation
 
