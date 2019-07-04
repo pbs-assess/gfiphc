@@ -136,6 +136,7 @@ get_iphc_hooks <- function(species, usability = NULL) {
 #' This [cache_pbs_data_iphc()] function caches the data for the given
 #'   species from [get_all_iphc_set_counts()]
 #' @rdname iphc_data
+#' @export
 #' @examples
 #' \dontrun{
 #' cache_pbs_data_iphc("redbanded rockfish")
