@@ -42,6 +42,7 @@ get_iphc_sets <- function(species, usability = NULL) {
 }
 
 ##' @rdname iphc_data
+##' @export
 get_iphc_sets_info <- function() {
   .q <- read_sql("get-iphc-set-info.sql")
   .d <- run_sql("GFBioSQL", .q)
@@ -52,6 +53,7 @@ get_iphc_sets_info <- function() {
 }
 
 ##' @rdname iphc_data
+##' @export
 get_iphc_skates_info <- function() {
   .q <- read_sql("get-iphc-skate-info.sql")
   .d <- run_sql("GFBioSQL", .q)
@@ -83,6 +85,7 @@ get_iphc_skates_info <- function() {
 }
 
 #' @rdname iphc_data
+#' @export
 get_iphc_hooks <- function(species, usability = NULL) {
   if (species != "hook with bait") {
     .q <- read_sql("get-iphc-hook-level.sql")
@@ -575,8 +578,8 @@ get_all_iphc_set_counts <- function(species) {
 }
 
 read_sql <- function(x) {
-  if (file.exists(system.file("sql", x, package = "gfplot"))) {
-    readLines(system.file("sql", x, package = "gfplot"))
+  if (file.exists(system.file("sql", x, package = "gfiphc"))) {
+    readLines(system.file("sql", x, package = "gfiphc"))
   } else {
     stop("The sql file does not exist.")
   }

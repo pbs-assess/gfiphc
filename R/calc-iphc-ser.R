@@ -29,11 +29,13 @@
 #' @examples
 #' \dontrun{
 #' yelloweye <- tidy_iphc_survey(
-#'   get_iphc_hooks("yelloweye rockfish"),
-#'   get_iphc_skates_info(),
-#'   get_iphc_sets_info()
+#'  get_iphc_hooks("yelloweye rockfish"),
+#'  get_iphc_skates_info(),
+#'  get_iphc_sets_info()
 #' )
+#' calc_iphc_ser_all(yelloweye)
 #' }
+#' @export
 calc_iphc_ser_all <- function(set_counts, lat_cut_off = 50.6) {
   set_counts_usable <- filter(set_counts, usable == "Y")
 
