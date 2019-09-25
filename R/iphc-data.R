@@ -77,7 +77,7 @@ get_iphc_skates_info <- function() {
     chumDeplHooksPerSkate = deplHooksPerSkate * (bait == 110),
     chumObsHooksPerSkate = obsHooksPerSkate * (bait == 110),
     obsHooksPerSkate20 = 20, # **Remove this line when Elise updates
-    #  sql query, Issue #40
+    #  sql query, Issue #12 in gfiphc - needs finishing
     chumObsHooksPerSkate20 = obsHooksPerSkate20 * (bait == 110)
   ) %>%
     select(-lastHookTemp)
