@@ -187,11 +187,12 @@ boot_iphc <- function(ser_year_rates,
   unique_years <- unique(ser_year_rates$year)
   bcaConf <- tibble(year = unique_years) %>%
     mutate(
-      I_tBootMean = NA,
-      I_tBootLow = NA,
-      I_tBootHigh = NA,
-      I_tBootCV = NA
+      I_tBootMean = NA_real_,
+      I_tBootLow = NA_real_,
+      I_tBootHigh = NA_real_,
+      I_tBootCV = NA_real_
     )
+
   set.seed(seed_val)
   bool <- list() # list of boot results
   boolCI <- list() # list of boot.ci results
