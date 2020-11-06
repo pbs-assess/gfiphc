@@ -20,7 +20,7 @@ get_iphc_1996to2002(species)
 get_iphc_2013(species)
 }
 \arguments{
-\item{species}{Species common name (as used by gfplot). If NULL then
+\item{species}{Species common name (as used by gfdata). If NULL then
 get_iphc_spp_name returns the full data frame of names (iphc-spp-names-csv).}
 
 \item{countData}{A new IPHC dataset to check all species names against, if

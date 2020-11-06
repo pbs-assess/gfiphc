@@ -3,7 +3,6 @@
 \docType{package}
 \name{gfiphc}
 \alias{gfiphc}
-\alias{gfiphc-package}
 \title{gfiphc package}
 \description{
 gfiphc package

@@ -766,7 +766,9 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
   new_names
 }
 
-##' Plot just the IPHC survey index, though works for all surveys
+##' Plot just the IPHC survey index, though works for all surveys - WON'T
+##'   CURRENTLY WORK as commenting out reference to gfplot, need to move that
+##'   function here but want to test first.
 ##'
 ##' Plot just the IPHC survey index (mainly for testing).
 ##' @param iphc_set_counts_sp_format Set counts for a given species formatted
@@ -777,13 +779,13 @@ plot_iphc_index <- function(iphc_set_counts_sp_format) {
     RColorBrewer::brewer.pal(7L, "Set2"),
     "#303030", "#a8a8a8", "#a8a8a8", "#a8a8a8"
   )
-  iphc_plot <- iphc_set_counts_sp_format %>%
-    gfplot::plot_survey_index(
-      col = c("grey60", "grey20"),
-      survey_cols = survey_cols,
-      xlim = c(1984, 2017)
-    )
-  iphc_plot
+#  iphc_plot <- iphc_set_counts_sp_format %>%
+#    gfplot::plot_survey_index(
+#      col = c("grey60", "grey20"),
+#      survey_cols = survey_cols,
+#      xlim = c(1984, 2017)
+#    )
+#  iphc_plot
 }
 
 ##' Get data, do calculations and plot longest series for the IPHC survey

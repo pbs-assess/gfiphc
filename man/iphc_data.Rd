@@ -17,12 +17,11 @@ get_iphc_skates_info()
 
 get_iphc_hooks(species, usability = NULL)
 
-cache_pbs_data_iphc(species, file_name = NULL, path = ".",
-  compress = FALSE)
+cache_pbs_data_iphc(species, file_name = NULL, path = ".", compress = FALSE)
 }
 \arguments{
 \item{species}{One or more species common names (e.g. \code{"pacific ocean perch"}) or one or more species codes (e.g. \code{396}). Species codes can be
-specified as numeric vectors \code{c(396, 442}) or characters \code{c("396", "442")}.
+specified as numeric vectors \verb{c(396, 442}) or characters \code{c("396", "442")}.
 Numeric values shorter than 3 digits will be expanded to 3 digits and
 converted to character objects (\code{1} turns into \code{"001"}). Species common
 names and species codes should not be mixed. If any element is missing a

@@ -4,13 +4,15 @@
 \name{countData1995}
 \alias{countData1995}
 \title{Count data for 1995 IPHC survey}
-\format{A tibble:
+\format{
+A tibble:
 \describe{
 \item{year}{1995 for this data set}
 \item{station}{station name, to link with setData1995}
 \item{specName}{species name for the counts for that set}
 \item{specCount}{count of that species for that set}
-}}
+}
+}
 \source{
 Originally from file 1995IPHCSetlineData.xlsx that Lynne Yamanaka
 received from Aaron Ranta at the IPHC.

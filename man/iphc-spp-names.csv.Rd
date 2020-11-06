@@ -3,11 +3,13 @@
 \name{iphc-spp-names.csv}
 \alias{iphc-spp-names.csv}
 \title{Conversion from GFbio names to IPHC species names (for data not in GFbio)}
-\format{A csv file:
+\format{
+A csv file:
 \describe{
 \item{species_common_nameyear}{GFbio species common name}
 \item{iphc_common_name}{IPHC data sets species common name}
-}}
+}
+}
 \source{
 Created manually by Andrew Edwards. Most are obvious. If get a new
 set-level dataset from IPHC (that doesn't get put into GFbio) then see

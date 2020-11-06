@@ -4,7 +4,8 @@
 \name{setData2013}
 \alias{setData2013}
 \title{Station data for 2013 IPHC survey}
-\format{A tibble:
+\format{
+A tibble:
 \describe{
 \item{year}{2013 for this data set}
 \item{station}{station name}
@@ -16,11 +17,12 @@
 only, calculated as the (number of hooks observed)/
 (number of hooks retrieved) * effSkateIPHC}
 \item{usable}{whether or not the set is usable, as determined by IPHC}
-}}
+}
+}
 \source{
 Originally from file 2013.20-SetInfo.csv from a spreadsheet from the
 IPHC, with further calculations done in private yeye15Reproduce repo of
-Andrew Edwards (see data-raw there, will put into gfplot).
+Andrew Edwards (see data-raw there, could go into here if needed).
 }
 \usage{
 setData2013

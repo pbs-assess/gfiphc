@@ -4,7 +4,8 @@
 \name{setData1995rs}
 \alias{setData1995rs}
 \title{Station data for 1995 IPHC survey for RS stations}
-\format{A tibble:
+\format{
+A tibble:
 \describe{
 \item{lat}{latitude of station}
 \item{lon}{longitude of station}
@@ -13,7 +14,8 @@
 \item{usable}{whether or not the set is usable, as determined by IPHC plus
 four extra that had no hooks enumerated except for Pacific
 Halibut, and so are not usable by us}
-}}
+}
+}
 \source{
 Originally from file 1995IPHCSetlineData.xlsx that Lynne Yamanaka
 received from Aaron Ranta at the IPHC.

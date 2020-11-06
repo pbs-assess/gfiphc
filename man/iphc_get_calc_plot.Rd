@@ -7,7 +7,7 @@
 iphc_get_calc_plot(sp)
 }
 \arguments{
-\item{sp}{Species names (as used in gfplot).}
+\item{sp}{Species names (as used in gfdata and gfplot).}
 }
 \value{
 For the given species, list containing

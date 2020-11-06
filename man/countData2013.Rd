@@ -4,14 +4,16 @@
 \name{countData2013}
 \alias{countData2013}
 \title{Count data for 2013 IPHC survey}
-\format{A tibble:
+\format{
+A tibble:
 \describe{
 
 \item{year}{2013 for this data set}
 \item{station}{station name}
 \item{spNameIPHC}{species name for the counts for that set}
 \item{specCount}{count of that species for that set}
-}}
+}
+}
 \source{
 Originally from file 2013.20-SampleInfo.csv from a spreadsheet
 from the IPHC.

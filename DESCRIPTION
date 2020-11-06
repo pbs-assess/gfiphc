@@ -1,7 +1,7 @@
 Package: gfiphc
 Title: Data Extraction and Processing for IPHC Survey Data for Pacific Groundfish
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R:
     c(person(c("Andrew", "M."), "Edwards", email = "a@a.com", role = c("cre", "aut")),
       person(c("Sean", "C."), "Anderson", role = "aut"),
       person(c("Elise", "A."), "Keppel", role = "aut"),
@@ -13,13 +13,12 @@ License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.4.0)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Roxygen: list(markdown = TRUE)
-Imports: 
+Imports:
     magrittr,
     dplyr,
     boot,
-    gfplot,
     rlang,
     RColorBrewer
 Remotes: github::pbs-assess/gfplot

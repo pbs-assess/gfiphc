@@ -4,7 +4,8 @@
 \name{data1996to2002}
 \alias{data1996to2002}
 \title{Set-by-set level data (with species counts) from 1996 to 2002.}
-\format{A tibble:
+\format{
+A tibble:
 \describe{
 \item{year}{year}
 \item{station}{station name}
@@ -20,7 +21,8 @@ observed hook numbers)}
 \item{skates}{number of skates on that set}
 \item{hooksObserved}{number of hooks observed on that set}
 \item{usable}{whether or not the set is usable, as determined by IPHC}
-}}
+}
+}
 \source{
 Originally from the file 2B AllSpecies 96-02 roundlll.xls that came
 from the IPHC, which Rowan Haigh extracted into 'IPHC 2B Catch.rda', Andrew
