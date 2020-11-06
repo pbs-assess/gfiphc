@@ -108,7 +108,7 @@
 #' }
 #' @source Originally from file 2013.20-SetInfo.csv from a spreadsheet from the
 #'   IPHC, with further calculations done in private yeye15Reproduce repo of
-#'   Andrew Edwards (see data-raw there, will put into gfplot).
+#'   Andrew Edwards (see data-raw there, could go into here if needed).
 "setData2013"
 
 

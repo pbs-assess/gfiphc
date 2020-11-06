@@ -791,7 +791,7 @@ plot_iphc_index <- function(iphc_set_counts_sp_format) {
 ##' Get data, do calculations and plot longest series for the IPHC survey for
 ##'  a given species. Will take a while since queries GFbio (and need to be on DFO
 ##'  network).
-##' @param sp Species names (as used in gfplot).
+##' @param sp Species names (as used in gfdata and gfplot).
 ##' @return For the given species, list containing
 ##'
 ##'   iphc_set_counts_sp: list returned from [calc_iphc_full_res()]

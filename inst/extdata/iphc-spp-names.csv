@@ -1,0 +1,116 @@
+# NA means haven't seen yet in the non-GFbio IPHC data. **COPIED THIS FROM gfplot TO HOPEFULLY DEPRECATE FROM THERE (can't test right now), SO IF YOU CHANGE SOMETHING HERE CHANGE IT IN gfplot REPO ALSO**
+species_common_name,iphc_common_name
+north pacific spiny dogfish,Spiny Dogfish
+big skate,Big Skate
+longnose skate,Longnose Skate
+pacific cod,Pacific Cod
+walleye pollock,Walleye Pollock
+rougheye/blackspotted rockfish complex,Rougheye Rockfish
+pacific ocean perch,NA
+redbanded rockfish,Redbanded Rockfish
+shortraker rockfish,Shortraker Rockfish
+silvergray rockfish,Silvergray Rockfish
+copper rockfish,Copper Rockfish
+darkblotched rockfish,NA
+widow rockfish,NA
+yellowtail rockfish,Yellowtail Rockfish
+quillback rockfish,Quillback Rockfish
+bocaccio,Bocaccio
+canary rockfish,Canary Rockfish
+redstripe rockfish,NA
+yellowmouth rockfish,Yellowmouth Rockfish
+yelloweye rockfish,Yelloweye Rockfish
+shortspine thornyhead,Shortspine Thornyhead
+longspine thornyhead,NA
+sablefish,Sablefish (Blackcod)
+lingcod,Lingcod
+arrowtooth flounder,Arrowtooth Flounder
+petrale sole,Petrale Sole
+rex sole,NA
+southern rock sole,Rock Sole
+dover sole,Dover Sole
+english sole,English Sole
+bluntnose sixgill shark,Sixgill Shark
+basking shark,NA
+salmon shark,NA
+brown cat shark,NA
+soupfin shark,Soupfin Shark
+blue shark,Blue Shark
+pacific sleeper shark,Sleeper Shark
+aleutian skate,Aleutian Skate
+abyssal skate,NA
+broad skate,NA
+roughtail skate,NA
+sandpaper skate,NA
+alaska skate,NA
+spotted ratfish,Spotted Ratfish
+whitebait smelt,NA
+pacific flatnose,NA
+pacific tomcod,Pacific Tomcod
+bigfin eelpout,NA
+twoline eelpout,NA
+shortfin eelpout,NA
+black eelpout,NA
+wattled eelpout,NA
+blackbelly eelpout,NA
+pacific grenadier,NA
+threadfin grenadier,NA
+giant grenadier,NA
+california grenadier,*********
+shiner perch,NA
+pearly prickleback,********
+snake prickleback,NA
+whitebarred prickleback,NA
+wolf eel,Wolf-Eel
+giant wrymouth,NA
+dwarf wrymouth,NA
+prowfish,NA
+pacific sand lance,NA
+ragfish,NA
+aurora rockfish,NA
+dusky rockfish,NA
+splitnose rockfish,NA
+greenstriped rockfish,Greenstriped Rockfish
+puget sound rockfish,NA
+chilipepper,NA
+rosethorn rockfish,NA
+black rockfish,Black Rockfish
+blackgill rockfish,NA
+vermilion rockfish,NA
+california rockfish,Blue Rockfish
+china rockfish,China Rockfish
+tiger rockfish,Tiger Rockfish
+stripetail rockfish,NA
+harlequin rockfish,NA
+pygmy rockfish,NA
+sharpchin rockfish,NA
+kelp greenling,NA
+whitespotted greenling,NA
+spinyhead sculpin,***
+buffalo sculpin,****
+red irish lord,*****
+bigmouth sculpin,*****
+threadfin sculpin,*****
+spotfin sculpin,*****
+pacific staghorn sculpin,*****
+blackfin sculpin,*****
+great sculpin,*****
+thornback sculpin,*****
+giant blobsculpin,*****
+slim sculpin,*****
+cabezon,*****
+sturgeon poacher,*****
+smootheye poacher,*****
+blacktail snailfish,*****
+pacific sanddab,Sand Dab# GFbio also has speckled, Maria says IPHC ones are likely Pacific
+deepsea sole,NA
+flathead sole,Flathead Sole
+butter sole,NA
+slender sole,NA
+starry flounder,NA
+c-o sole,C-O Sole
+curlfin sole,NA
+sand sole,NA
+hook with bait,Hook with Bait
+pacific hake,Pacific Hake
+pacific halibut,Pacific Halibut

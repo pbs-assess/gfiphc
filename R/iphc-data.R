@@ -17,7 +17,7 @@
 #' * `cache_pbs_data_iphc()` runs `get_all_iphc_set_counts()` for a given species
 #'    and caches extracted data to a give folder
 #' @name iphc_data
-#' @importFrom gfplot run_sql inject_filter
+#' @importFrom gfdata run_sql inject_filter
 #' @importFrom stats sd
 #' @importFrom rlang .data
 NULL
@@ -184,7 +184,7 @@ cache_pbs_data_iphc <- function(species, file_name = NULL, path = ".",
 #'
 #' @details
 #'
-##' @param species Species common name (as used by gfplot). If NULL then
+##' @param species Species common name (as used by gfdata). If NULL then
 ##'  get_iphc_spp_name returns the full data frame of names (iphc-spp-names-csv).
 ##' @name get_early_iphc
 NULL
@@ -204,12 +204,11 @@ NULL
 ##' testthat::expect_error(get_iphc_spp_name(c("redbanded rockfish", "yellowmouth rockfish")))
 ##' }
 get_iphc_spp_name <- function(species = NULL) {
-  iphc_names <- read.csv(system.file("extdata/iphc-spp-names.csv",
-    package = "gfplot"
-  ),
-  comment.char = "#",
-  as.is = TRUE
-  )
+  iphc_names <- read.csv(system.file("inst/extdata/iphc-spp-names.csv",
+                                     package = "gfiphc"),
+                         comment.char = "#",
+                         as.is = TRUE
+                         )
   if (is.null(species)) {
     return(iphc_names)
   } else {
@@ -249,12 +248,11 @@ get_iphc_spp_name <- function(species = NULL) {
 ##' }
 ##' @rdname get_early_iphc
 check_iphc_spp_name <- function(countData = NULL, ignore_obvious = TRUE) {
-  iphc_names <- read.csv(system.file("extdata/iphc-spp-names.csv",
-    package = "gfplot"
-  ),
-  comment.char = "#",
-  as.is = TRUE
-  )
+  iphc_names <- read.csv(system.file("inst/extdata/iphc-spp-names.csv",
+                                     package = "gfiphc"
+                                     ),
+                         comment.char = "#",
+                         as.is = TRUE)
   ignore <- c(
     "Missing Hook/Gangion",
     "Bent Hook",
