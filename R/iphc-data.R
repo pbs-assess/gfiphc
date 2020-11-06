@@ -35,8 +35,8 @@ NULL
 #'   names.
 get_iphc_sets <- function(species, usability = NULL) {
   .q <- read_sql("get-iphc-set-level.sql")
-  .q <- inject_filter("AND C.SPECIES_CODE IN", species, sql_code = .q)
-  .d <- run_sql("GFBioSQL", .q)
+  .q <- gfdata::inject_filter("AND C.SPECIES_CODE IN", species, sql_code = .q)
+  .d <- gfdata::run_sql("GFBioSQL", .q)
   .d$species <- tolower(.d$species)
   as_tibble(.d)
 }
@@ -45,7 +45,7 @@ get_iphc_sets <- function(species, usability = NULL) {
 ##' @export
 get_iphc_sets_info <- function() {
   .q <- read_sql("get-iphc-set-info.sql")
-  .d <- run_sql("GFBioSQL", .q)
+  .d <- gfdata::run_sql("GFBioSQL", .q)
   .d <- mutate(.d, usable = ifelse(iphcUsabilityCode %in% c(1, 52),
     "Y", "N"
   ))
@@ -56,7 +56,7 @@ get_iphc_sets_info <- function() {
 ##' @export
 get_iphc_skates_info <- function() {
   .q <- read_sql("get-iphc-skate-info.sql")
-  .d <- run_sql("GFBioSQL", .q)
+  .d <- gfdata::run_sql("GFBioSQL", .q)
   # Calculating here:
   # lastHook - hook number of final hook on that skate
   # firstHook - hook number of 1st hook on that skate
@@ -89,8 +89,8 @@ get_iphc_skates_info <- function() {
 get_iphc_hooks <- function(species, usability = NULL) {
   if (species != "hook with bait") {
     .q <- read_sql("get-iphc-hook-level.sql")
-    .q <- inject_filter("AND C.SPECIES_CODE IN", species, sql_code = .q)
-    .d <- run_sql("GFBioSQL", .q)
+    .q <- gfdata::inject_filter("AND C.SPECIES_CODE IN", species, sql_code = .q)
+    .d <- gfdata::run_sql("GFBioSQL", .q)
     .d$species <- tolower(.d$species)
     if (dim(.d)[1] == 0) {
       .d[1, ] <- c(2003, rep(NA, dim(.d)[2] - 1))
@@ -99,7 +99,7 @@ get_iphc_hooks <- function(species, usability = NULL) {
     return(as_tibble(.d))
   } else {
     .q <- read_sql("get-iphc-hook-level-bait-on-hook.sql")
-    .d <- run_sql("GFBioSQL", .q)
+    .d <- gfdata::run_sql("GFBioSQL", .q)
     # .d$species <- tolower(.d$species)
     .d <- mutate(.d,
       speciesCode = NA,
