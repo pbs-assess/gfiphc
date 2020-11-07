@@ -1,2 +1,10 @@
 ^gfiphc\.Rproj$
 ^\.Rproj\.user$
+
+^misc$
+^\.travis\.yml$
+^doc$
+^Meta$
+^report$
+^data-raw$
+^codecov\.yml$
