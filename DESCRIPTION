@@ -20,5 +20,6 @@ Imports:
     dplyr,
     boot,
     rlang,
-    RColorBrewer
-Remotes: github::pbs-assess/gfplot
+    RColorBrewer,
+    gfdata
+Remotes: github::pbs-assess/gfdata
