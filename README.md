@@ -1,7 +1,8 @@
 # gfiphc: An R package for extracting and analysing groundfish data from the IPHC longline survey in BC
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.org/pbs-assess/gfiphc.svg?branch=master)](https://travis-ci.org/pbs-assess/gfiphc)
+[![Travis build status](https://travis-ci.com/pbs-assess/gfiphc.svg?branch=master)](https://travis-ci.com/pbs-assess/gfiphc)
+
 <!-- badges: end -->
 
 The International Pacific Halibut Commission (IPHC) conducts an annual stock assessment longline survey in waters from California to Alaska, including British Columbia (BC) waters. The survey's main goal is to provide data on Pacific Halibut (*Hippoglosus stenolepis*) for stock assessment purposes.
