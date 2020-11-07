@@ -668,7 +668,7 @@ calc_iphc_full_res <- function(set_counts) {
 ##' Format the longest IPHC time series index to agree with other surveys
 ##'
 ##' Format the longest IPHC time series index to agree with other surveys so
-##'   that [plot_survey_index()] works automatically. So the mean catch rate
+##'   that plot_survey_index() in gfplot (and may get moved to here) works automatically. So the mean catch rate
 ##'   gets renames as `biomass' even though it's numbers per effective skate.
 ##'
 ##' @param iphc_set_counts_sp Output from [calc_iphc_full_res()] (only actually
@@ -792,7 +792,7 @@ plot_iphc_index <- function(iphc_set_counts_sp_format) {
 ##'
 ##' Get data, do calculations and plot longest series for the IPHC survey for
 ##'  a given species. Will take a while since queries GFbio (and need to be on DFO
-##'  network).
+##'  network). WON'T CURRENTLY WORK AS plot_iphc_index() won't currently work.
 ##' @param sp Species names (as used in gfdata and gfplot).
 ##' @return For the given species, list containing
 ##'

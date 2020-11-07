@@ -15,7 +15,7 @@ Renamed ser_longest, with some required columns calculated.
 }
 \description{
 Format the longest IPHC time series index to agree with other surveys so
-that \code{\link[=plot_survey_index]{plot_survey_index()}} works automatically. So the mean catch rate
+that plot_survey_index() in gfplot (and may get moved to here) works automatically. So the mean catch rate
 gets renames as `biomass' even though it's numbers per effective skate.
 }
 \examples{
