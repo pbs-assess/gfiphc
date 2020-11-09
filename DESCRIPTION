@@ -23,3 +23,7 @@ Imports:
     RColorBrewer,
     gfdata
 Remotes: github::pbs-assess/gfdata
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

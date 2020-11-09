@@ -8,3 +8,5 @@
 ^report$
 ^data-raw$
 ^codecov\.yml$
+
+^vignettes\yeyeForBeauSep19.R

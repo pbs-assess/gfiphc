@@ -12,3 +12,8 @@
 *.aux
 *.log
 *chunk*
+inst/doc
+
+vignettes/*.html
+vignettes/*.R
+vignettes/yeyeForBeauSep19.R
