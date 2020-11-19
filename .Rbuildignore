@@ -9,4 +9,5 @@
 ^data-raw$
 ^codecov\.yml$
 
-^vignettes\yeyeForBeauSep19.R
+vignettes/yeyeForBeauSep19.R
+vignettes/MEE_reproduce_2.Rmd

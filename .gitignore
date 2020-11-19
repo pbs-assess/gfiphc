@@ -17,3 +17,4 @@ inst/doc
 vignettes/*.html
 vignettes/*.R
 vignettes/yeyeForBeauSep19.R
+vignettes/MEE_reproduce_2.Rmd
