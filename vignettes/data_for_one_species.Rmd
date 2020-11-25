@@ -1,0 +1,118 @@
+---
+title: "Extract the IPHC data for one species"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Extract the IPHC data for one species}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 6
+)
+```
+
+```{r setup}
+library(gfiphc)
+```
+
+<!-- Adapting code written by Andrew Edwards for Beau Doherty at Landmark -->
+<!-- Fisheries in March 2019 and updated in September 2019.-->
+<!-- Also using MEE_reproduce_2.Rmd sizeSpectra vignette as a template -->
+
+## Data for all skates and stations, and counts for one species
+
+Extract and save the IPHC data for a single species, using Yelloweye Rockfish as an
+example. Someone at PBS has to run the first chunk of code to extract data from
+the GFBio database and send the external collaborator the resulting four .rds
+files. The rest of the code will run outside of PBS.
+
+```{r extract}
+# Will only run at PBS as accesses the GFBio database
+sp <- "yelloweye rockfish"
+cache_pbs_data_iphc(sp)                # creates yelloweye-rockfish.rds. This is
+                                       # what gfsynopsis::get_data_iphc() calls,
+                                       # via gfsynopsis::get_data() in
+                                       # report/make.R of gfsynopsis repo.
+
+cache_pbs_data_iphc("hook with bait")  # creates hook-with-bait.rds
+
+sets <- get_iphc_sets_info()           # extracts the set level data from
+                                       #  GFBio for 2003 onwards (excluding 2013)
+saveRDS(sets, "sets.RDS", compress = TRUE)
+
+skates <- get_iphc_skates_info()       # extracts skate level data from GFBio
+                                       #  for 2003 onwards (excluding 2013)
+saveRDS(skates, "skates.RDS", compress = TRUE)
+```
+
+Other data sets are already built into the gfiphc package, the main ones being:
+```{r builtin}
+setData1995      # Locations and effective skate values of stations for the 1995 survey
+countData1995    # Counts of each species at each station in 1995
+data1996to2002   # Catches at each station from 1996 to 2002
+setData2013      # Station details for 2013 survey
+```
+See `?<dataset>` for details of each, and `data(package = "gfiphc")` for other
+data sets. Notation such as `E_it20` matches the write-up in the Groundfish
+Synopsis report.
+
+The formats are different to each other due to the way the data are
+available. For example, there are no `hooksObserved` values available for 1995
+and 2013, which will complicate consideration of hook competition
+for those years.
+
+Need to look at locations of stations, since in 2019 they expanded again.
+
+## Locations of stations
+
+
+
+
+
+
+
+
+
+Robyn did for P Cod (but will not get final year(s) right since I haven't yet
+corrected for changing stations).
+
+```{r pcod}
+iphc_raw <- gfiphc::tidy_iphc_survey(
+  get_iphc_hooks("pacific cod"),
+  get_iphc_skates_info(),
+  get_iphc_sets_info()
+)
+iphc_index <- gfiphc::calc_iphc_full_res(iphc_raw)
+```
+
+
+The code used in `gfsynopsis/R/make-pages.R` is the following, simplifying it
+here to then check that it matches what is done above (not finished checking yet):
+```{r gfsynopsis, eval = FALSE}
+#if (!is.null(dat_iphc)) {
+#    if (!file.exists(iphc_index_cache_spp)) {
+      iphc_set_counts_sp <-
+        gfiphc::calc_iphc_full_res(dat_iphc$set_counts)
+
+      saveRDS(iphc_set_counts_sp, file = iphc_index_cache_spp, compress = FALSE)
+    } else {
+      iphc_set_counts_sp <- readRDS(iphc_index_cache_spp)
+    }
+
+    iphc_set_counts_sp_format <- tryCatch({
+      gfiphc::format_iphc_longest(iphc_set_counts_sp)
+    }, error = function(e) NA)
+    # Remove existing (GFbio) based IPHC series with longer ones from new calcs
+    if (!is.na(iphc_set_counts_sp_format)) {
+      dat_tidy_survey_index <- dat_tidy_survey_index %>%
+        filter(survey_abbrev != "IPHC FISS") %>%
+        rbind(iphc_set_counts_sp_format)
+    }
+  }
+```

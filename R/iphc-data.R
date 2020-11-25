@@ -15,7 +15,7 @@
 #'    If species is 'hook with bait' then it returns the hooks that were returned
 #'    with bait.
 #' * `cache_pbs_data_iphc()` runs `get_all_iphc_set_counts()` for a given species
-#'    and caches extracted data to a give folder
+#'    and caches extracted data to a given folder
 #' @name iphc_data
 #' @importFrom gfdata run_sql inject_filter
 #' @importFrom stats sd
