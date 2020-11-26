@@ -57,11 +57,11 @@ hooks_with_bait <- readRDS("hook-with-bait.rds")
 
 sets_other_years <- get_iphc_sets_info() # extracts the set level data from
                                          #  GFBio for 2003 onwards (excluding 2013)
-saveRDS(sets_other_years, "sets-other-years.RDS", compress = TRUE)
+saveRDS(sets_other_years, "sets-other-years.rds", compress = TRUE)
 
 skates_other_years <- get_iphc_skates_info()  # extracts skate level data from GFBio
                                               #  for 2003 onwards (excluding 2013)
-saveRDS(skates_other_years, "skates-other-years.RDS", compress = TRUE)
+saveRDS(skates_other_years, "skates-other-years.rds", compress = TRUE)
 ```
 
 Other data sets are already built into the gfiphc package, the main ones being:

@@ -13,6 +13,7 @@
 *.log
 *chunk*
 inst/doc
+*.rds
 
 vignettes/*.html
 vignettes/*.R
