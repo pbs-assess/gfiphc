@@ -66,7 +66,7 @@ species, from 2003 to present (excluding 2013 which is not in database).
 If species is 'hook with bait' then it returns the hooks that were returned
 with bait.
 \item \code{cache_pbs_data_iphc()} runs \code{get_all_iphc_set_counts()} for a given species
-and caches extracted data to a give folder
+and caches extracted data to a given folder
 }
 
 This \code{\link[=cache_pbs_data_iphc]{cache_pbs_data_iphc()}} function caches the data for the given

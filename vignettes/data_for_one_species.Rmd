@@ -33,22 +33,35 @@ the GFBio database and send the external collaborator the resulting four .rds
 files. The rest of the code will run outside of PBS.
 
 ```{r extract}
-# Will only run at PBS as accesses the GFBio database
 sp <- "yelloweye rockfish"
-cache_pbs_data_iphc(sp)                # creates yelloweye-rockfish.rds. This is
-                                       # what gfsynopsis::get_data_iphc() calls,
-                                       # via gfsynopsis::get_data() in
-                                       # report/make.R of gfsynopsis repo.
+cache_pbs_data_iphc(sp)
+                                       # That creates yelloweye-rockfish.rds. [This is
+                                       #  what gfsynopsis::get_data_iphc() calls,
+                                       #  via gfsynopsis::get_data() in
+                                       #  report/make.R of gfsynopsis repo.]
+sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
+                                       # Load it into workspace.
+                                       # For each set, contains the various
+                                       # catch rates for this species, the lat
+                                       # and lon, and whether the set
+                                       # is usable or not. Includes the basic
+                                       # information for each set, but further
+                                       # details are available in the
+                                       # objects described below
 
-cache_pbs_data_iphc("hook with bait")  # creates hook-with-bait.rds
+cache_pbs_data_iphc("hook with bait")
+                                       # creates hook-with-bait.rds, same as
+                                       # sp_set_counts but for 'species' hook
+                                       # with bait; needed if looking into hook competition.
+hooks_with_bait <- readRDS("hook-with-bait.rds")
 
-sets <- get_iphc_sets_info()           # extracts the set level data from
-                                       #  GFBio for 2003 onwards (excluding 2013)
-saveRDS(sets, "sets.RDS", compress = TRUE)
+sets_other_years <- get_iphc_sets_info() # extracts the set level data from
+                                         #  GFBio for 2003 onwards (excluding 2013)
+saveRDS(sets_other_years, "sets-other-years.RDS", compress = TRUE)
 
-skates <- get_iphc_skates_info()       # extracts skate level data from GFBio
-                                       #  for 2003 onwards (excluding 2013)
-saveRDS(skates, "skates.RDS", compress = TRUE)
+skates_other_years <- get_iphc_skates_info()  # extracts skate level data from GFBio
+                                              #  for 2003 onwards (excluding 2013)
+saveRDS(skates_other_years, "skates-other-years.RDS", compress = TRUE)
 ```
 
 Other data sets are already built into the gfiphc package, the main ones being:
@@ -67,22 +80,41 @@ available. For example, there are no `hooksObserved` values available for 1995
 and 2013, which will complicate consideration of hook competition
 for those years.
 
-Need to look at locations of stations, since in 2019 they expanded again.
+Look at the data for the species of interest:
+```{r load}
+sp_set_counts
+                  # For each set, the calculatable catch rates for that
+                  # species, plus lat and lon and whether the set is usable.
+                  # See ?get_all_iphc_set_counts for full details.
+
+sets_each_year <- sp_set_counts$set_counts %>% group_by(year) %>%
+  summarise(total = n())
+plot(sets_each_year$year, sets_each_year$total, type = "o",
+     xlab = "Year", ylab = "Sets each year")
+```
+
+This shows that the number of sets changes over time. In particular, there were
+lots more stations in 2018 and these need to be accounted for when calculating
+the catch rates. THEY HAVE NOT YET BEEN IN THE AUTOMATED FUNCTIONS ABOVE. Also
+were not accounted for in the gfsynopsis report (when we added in the 2018 data
+quite late, see Issue #14, which notes that the latest Yelloweye Rockfish
+assessment properly accounted for this).
+
+Need to look at locations of stations, and check in detail what happens for 2018
+onwards.
 
 ## Locations of stations
 
+Will adapt old code to create maps of stations, but I think Beau at Landmark
+does this anyway, and correctly ignored the new stations in 2018.
 
+## Not running yet, can ignore for now:
 
+Robyn did this for P Cod (but will not get final year(s) right since I haven't yet
+corrected for changing stations) to take a quick look at the data, but didn't
+end up using it.
 
-
-
-
-
-
-Robyn did for P Cod (but will not get final year(s) right since I haven't yet
-corrected for changing stations).
-
-```{r pcod}
+```{r pcod, eval = FALSE}
 iphc_raw <- gfiphc::tidy_iphc_survey(
   get_iphc_hooks("pacific cod"),
   get_iphc_skates_info(),
