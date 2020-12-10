@@ -204,7 +204,7 @@ NULL
 ##' testthat::expect_error(get_iphc_spp_name(c("redbanded rockfish", "yellowmouth rockfish")))
 ##' }
 get_iphc_spp_name <- function(species = NULL) {
-  iphc_names <- read.csv(system.file("inst/extdata/iphc-spp-names.csv",
+  iphc_names <- read.csv(system.file("extdata/iphc-spp-names.csv",
                                      package = "gfiphc"),
                          comment.char = "#",
                          as.is = TRUE
@@ -248,7 +248,7 @@ get_iphc_spp_name <- function(species = NULL) {
 ##' }
 ##' @rdname get_early_iphc
 check_iphc_spp_name <- function(countData = NULL, ignore_obvious = TRUE) {
-  iphc_names <- read.csv(system.file("inst/extdata/iphc-spp-names.csv",
+  iphc_names <- read.csv(system.file("extdata/iphc-spp-names.csv",
                                      package = "gfiphc"
                                      ),
                          comment.char = "#",
