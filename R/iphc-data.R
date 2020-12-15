@@ -493,6 +493,8 @@ get_iphc_1996to2002 <- function(species) {
 ##'           C_it20 (catch rate of 'species' as number per effective skate,
 ##'                   based on the first 20 hooks),
 ##'           usable (whether or not that station is usable, as deemed by IPHC),
+##'           standard (whether or not station is a standard one or in the
+##'                   expansion set after 2018; all Y here since 2013)
 ##'
 ##' If no data at all on that species then C_it and N_it are NA's.
 ##' @examples
@@ -519,7 +521,11 @@ get_iphc_2013 <- function(species) {
       E_it = NA,
       N_it = NA,
       C_it = NA
-    )
+    ) %>%
+    left_join(select(setDataExpansion,
+                     station,
+                     standard),
+              by = "station")
 
   setVals2013$year <- 2013 # some are NA's from the left_join
   # Re-order:
@@ -535,7 +541,8 @@ get_iphc_2013 <- function(species) {
     E_it20,
     N_it20,
     C_it20,
-    usable
+    usable,
+    standard
   )
   setVals2013
 }
