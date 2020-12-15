@@ -409,6 +409,13 @@ get_iphc_1995 <- function(species) {
 ##'           C_it20 (catch rate of 'species' as number per effective skate,
 ##'                   based on the first 20 hooks, so NA for 1996),
 ##'           usable (whether or not that station is usable, as deemed by IPHC),
+##'           standard (whether or not station is a standard one or in the
+##'                   expansion set after 2018; all Y here since pre-2018; for
+##'                   1996 and 1997 the station layout is not the standard grid
+##'                   and the naming of stations is different,
+##'                   `intersect(filter(sp_set_counts$set_counts, year == 1996)$station, setDataExpansion$station`
+##'                   is empty, but the area fished is similar to later standard
+##'                   years so we put Y here)
 ##'
 ##' If no data on that species then C_it and N_it are NA's.
 ##' @examples
@@ -436,7 +443,8 @@ get_iphc_1996to2002 <- function(species) {
       E_it20 = NA,
       N_it20 = NA,
       C_it20 = NA,
-      station = as.character(station)
+      station = as.character(station),
+      standard = as.factor("Y")
     ) %>%
     select(
       year,
@@ -449,7 +457,8 @@ get_iphc_1996to2002 <- function(species) {
       E_it20,
       N_it20,
       C_it20,
-      usable
+      usable,
+      standard
     )
 
   setVals1997to2002prelim <- filter(data1996to2002, year > 1996.5)
@@ -466,7 +475,8 @@ get_iphc_1996to2002 <- function(species) {
       E_it = NA,
       N_it = NA,
       C_it = NA,
-      station = as.character(station)
+      station = as.character(station),
+      standard = as.factor("Y")
     ) %>%
     select(
       year,
@@ -479,7 +489,8 @@ get_iphc_1996to2002 <- function(species) {
       E_it20,
       N_it20,
       C_it20,
-      usable
+      usable,
+      standard
     )
   rbind(setVals1996, setVals1997to2002)
 }
