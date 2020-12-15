@@ -103,6 +103,8 @@ sp_set_counts
                   # species, plus lat and lon and whether the set is usable.
                   # See ?get_all_iphc_set_counts for full details.
 
+summary(sp_set_counts$set_counts)
+
 sets_each_year <- sp_set_counts$set_counts %>% group_by(year) %>%
   summarise(total = n())
 plot(sets_each_year$year, sets_each_year$total, type = "o",

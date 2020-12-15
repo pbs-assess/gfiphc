@@ -34,6 +34,7 @@
 tidy_iphc_survey <- function(hook_level,
                              skate_info,
                              set_info) {
+  # If no data then still return a tibble
   if (nrow(hook_level) == 1) {
     if (is.na(hook_level$numOnHook)) {
       return(tibble(
@@ -100,7 +101,8 @@ tidy_iphc_survey <- function(hook_level,
     # for B.1 in YYR 2014
     hooksChumRatio20 = sum(chumObsHooksPerSkate20) /
       sum(obsHooksPerSkate)
-  )
+    )
+
   # for B.4 in YYR 2014, fraction in ():
   # tilde{H}_it / H^*_{it}
   set_counts <- left_join(set_info,
