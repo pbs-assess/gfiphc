@@ -84,7 +84,8 @@ setData1995      # Locations and effective skate values of stations for the 1995
 countData1995    # Counts of each species at each station in 1995
 data1996to2002   # Catches at each station from 1996 to 2002
 setData2013      # Station details for 2013 survey
-setData2018      # Station details for 2018 onwards
+setDataExpansion # Station details regarding expansion stations from 2018 (and
+                 # possibly onwards)
 ```
 See `?<dataset>` for details of each, and `data(package = "gfiphc")` for other
 data sets. Notation such as `E_it20` matches the write-up in the Groundfish
@@ -93,7 +94,7 @@ Synopsis report.
 The formats are different to each other due to the way the data are
 available. For example, there are no `hooksObserved` values available for 1995
 and 2013, which will complicate consideration of hook competition
-for those years. `setData2018` is needed to identify stations in the expanded
+for those years. `setDataExpansion` is needed to identify stations in the expanded
 grid (that were not fished in previous years).
 
 Look at the data for the species of interest:

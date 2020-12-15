@@ -11,19 +11,20 @@ raw_data <- read.csv("IPHC_Stations_All.csv") %>%
 # Remove un-needed columns (FID was just added on by Dana's ArcGIS, regarea is
 # 2B for all BC waters, stn_type_n is just numeric code for stn_type), set lon
 # to be same format as elsewhere in package,
-setData2018 <- dplyr::select(raw_data,
-                             station,
-                             lat,
-                             lon,
-                             type = stn_type,
-                             rca,
-                             mpa,
-                             mpa_name) %>%
-  dplyr::mutate(year = 2018,
+setDataExpansion <- dplyr::select(raw_data,
+                                  station,
+                                  lat,
+                                  lon,
+                                  type = stn_type,
+                                  rca,
+                                  mpa,
+                                  mpa_name) %>%
+  dplyr::mutate(station = as.character(station),
                 lon = lon - 360,
-                rca = ifelse(rca == 1, "Y", "N"),
-                mpa = ifelse(mpa == 1, "Y", "N"),
-                mpa_name = ifelse(mpa_name == " ", NA, mpa_name)) %>%
-  dplyr::relocate(year)
+                standard = as.factor(ifelse(type == "standard", "Y", "N")),
+                rca = as.factor(ifelse(rca == 1, "Y", "N")),
+                mpa = as.factor(ifelse(mpa == 1, "Y", "N")),
+                mpa_name = as.factor(ifelse(mpa_name == " ", NA, mpa_name))) %>%
+  dplyr::select(-c("type"))
 
-usethis::use_data(setData2018, overwrite = TRUE)
+usethis::use_data(setDataExpansion, overwrite = TRUE)

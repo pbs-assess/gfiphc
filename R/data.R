@@ -145,10 +145,10 @@
 "data1996to2002"
 
 
-#' Station data for 2018 IPHC survey onwards
+#' Data indicating which stations are the 2018 (and maybe later) expansion stations
 #'
 #' A dataset containing details of the stations for the 2018
-#' IPHC survey; one set was deployed at each station, but an expanded grid (more
+#' IPHC survey; one set was deployed at each usual station, but an expanded grid (more
 #' stations) was used this year, and the expansion stations need to be kept
 #' track of when comparing spatially-averaged catch rates to previous
 #' years. 2019 onwards may also use the expanded grids.
@@ -157,11 +157,12 @@
 #'
 #' @format A tibble:
 #' \describe{
-#'   \item{year}{2018 for this data set}
-#'   \item{station}{station name}
+#'   \item{station}{station name (character because early years used
+#'     alphanumeric and need to be able to combine years later)}
 #'   \item{lat}{latitude of station}
 #'   \item{lon}{longitude of station}
-#'   \item{type}{station type, either standard or expansion}
+#'   \item{standard}{whether or not (Y/N) the station is a standard one or an
+#'   expansions station}
 #'   \item{rca}{whether or not (Y/N) the station is within a Rockfish
 #'   Conservation Area}
 #'   \item{mpa}{whether or not (Y/N) the station is within a Marine Protected
@@ -171,7 +172,7 @@
 #' }
 #' @source Originally from file IPHC_Stations_All.csv from Dana Haggarty, with
 #'   details and further tidying done here in `data-raw/IPHC-stations-expanded.R`.
-"setData2018"
+"setDataExpansion"
 
 
 
