@@ -99,7 +99,7 @@
 #'   \item{station}{station name}
 #'   \item{lat}{latitude of station}
 #'   \item{lon}{longitude of station}
-#'   \item{avgDepthlon}{average depth of set}
+#'   \item{avgDepth}{average depth of set}
 #'   \item{effSkateIPHC}{effective skate number of the set, as calculated by IPHC}
 #'   \item{E_it20}{effective skate number of the set based on the first 20 hooks
 #'     only, calculated as the (number of hooks observed)/
@@ -143,6 +143,36 @@
 #'   Edwards preprocessed in iphc9602.Snw for Yelloweye 2014 assessment, and then
 #'   tidied further in private yeye15reproduce repository.
 "data1996to2002"
+
+
+#' Station data for 2018 IPHC survey onwards
+#'
+#' A dataset containing details of the stations for the 2018
+#' IPHC survey; one set was deployed at each station, but an expanded grid (more
+#' stations) was used this year, and the expansion stations need to be kept
+#' track of when comparing spatially-averaged catch rates to previous
+#' years. 2019 onwards may also use the expanded grids.
+#' Effective skate number, avgDepth and usability will come from the GFbio query (unlike, say,
+#' setData2013, for which the set details could not go into GFbio).
+#'
+#' @format A tibble:
+#' \describe{
+#'   \item{year}{2018 for this data set}
+#'   \item{station}{station name}
+#'   \item{lat}{latitude of station}
+#'   \item{lon}{longitude of station}
+#'   \item{type}{station type, either standard or expansion}
+#'   \item{rca}{whether or not (Y/N) the station is within a Rockfish
+#'   Conservation Area}
+#'   \item{mpa}{whether or not (Y/N) the station is within a Marine Protected
+#'   Area}
+#'   \item{mpa_name}{name of the Marine Protected Area that the station is
+#'   within, if applicable (else is character <NA>)}
+#' }
+#' @source Originally from file IPHC_Stations_All.csv from Dana Haggarty, with
+#'   details and further tidying done here in `data-raw/IPHC-stations-expanded.R`.
+"setData2018"
+
 
 
 #' Conversion from GFbio names to IPHC species names (for data not in GFbio)
