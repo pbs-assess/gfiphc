@@ -116,7 +116,7 @@ tidy_iphc_survey <- function(hook_level,
       C_it20 = N_it20 / E_it20
     ) %>%
     select(year,
-      station = block,
+      station,
       lat,
       lon = long,
       E_it,
