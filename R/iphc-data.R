@@ -340,6 +340,10 @@ check_iphc_spp_name <- function(countData = NULL, ignore_obvious = TRUE) {
 ##'           C_it20 (catch rate of 'species' as number per effective skate,
 ##'                   based on the first 20 hooks, so NA for 1995),
 ##'           usable (whether or not that station is usable, as deemed by IPHC),
+##'           standard (whether or not station is a standard one or in the
+##'                     expansion set after 2018; manually setting to Y here as
+##'                     stations are not exactly the same as the standard ones
+##'                     but are not in the expanded area)
 ##'
 ##' If no data at all on that species then C_it and N_it are NA's.
 ##' @examples
@@ -364,7 +368,8 @@ get_iphc_1995 <- function(species) {
     mutate(
       E_it20 = as.double(NA),
       N_it20 = as.double(NA),
-      C_it20 = as.double(NA)
+      C_it20 = as.double(NA),
+      standard = as.factor("Y")
     )
 
   setVals1995$year <- 1995 # some are NA's from the left_join
@@ -380,7 +385,8 @@ get_iphc_1995 <- function(species) {
     E_it20,
     N_it20,
     C_it20,
-    usable
+    usable,
+    standard
   )
   setVals1995
 }
