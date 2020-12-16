@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(gfiphc)
+library(dplyr)
 ```
 
 <!-- Adapting code written by Andrew Edwards for Beau Doherty at Landmark -->
@@ -91,47 +92,82 @@ See `?<dataset>` for details of each, and `data(package = "gfiphc")` for other
 data sets. Notation such as `E_it20` matches the write-up in the Groundfish
 Synopsis report.
 
-The formats are different to each other due to the way the data are
+The formats are different to each other due to the data are
 available. For example, there are no `hooksObserved` values available for 1995
 and 2013, which will complicate consideration of hook competition
 for those years. `setDataExpansion` is needed to identify stations in the expanded
 grid (that were not fished in previous years).
 
-Look at the data for the species of interest:
+Look at the data for the species of interest, which combines all the data for
+the species (built-in data sets plus data extracted from GFBio):
 ```{r load}
 sp_set_counts
                   # For each set, the calculatable catch rates for that
                   # species, plus lat and lon and whether the set is usable.
                   # See ?get_all_iphc_set_counts for full details.
 
+tail(sp_set_counts$set_counts)
+
 summary(sp_set_counts$set_counts)
 
-sets_each_year <- sp_set_counts$set_counts %>% group_by(year) %>%
+sets_each_year <- sp_set_counts$set_counts %>%
+  group_by(year) %>%
   summarise(total = n())
-plot(sets_each_year$year, sets_each_year$total, type = "o",
-     xlab = "Year", ylab = "Sets each year")
 ```
 
-This shows that the number of sets changes over time. In particular, there were
-lots more stations in 2018 and these need to be accounted for when calculating
-the catch rates. THEY HAVE NOT YET BEEN IN THE AUTOMATED FUNCTIONS ABOVE. Also
-were not accounted for in the gfsynopsis report (when we added in the 2018 data
-quite late, see Issue #14, which notes that the latest Yelloweye Rockfish
-assessment properly accounted for this).
+The number of sets jumped in 2018 due to the expanded survey grid that year that
+involved extra stations (there should only ever be one set at a station):
+```{r plotsets, fig.height = 4}
+plot(sets_each_year$year, sets_each_year$total, type = "o",
+     xlab = "Year", ylab = "Sets each year", ylim = c(0, max(sets_each_year$total)))
+```
 
-Need to look at locations of stations, and check in detail what happens for 2018
-onwards.
+The extra stations are identified as `standard` being `N`, with `Y` being the
+standard stations. Removing the non-standard stations brings the number of sets
+in 2018 into line with other years, and so this should be done for (most)
+analyses:
+```{r plotsetsstd, fig.height = 4}
+sets_each_year_standard <- sp_set_counts$set_counts %>%
+  filter(standard == "Y") %>%
+  group_by(year) %>%
+  summarise(total = n())
+
+plot(sets_each_year_standard$year, sets_each_year_standard$total, type = "o",
+     xlab = "Year", ylab = "Sets each year", ylim = c(0, max(sets_each_year$total)))
+```
+
+Note that (as of 2019 data at least) the expansion (non-standard) stations only
+appear in 2018:
+```{r checkexpansion}
+filter(sp_set_counts$set_counts, standard == "N") %>%
+  select(year) %>%
+  range()
+```
+
+So use `filter(..., standard == "Y", usable == "Y")` for analyses (to also include
+only the usable stations).
+
+As noted in Issue #14, the standard refinement has not yet been done for the Series A, B, C, D
+etc. calculation code that was used for the synopsis report, but the latest
+Yelloweye Rockfish assessment did properly account for this.
+
+Also, there are 7 stations for 2018 in GFBio that are not identified yet in
+`setDataExpansion` (also noted in Issue #14):
+```{r spurious}
+summary(sp_set_counts$set_counts$standard)
+```
+Using `standard == "Y"` will weed these out anyway for now, and this will get
+resolved (through Issue #14). Can also check where they are by plotting a map.
 
 ## Locations of stations
 
-Will adapt old code to create maps of stations, but I think Beau at Landmark
-does this anyway, and correctly ignored the new stations in 2018.
+Andy will include existing code to create maps of stations.
 
 ## Not running yet, can ignore for now:
 
-Robyn did this for P Cod (but will not get final year(s) right since I haven't yet
-corrected for changing stations) to take a quick look at the data, but didn't
-end up using it.
+Robyn did this for Pacific Cod (but will not get 2018 right since code doesn't
+yet correct for expansion stations). This was to take a quick look at the data,
+but she didn't end up using it. Will be useful as an example here.
 
 ```{r pcod, eval = FALSE}
 iphc_raw <- gfiphc::tidy_iphc_survey(

@@ -589,7 +589,10 @@ get_iphc_2013 <- function(species) {
 ##'           N_it20 (number of 'species' caught in first 20 hooks),
 ##'           C_it20 (catch rate of 'species' as number per effective skate,
 ##'                   based on the first 20 hooks),
-##'           usable (whether or not that station is usable, as deemed by IPHC).
+##'           usable (whether or not that station is usable, as deemed by IPHC),
+##'           standard (whether or not station is a standard one or in the
+##'                   expansion set after 2018).
+##'
 ##' @export
 get_all_iphc_set_counts <- function(species) {
   bind_rows(
