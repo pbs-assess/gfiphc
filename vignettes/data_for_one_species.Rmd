@@ -203,3 +203,31 @@ here to then check that it matches what is done above (not finished checking yet
     }
   }
 ```
+
+## Extracting multiple species (not run here)
+
+Did these for Joe Watson (16/12/20). May as well document here as will need to
+do again when the 2020 data are uploaded. Realised can just make a species vector
+so doing that here, though not fully tested.
+
+```{r multiple, eval=FALSE}
+sp_vec <- c("yelloweye rockfish",
+            "arrowtooth flounder",
+            "lingcod",
+            "north pacific spiny dogfish",
+            "pacific cod",
+            "pacific halibut",
+            "redbanded rockfish",
+            "sablefish",
+            "longnose skate",
+            "walleye pollock")
+
+cache_pbs_data_iphc(sp_vec)   # not double checked, as just ran them all individually
+
+# Do in console to just print the first and last values:
+for(sp in sp_vec){
+  print(sp)
+  print(readRDS(paste0(gsub(" ", "-", sp), ".rds")))
+  print(tail(readRDS(paste0(gsub(" ", "-", sp), ".rds"))$set_counts))
+}
+```
