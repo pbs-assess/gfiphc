@@ -52,6 +52,10 @@ N_it20 (number of 'species' caught in first 20 hooks, so NA for
 C_it20 (catch rate of 'species' as number per effective skate,
 based on the first 20 hooks, so NA for 1995),
 usable (whether or not that station is usable, as deemed by IPHC),
+standard (whether or not station is a standard one or in the
+expansion set after 2018; manually setting to Y here as
+stations are not exactly the same as the standard ones
+but are not in the expanded area)
 
 If no data at all on that species then C_it and N_it are NA's.
 
@@ -68,6 +72,13 @@ N_it20 (number of 'species' caught in first 20 hooks, so NA for
 C_it20 (catch rate of 'species' as number per effective skate,
 based on the first 20 hooks, so NA for 1996),
 usable (whether or not that station is usable, as deemed by IPHC),
+standard (whether or not station is a standard one or in the
+expansion set after 2018; all Y here since pre-2018; for
+1996 and 1997 the station layout is not the standard grid
+and the naming of stations is different,
+\verb{intersect(filter(sp_set_counts$set_counts, year == 1996)$station, setDataExpansion$station}
+is empty, but the area fished is similar to later standard
+years so we put Y here)
 
 If no data on that species then C_it and N_it are NA's.
 
@@ -83,6 +94,8 @@ N_it20 (number of 'species' caught in first 20 hooks),
 C_it20 (catch rate of 'species' as number per effective skate,
 based on the first 20 hooks),
 usable (whether or not that station is usable, as deemed by IPHC),
+standard (whether or not station is a standard one or in the
+expansion set after 2018; all Y here since 2013)
 
 If no data at all on that species then C_it and N_it are NA's.
 }

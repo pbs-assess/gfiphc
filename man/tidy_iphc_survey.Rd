@@ -12,7 +12,7 @@ tidy_iphc_survey(hook_level, skate_info, set_info)
 \item{skate_info}{species-independent skate-level information from
 \code{\link[=get_iphc_skates_info]{get_iphc_skates_info()}}.}
 
-\item{set_info}{species-indepentn set-level information from
+\item{set_info}{species-independent set-level information from
 \code{\link[=get_iphc_sets_info]{get_iphc_sets_info()}}.}
 }
 \value{

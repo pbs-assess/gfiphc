@@ -21,7 +21,9 @@ E_it20 (effective skate number for that station, based on first
 N_it20 (number of 'species' caught in first 20 hooks),
 C_it20 (catch rate of 'species' as number per effective skate,
 based on the first 20 hooks),
-usable (whether or not that station is usable, as deemed by IPHC).
+usable (whether or not that station is usable, as deemed by IPHC),
+standard (whether or not station is a standard one or in the
+expansion set after 2018).
 }
 \description{
 Combine all the IPHC survey data for a given species, with catch rates
