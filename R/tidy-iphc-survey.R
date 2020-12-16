@@ -9,7 +9,7 @@
 #' @param hook_level species-specific hook-level counts from [get_iphc_hooks()].
 #' @param skate_info species-independent skate-level information from
 #'   [get_iphc_skates_info()].
-#' @param set_info species-indepentn set-level information from
+#' @param set_info species-independent set-level information from
 #'   [get_iphc_sets_info()].
 #'
 #'
@@ -49,7 +49,8 @@ tidy_iphc_survey <- function(hook_level,
         E_it20 = NA,
         N_it20 = NA,
         C_it20 = NA,
-        usable = NA
+        usable = NA,
+        standard = NA
       ))
     }
   }
@@ -127,7 +128,8 @@ tidy_iphc_survey <- function(hook_level,
       E_it20,
       N_it20,
       C_it20,
-      usable
+      usable,
+      standard
     ) %>%
     as_tibble()
 }
