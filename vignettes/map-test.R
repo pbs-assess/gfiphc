@@ -98,7 +98,6 @@ sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
 # objects described below
 # It's a list with first element sp_set_counts$set_counts
 
-# sp_set_counts <- as_tibble(sp_set_counts)   # Just may to redo the save?
 hooks_with_bait <- readRDS("hook-with-bait.rds")
 sets_other_years <- readRDS("sets-other-years.rds")
 skates_other_years <- readRDS("skates-other-years.rds")
@@ -107,7 +106,7 @@ skates_other_years <- readRDS("skates-other-years.rds")
 # postscript("stations1995mapA.eps", height = figheight, width = figwidth,
 #           horizontal=FALSE,  paper="special")
 
-expandPlot(mfrow=c(1,1))
+# expandPlot(mfrow=c(1,1))
 plot_iphc_map(sp_set_counts$set_counts, sp = "Yelloweye Rockfish", years = 1995)
 
 plot_iphc_map(sp_set_counts$set_counts, sp = "Yelloweye Rockfish", years = 1996)

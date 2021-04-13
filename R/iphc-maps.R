@@ -6,11 +6,15 @@
 ##' `PBSmapping` style of plot, as used in the Redbanded and Yelloweye Rockfish
 ##' stock assessments.
 ##'
-##' @param set_counts_of_sp input tibble, likely generated from
+##' @param set_counts_of_sp input tibble of the species of interest, likely generated from
 ##'   `cache_pbs_data_iphc` (which seems to save a list with the first element
 ##'   the desired tibble), with column names `year`, `station`, `lat`, `lon`,
 ##'   `E_it`, `N_it`, `C_it`, `E_it20`, `N_it20`, `C_it20`, `usable`
-##' @param sp species of interest
+##' @param sp_short_name short name species of interest to have in legend,
+##'   if NULL then plots all stations labelled as
+##'   usable and unusable, but with no catch rates. Still needs
+##'   `set_counts_of_sp` input tibble (can be any species, as they all have all
+##'   stations documented).
 ##' @param years years of interest ****currently just for one year, multiple will
 ##'   get tricky
 ##' @param main_title title for map, if NULL then is "All <year> stations"
@@ -23,6 +27,10 @@
 ##' @param lon_cut_off_1 left-hand end of line (longitude) to show cut off
 ##' @param lon_cut_off_2 right-hand end of line (longitude) to show cut off
 ##'
+##' @param pch_pos_count
+##' @param pch_zero_count
+##' @param cex_val
+##' @param ...
 ##' @return A map of the IPHC survey stations for that year and species, with a
 ##'   legend describing the points.
 ##' @export
@@ -33,17 +41,23 @@
 ##' sp <- "yelloweye rockfish"
 ##' sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))    # Need .rds
 ##'   saved already
-##' plot_iphc_map(sp_set_counts$set_counts, sp = "Yelloweye Rockfish", years =
+##' plot_iphc_map(sp_set_counts$set_counts, sp_short_name = "Yelloweye", years =
 ##'   2003)  # one year
 ##' # many years (matches maps in Yamanka et al. (2018) Yelloweye assessment,
 ##' #  except stations 14A, 19IC, and 3D that are now marked as unusable):
-##' for(i in 1995:2019){ plot_iphc_map(sp_set_counts$set_counts, sp = "Yelloweye
-##'   Rockfish", years = i);
+##' for(i in unique(sp_set_counts$set_counts$year)){
+##'   plot_iphc_map(sp_set_counts$set_counts,
+##'                 sp_short_name = "Yelloweye",
+##'                 years = i)
 ##'   invisible(readline(prompt="Press [enter] to continue"))
+##' }
+##'
+##' # Just the stations with no species information:
+##' plot_iphc_map(sp_set_counts$set_counts, sp = NULL, years = 1995)
 ##' }
 ##' @}
 plot_iphc_map <- function(set_counts_of_sp,
-                          sp,
+                          sp_short_name = NULL,
                           years,
                           main_title = NULL,
                           mar_val = c(1.8,2,1.0,0.5),
@@ -51,6 +65,9 @@ plot_iphc_map <- function(set_counts_of_sp,
                           lat_cut_off = 50.6,
                           lon_cut_off_1 =-130,
                           lon_cut_off_2 = -128.25,
+                          pch_pos_count = 19,
+                          pch_zero_count = 1,
+                          cex_val = 1,
                           ...
                           ){
   par(mar = mar_val,
@@ -59,51 +76,40 @@ plot_iphc_map <- function(set_counts_of_sp,
 
   if(is.null(main_title))  main_title = paste0("All ", years, " stations")
 
-  plot_BC(main = main_title)
-
   set_counts_of_sp_one_year <- filter(set_counts_of_sp,
                                       year == years)
 
-  # TODO: generalise to work for 1997 and other years with only first 20 years
-  # of data - so filter the data first then plot; need to use N_it20
+  plot_BC(main = main_title)
 
-  if(all(!is.na(set_counts_of_sp_one_year$E_it))){
-    # So E_it based on all hooks, so use N_it
+  if(!is.null(sp)){
+    # Species-specific
+    add_stations(set_counts_of_sp_one_year,
+                 species = TRUE,
+                 pch_zero_count = pch_zero_count,
+                 pch_pos_count = pch_pos_count,
+                 cex_val = cex_val)
+    legend("bottomleft", legend=c(paste("Did not catch", sp_short_name),
+                                  paste("Did catch", sp_short_name),
+                                  "Unusable station"),
+           pch = c(pch_zero_count, pch_pos_count, pch_pos_count),
+           pt.cex = rep(cex_val, 3),
+           col=c("red", "red", "grey"))
+  } else {
 
-    # Plot usable stations with catch rates = 0 for sp
+    # Just show stations
     points(lat~lon,
            data = filter(set_counts_of_sp_one_year,
-                         usable=="Y",
-                         N_it == 0),
-           col = "red",
-           cex = 1)
+                         year == years,
+                         usable == "Y"),
+           col = "blue",
+           pch = pch_pos_count,
+           cex = cex_val)
 
-    # Plot usable stations with catch rates > 0
-    points(lat~lon,
-           data = filter(set_counts_of_sp_one_year,
-                         usable == "Y",
-                         N_it > 0),
-           col="red",
-           pch=20,
-           cex=1.2)} else {
-    # So E_it is NA for all sets, meaning only first 20 hooks enumerated so use N_it20
-
-    # Plot usable stations with catch rates = 0 for sp
-    points(lat~lon,
-           data = filter(set_counts_of_sp_one_year,
-                         usable=="Y",
-                         N_it20 == 0),
-           col = "red",
-           cex = 1)
-
-    # Plot usable stations with catch rates > 0
-    points(lat~lon,
-           data = filter(set_counts_of_sp_one_year,
-                         usable == "Y",
-                         N_it20 > 0),
-           col="red",
-           pch=20,
-           cex=1.2)
+    legend("bottomleft", legend=c(paste("Usable station"),
+                                  "Unusable station"),
+           pch = rep(pch_pos_count, 2),
+           pt.cex = rep(cex_val, 2),
+           col=c("blue", "grey"))
     }
 
     # Plot unusable stations (which have NA's for catch rates and E_it, E_it20)
@@ -111,9 +117,9 @@ plot_iphc_map <- function(set_counts_of_sp,
            data = filter(set_counts_of_sp_one_year,
                          year == years,
                          usable == "N"),
-           col="grey",
-           pch=20,
-           cex=1.2)
+           col = "grey",
+           pch = pch_pos_count,
+           cex = cex_val)
 
   # This is keeping in Series A or not - could just draw the horizontal line every time
   #points(lat~lon,
@@ -125,12 +131,6 @@ plot_iphc_map <- function(set_counts_of_sp,
   lines(c(lon_cut_off_1, lon_cut_off_2),
         rep(lat_cut_off, 2))
 
-  legend("bottomleft", legend=c(paste("Did not catch", sp),
-                                paste("Did catch", sp),
-                                "Unusable station"),
-         pch=c(1, 20, 20),
-         pt.cex=c(1, 1.2, 1.2),
-         col=c("red", "red", "grey"))
 }
 
 
@@ -181,4 +181,81 @@ plot_BC <- function(xlim = c(-134,-124),
   #           ...)
   #}
   invisible(isob)
+}
+
+##' Add individual stations to map
+##'
+##' Add individual stations to map of BC, with options for all stations (no
+##' species catch information), or positive and zero catches for a given
+##' species. Called from within `plot_iphc_map()`.
+##'
+##' @param set_counts_of_sp_one_year tibble for just one year, from
+##'   `set_counts_of_sp`.
+##' @param #usable
+##' @param cex_val
+##' @param usable TRUE if plotting the usable stations, FALSE for unusable.
+##' @param pos_catch_rates TRUE if plotting the positive (>0) catch rates for
+##'   the given species, FALSE if plotting the 0 catch rates (showing as open
+##'   circles).
+##' @param species TRUE to plot the stations and catch rates for the given
+##'   species (already specified in the data), or FALSE to just low locations of
+##'   stations and whether they are usable or not.
+##' @return adds points to existing plot
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' @
+##' @}
+add_stations <- function(set_counts_of_sp_one_year,
+#                         usable = "Y",
+#                         pos_catch_rates = TRUE,
+                         species = TRUE,
+                         pch_zero_count,
+                         pch_pos_count,
+                         cex_val){
+  if(all(!is.na(set_counts_of_sp_one_year$E_it))){
+    # So E_it based on all hooks, so use N_it
+
+    # Plot usable stations with catch rates = 0 for sp
+    points(lat~lon,
+           data = filter(set_counts_of_sp_one_year,
+                         usable == "Y",
+                         N_it == 0),
+           col = "red",
+           pch = pch_zero_count,
+           cex = cex_val)
+
+    # Plot usable stations with catch rates > 0
+    points(lat~lon,
+           data = filter(set_counts_of_sp_one_year,
+                         usable == "Y",
+                         N_it > 0),
+           col="red",
+           pch = pch_pos_count,
+           cex = cex_val)} else {
+    # So E_it is NA for all sets, meaning only first 20 hooks enumerated so use N_it20
+
+    # Plot usable stations with catch rates = 0 for sp
+    points(lat~lon,
+           data = filter(set_counts_of_sp_one_year,
+                         usable == "Y",
+                         N_it20 == 0),
+           pch = pch_zero_count,
+           col = "red",
+           cex = cex_val)
+
+    # Plot usable stations with catch rates > 0
+    points(lat~lon,
+           data = filter(set_counts_of_sp_one_year,
+                         usable == "Y",
+                         N_it20 > 0),
+           col = "red",
+           pch = pch_pos_count,
+           cex = cex_val)
+    }
+
+
+
+  invisible()
 }
