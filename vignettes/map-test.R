@@ -114,6 +114,9 @@ plot_iphc_map(sp_set_counts$set_counts, sp = "Yelloweye Rockfish", years = 1996)
 
 plot_iphc_map(sp_set_counts$set_counts, sp = "Yelloweye Rockfish", years = 1997) # won't work yet
 
+plot_iphc_map(sp_set_counts$set_counts, sp = "Yelloweye Rockfish", years = 2008)
+# has an unusable
+
 plot_iphc_map(sp_set_counts$set_counts, sp = "Yelloweye Rockfish", years = 2003)
 
 # \onefig{stations1995mapA}{Locations of the \Sexpr{dim(setVals1995)[1]} stations in 1995, of which \Sexpr{dim(filter(setVals1995, usable=="Y", N_it == 0))[1]} did not catch \Sexpr{spName} (red open circles), \Sexpr{dim(filter(setVals1995, usable=="Y", N_it > 0))[1]} stations did catch it (red closed circles), and \Sexpr{sum(setVals1995$usable == "N")} were deemed unusable by the IPHC (grey closed circles) and so are not considered further. The black line indicates the geographic cut-off, below which \Sexpr{sum(setVals1995$keep == 0)} stations (black crosses) are thus excluded.}
