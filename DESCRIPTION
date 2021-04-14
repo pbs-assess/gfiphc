@@ -21,9 +21,10 @@ Imports:
     boot,
     rlang,
     RColorBrewer,
-    gfdata
+    gfdata,
+    PBSmapping
 Remotes: github::pbs-assess/gfdata
-Suggests: 
+Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr

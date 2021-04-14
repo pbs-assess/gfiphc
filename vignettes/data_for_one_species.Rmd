@@ -38,9 +38,10 @@ sp <- "yelloweye rockfish"
 Someone at PBS has to run the first chunk of code to extract data from
 the GFBio database and send the external collaborator the resulting four .rds
 files. The remaining code will run outside of PBS. Within PBS, the first chunk doesn't need
-to be re-run once the .rds files have been saved locally.
+to be re-run once the .rds files have been saved locally (and so it is not
+evaluated here).
 
-```{r extract}
+```{r extract, eval = FALSE}
 # This chunk will only work within PBS
 cache_pbs_data_iphc(sp)
                                        # That creates yelloweye-rockfish.rds. [This is
@@ -115,8 +116,65 @@ sets_each_year <- sp_set_counts$set_counts %>%
   summarise(total = n())
 ```
 
-The number of sets jumped in 2018 due to the expanded survey grid that year that
-involved extra stations (there should only ever be one set at a station):
+## Maps of stations
+
+For a single year, and whether or not the survey caught the species of interest
+in that year:
+
+```{r onemap, fig.height = 6}
+plot_iphc_map(sp_set_counts$set_counts,
+              sp_short_name = "Yelloweye", # for the legend
+              years = 2008)
+```
+
+Unusable stations are determined by the IPHC and any data are excluded from our
+calculations. The horizontal line is the cut-off for calculations for different
+Series (see the synopsis Research Document). Note that the `sp_short_name`
+argument is only for the legend, the first argument needs to contain the data
+for the species of interest.
+
+To see a movie of the station locations through time:
+
+![IPHC-stations-movie-1995-2019.gif](IPHC-stations-movie-1995-2019.gif).
+
+Here is the code to build the movie, but it is commented out since it causes Travis
+to fail (Travis is the continuous integration service that automatically
+checks the packages builds every time a change is committed to GitHub, giving the
+little green symbol `passing` icon on the main page). To make the movie, run the
+run this vignette code with commented line uncommented (you need to install the
+`gifski` package), right-click on the animation in the
+html viewer and save it.
+```{r, eval=FALSE}
+# ```{r, animation.hook = 'gifski', interval = 1.5, fig.height = 6}
+for(i in unique(sp_set_counts$set_counts$year)){
+  plot_iphc_map(sp_set_counts$set_counts,
+                sp_short_name = "Yelloweye",
+                years = i)
+}
+```
+
+To see the stations without reference to any species:
+```{r, fig.height = 6}
+plot_iphc_map(sp_set_counts$set_counts,
+              sp = NULL,
+              years = 2008)
+```
+
+noting that you still need `sp_set_counts$set_counts` (for an arbitrary species)
+as an argument.
+
+Can also use `hooks_with_bait$set_counts` to see stations that came back with no
+bait (the legend will need adapting though; empty circles are no baits with
+hooks returned):
+```{r, fig.height = 6}
+plot_iphc_map(hooks_with_bait$set_counts,
+              sp = "Hooks with bait",
+              years = 2008)
+```
+
+In the movie you see that the number of sets jumped in 2018 due to the expanded
+survey grid that year that involved extra stations (there should only ever be
+one set at a station):
 ```{r plotsets, fig.height = 4}
 plot(sets_each_year$year, sets_each_year$total, type = "o",
      xlab = "Year", ylab = "Sets each year", ylim = c(0, max(sets_each_year$total)))
@@ -158,10 +216,6 @@ summary(sp_set_counts$set_counts$standard)
 ```
 Using `standard == "Y"` will weed these out anyway for now, and this will get
 resolved (through Issue #14). Can also check where they are by plotting a map.
-
-## Locations of stations
-
-Andy will include existing code to create maps of stations.
 
 ## Not running yet, can ignore for now:
 

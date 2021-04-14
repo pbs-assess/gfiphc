@@ -26,10 +26,10 @@
 ##'   stations for 1995-1998
 ##' @param lon_cut_off_1 left-hand end of line (longitude) to show cut off
 ##' @param lon_cut_off_2 right-hand end of line (longitude) to show cut off
-##'
-##' @param pch_pos_count
-##' @param pch_zero_count
-##' @param cex_val
+##' @param pch_pos_count pch for positive counts
+##' @param pch_zero_count pch for positive counts
+##' @param cex_val cex size of plotted circles (or whatever is chosen using
+##'   above `pch` options
 ##' @param ...
 ##' @return A map of the IPHC survey stations for that year and species, with a
 ##'   legend describing the points.
@@ -37,7 +37,7 @@
 ##' @author Andrew Edwards
 ##' @examples
 ##' @donttest{
-##' @ See vignette ******
+##' @ See vignette `data_for_one_species`
 ##' sp <- "yelloweye rockfish"
 ##' sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))    # Need .rds
 ##'   saved already
@@ -53,7 +53,9 @@
 ##' }
 ##'
 ##' # Just the stations with no species information:
-##' plot_iphc_map(sp_set_counts$set_counts, sp = NULL, years = 1995)
+##' plot_iphc_map(sp_set_counts$set_counts,
+##'               sp_short_name = NULL,
+##'               years = 2008)
 ##' }
 ##' @}
 plot_iphc_map <- function(set_counts_of_sp,
@@ -81,7 +83,7 @@ plot_iphc_map <- function(set_counts_of_sp,
 
   plot_BC(main = main_title)
 
-  if(!is.null(sp)){
+  if(!is.null(sp_short_name)){
     # Species-specific
     add_stations(set_counts_of_sp_one_year,
                  species = TRUE,
@@ -150,31 +152,32 @@ plot_iphc_map <- function(set_counts_of_sp,
 ##' @
 ##' @}
 plot_BC <- function(xlim = c(-134,-124),
-                   ylim=c(48,54.6),
-                   zlev=seq(200,1200,200),
+                   ylim = c(48,54.6),
+                   zlev = seq(200,1200,200),
                    ...)
 {
   data(nepacLL,
        nepacLLhigh,
-       bcBathymetry)
+       bcBathymetry,
+       package = "PBSmapping")
   coast <- if (diff(xlim)<5) nepacLLhigh else nepacLL
-  clin <- contourLines(bcBathymetry,
-                       levels=zlev)
-  poly <- convCP(clin)
-  isob <- clipLines(poly$PolySet,
-                    xlim=xlim,
-                    ylim=ylim)
+  clin <- grDevices::contourLines(bcBathymetry,
+                                  levels=zlev)
+  poly <- PBSmapping::convCP(clin)
+  isob <- PBSmapping::clipLines(poly$PolySet,
+                                xlim=xlim,
+                                ylim=ylim)
   pdat <- poly$PolyData
   attr(isob,"projection") <- "LL"
-  clrFN <- colorRampPalette(c("cyan4","blue","navy"))
+  clrFN <- grDevices::colorRampPalette(c("cyan4","blue","navy"))
   clrs <- clrFN(length(zlev))
-  plotMap(coast,
-          xlim = xlim,
-          ylim = ylim,
-          col = "lemonchiffon",
-          border = "grey50",
-          plt=NULL,
-          ...)
+  PBSmapping::plotMap(coast,
+                      xlim = xlim,
+                      ylim = ylim,
+                      col = "lemonchiffon",
+                      border = "grey50",
+                      plt=NULL,
+                      ...)
   #if(showBathymetry){
   #  addLines(isob,
   #           col=clrs,
@@ -254,8 +257,5 @@ add_stations <- function(set_counts_of_sp_one_year,
            pch = pch_pos_count,
            cex = cex_val)
     }
-
-
-
   invisible()
 }
