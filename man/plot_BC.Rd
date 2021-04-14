@@ -8,6 +8,7 @@ plot_BC(
   xlim = c(-134, -124),
   ylim = c(48, 54.6),
   zlev = seq(200, 1200, 200),
+  showBathymetry = FALSE,
   ...
 )
 }
@@ -19,6 +20,8 @@ plot_BC(
 \item{zlev}{depth contours to show}
 
 \item{showBathymetry}{if TRUE then show bathymetry contours}
+
+\item{...}{other arguments to \code{PBSmapping::plotMap()} or \code{PBSmapping::addLines()}}
 }
 \value{
 Map of BC land and sea

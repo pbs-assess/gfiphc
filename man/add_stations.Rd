@@ -20,6 +20,13 @@ add_stations(
 species (already specified in the data), or FALSE to just low locations of
 stations and whether they are usable or not.}
 
+\item{pch_zero_count}{pch for zero counts}
+
+\item{pch_pos_count}{pch for positive counts}
+
+\item{cex_val}{cex size of plotted circles (or whatever is chosen using
+above \code{pch} options}
+
 \item{usable}{TRUE if plotting the usable stations, FALSE for unusable.}
 
 \item{pos_catch_rates}{TRUE if plotting the positive (>0) catch rates for

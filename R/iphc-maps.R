@@ -30,7 +30,7 @@
 ##' @param pch_zero_count pch for positive counts
 ##' @param cex_val cex size of plotted circles (or whatever is chosen using
 ##'   above `pch` options
-##' @param ...
+##' @param ... extra arguments to `par()`
 ##' @return A map of the IPHC survey stations for that year and species, with a
 ##'   legend describing the points.
 ##' @export
@@ -143,7 +143,7 @@ plot_iphc_map <- function(set_counts_of_sp,
 ##' @param ylim range of y (latitude)
 ##' @param zlev depth contours to show
 ##' @param showBathymetry if TRUE then show bathymetry contours
-##' @param ...
+##' @param ... other arguments to `PBSmapping::plotMap()` or `PBSmapping::addLines()`
 ##' @return Map of BC land and sea
 ##' @export
 ##' @author Andrew Edwards
@@ -154,12 +154,13 @@ plot_iphc_map <- function(set_counts_of_sp,
 plot_BC <- function(xlim = c(-134,-124),
                    ylim = c(48,54.6),
                    zlev = seq(200,1200,200),
+                   showBathymetry = FALSE,
                    ...)
 {
-  data(nepacLL,
-       nepacLLhigh,
-       bcBathymetry,
-       package = "PBSmapping")
+  utils::data(nepacLL,
+              nepacLLhigh,
+              bcBathymetry,
+              package = "PBSmapping")
   coast <- if (diff(xlim)<5) nepacLLhigh else nepacLL
   clin <- grDevices::contourLines(bcBathymetry,
                                   levels=zlev)
@@ -178,11 +179,11 @@ plot_BC <- function(xlim = c(-134,-124),
                       border = "grey50",
                       plt=NULL,
                       ...)
-  #if(showBathymetry){
-  #  addLines(isob,
-  #           col=clrs,
-  #           ...)
-  #}
+  if(showBathymetry){
+    PBSmapping::addLines(isob,
+                         col=clrs,
+                         ...)
+  }
   invisible(isob)
 }
 
@@ -194,15 +195,17 @@ plot_BC <- function(xlim = c(-134,-124),
 ##'
 ##' @param set_counts_of_sp_one_year tibble for just one year, from
 ##'   `set_counts_of_sp`.
-##' @param #usable
-##' @param cex_val
+##' @param species TRUE to plot the stations and catch rates for the given
+##'   species (already specified in the data), or FALSE to just low locations of
+##'   stations and whether they are usable or not.
+##' @param pch_zero_count pch for zero counts
+##' @param pch_pos_count pch for positive counts
+##' @param cex_val cex size of plotted circles (or whatever is chosen using
+##'   above `pch` options
 ##' @param usable TRUE if plotting the usable stations, FALSE for unusable.
 ##' @param pos_catch_rates TRUE if plotting the positive (>0) catch rates for
 ##'   the given species, FALSE if plotting the 0 catch rates (showing as open
 ##'   circles).
-##' @param species TRUE to plot the stations and catch rates for the given
-##'   species (already specified in the data), or FALSE to just low locations of
-##'   stations and whether they are usable or not.
 ##' @return adds points to existing plot
 ##' @export
 ##' @author Andrew Edwards
@@ -211,8 +214,6 @@ plot_BC <- function(xlim = c(-134,-124),
 ##' @
 ##' @}
 add_stations <- function(set_counts_of_sp_one_year,
-#                         usable = "Y",
-#                         pos_catch_rates = TRUE,
                          species = TRUE,
                          pch_zero_count,
                          pch_pos_count,

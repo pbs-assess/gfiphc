@@ -11,8 +11,11 @@
 #' @importFrom boot boot.ci boot
 #' @importFrom stats t.test
 #' @importFrom utils read.csv
+#' @importFrom graphics legend lines par points
 NULL
 
+# Think this is for when things are used within dplyr functions. Most of these
+# are from original gfplot and just got carried over; could remove them.
 if (getRversion() >= "2.15.1") utils::globalVariables(c("."))
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
@@ -125,7 +128,8 @@ if (getRversion() >= "2.15.1") {
     "lon", "spNameIPHC", "specCount", "station",
     "countData1995", "countData2013", "data1996to2002",
     "setData1995", "setData2013", "spNameIPHC", "Sets",
-
+    "standard", "nepacLL", "nepacLLhigh", "bcBathymetry", "setDataExpansion",
+    "setDataExpansion",
 
     # others
     "parent_rsty_id", "parent_taxonomic_unit", "row_version", "rsty_id",

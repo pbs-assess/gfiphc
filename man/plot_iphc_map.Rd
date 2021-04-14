@@ -57,6 +57,8 @@ stations for 1995-1998}
 
 \item{cex_val}{cex size of plotted circles (or whatever is chosen using
 above \code{pch} options}
+
+\item{...}{extra arguments to \code{par()}}
 }
 \value{
 A map of the IPHC survey stations for that year and species, with a
