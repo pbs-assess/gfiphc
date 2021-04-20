@@ -30,6 +30,8 @@
 ##' @param pch_zero_count pch for positive counts
 ##' @param cex_val cex size of plotted circles (or whatever is chosen using
 ##'   above `pch` options
+##' @param add_to_existing if TRUE then add to an existing plot, if FALSE then
+##'   create new map using `plot_BC()`
 ##' @param ... extra arguments to `par()`
 ##' @return A map of the IPHC survey stations for that year and species, with a
 ##'   legend describing the points.
@@ -70,6 +72,7 @@ plot_iphc_map <- function(set_counts_of_sp,
                           pch_pos_count = 19,
                           pch_zero_count = 1,
                           cex_val = 1,
+                          add_to_existing = FALSE,
                           ...
                           ){
   par(mar = mar_val,
@@ -81,7 +84,9 @@ plot_iphc_map <- function(set_counts_of_sp,
   set_counts_of_sp_one_year <- filter(set_counts_of_sp,
                                       year == years)
 
-  plot_BC(main = main_title)
+  if(!add_to_existing){
+    plot_BC(main = main_title)
+  }
 
   if(!is.null(sp_short_name)){
     # Species-specific

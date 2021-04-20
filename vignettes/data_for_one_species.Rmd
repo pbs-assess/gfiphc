@@ -244,10 +244,14 @@ TODO: Draws over some islands - don't worry for now.
 
 Or try plotting stations first:
 ```{r stationsfirst}
+plot_BC(main = "All 2008 stations")
+PBSmapping::addPolys(herring_HG_area,
+                     col = "pink")
 plot_iphc_map(sp_set_counts$set_counts,
               sp = NULL,
-              years = 2008)
-PBSmapping::addPolys(herring_HG_area, col = "red", )
+              years = 2008,
+              add_to_existing = TRUE)
+
 ```
 
 ## Not running yet, can ignore for now:
