@@ -250,9 +250,32 @@ PBSmapping::addPolys(herring_HG_area,
 plot_iphc_map(sp_set_counts$set_counts,
               sp = NULL,
               years = 2008,
+              lat_cut_off = NULL,
               add_to_existing = TRUE)
 
 ```
+
+Get data into format needed for PBSmapping findPolys:
+```{r format}
+# Probably rename this, see what we need. This is to go forwards with EID
+# (unique event identifier needed for PBSmapping::findPolys) and in_area
+# (whether or not the location is in the area of interest)
+sp_set_counts_with_area <- sp_set_counts$set_counts %>%
+  dplyr::mutate(in_area = FALSE) %>%       # then adjusted below
+  dplyr::bind_cols("EID" = 1:nrow(sp_set_counts$set_counts))
+
+events <- sp_set_counts_with_area %>%
+  dplyr::rename(X = lon, Y = lat) %>%
+  dplyr::select(year, EID, Y, X)
+
+locData <- PBSmapping::findPolys(as.data.frame(events), herring_HG_area)
+EIDs_in_poly <- unique(locData$EID)
+
+sp_set_counts_with_area$in_area <- sp_set_counts_with_area$EID %in% EIDs_in_poly
+
+
+```
+
 
 ## Not running yet, can ignore for now:
 

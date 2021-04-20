@@ -23,7 +23,7 @@
 ##' @param lat_cut_off latitudinal cut off near top of Vancouver Island, below
 ##'   which stations are excluded when constructing Series A and B; this is just
 ##'   below all stations from 1995-1998, so that Series A and B include all
-##'   stations for 1995-1998
+##'   stations for 1995-1998. If NULL then nothing plotted
 ##' @param lon_cut_off_1 left-hand end of line (longitude) to show cut off
 ##' @param lon_cut_off_2 right-hand end of line (longitude) to show cut off
 ##' @param pch_pos_count pch for positive counts
