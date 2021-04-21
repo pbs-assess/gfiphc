@@ -278,6 +278,23 @@ plot_iphc_map(sp_set_counts_with_area,
               indicate_in_area = TRUE)
 ```
 
+Make a movie to check each year:
+```{r, animation.hook = 'gifski', interval = 1.5, fig.height = 6}
+for(i in unique(sp_set_counts_with_area$year)){
+  plot_BC()
+
+  PBSmapping::addPolys(herring_HG_area,
+                       col = "pink")
+
+  plot_iphc_map(sp_set_counts_with_area,
+                sp = NULL,
+                years = i,
+                lat_cut_off = NULL,
+                add_to_existing = TRUE,
+                indicate_in_area = TRUE)
+}
+```
+
 
 
 
