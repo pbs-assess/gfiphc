@@ -227,25 +227,9 @@ One application is for generating time series of predators of Haida Gwaii
 Pacific Herring, for which we do not want to consider the full coast. The area
 of interest is TODO: currently saved in non-pushed files:
 ```{r predators}
-# herring_polys <- PBSmapping::importShapefile("herring-predators-HG/AreaOfInterest.shp")
 load("herring-predators-HG/AoI.rda")     # Rowan's tidied up file
-#plot_BC()
-#PBSmapping::addPolys(herring_polys)
-```
+herring_HG_area <- AoI
 
-That's many polygons, can join them together:
-```{r joinpolys}
-# herring_HG_area <- PBSmapping::joinPolys(herring_polys, op="UNION")
-herring_HG_area <- AoI       # now just use what Rowan did
-plot_BC()
-PBSmapping::addPolys(herring_HG_area, col = "pink")
-# plot_BC(add = TRUE)
-```
-
-TODO: Draws over some islands - don't worry for now.
-
-Or try plotting stations first:
-```{r stationsfirst}
 plot_BC(main = "All 2008 stations")
 PBSmapping::addPolys(herring_HG_area,
                      col = "pink")
@@ -254,7 +238,6 @@ plot_iphc_map(sp_set_counts$set_counts,
               years = 2008,
               lat_cut_off = NULL,
               add_to_existing = TRUE)
-
 ```
 
 Get data into format needed for PBSmapping findPolys:
