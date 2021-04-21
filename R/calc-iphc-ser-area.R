@@ -1,0 +1,414 @@
+#' Calculations restricted to a user-defined area.
+#'
+#' Calculate Series E and F from the IPHC data (restricted to a given area)
+#'
+#' Calculate both Series for as many years as possible, including bootstrapped
+#'  values, for the data restricted to a user-defined area.
+#' @details The two series are:
+#'
+#'  Series E: first 20 hooks from each skate (like Series A but restricted to a
+#'   given area)
+#'
+#'  Series F: all hooks from each skate (like Series B but restricted to a given area)
+#'
+#' @param set_counts species-specific set-level counts from [tidy_iphc_survey()]
+#'  or other, but with extra column `in_area` indicating if each station is in
+#'   the area being considered or not. See vignette for example.
+#' @return list containing two tibbles, one for each series (ser_E and ser_F).
+#'   Each tibble has one row for each set in each year, restricted to only the
+#'   sets within the defined area, with columns
+#'   year, station, lat, lon, E_it (effective skate number), N_it (number of
+#'   fish caught of the given species), C_it (catch rate of given species, as
+#'   numbers per effective skate), E_it20, N_it20 and C_it20 are the same but
+#'   considering the first 20 hooks of each skate only, usable (whether the set
+#'   should be used, based on IPHC codes; note that some should not be used for
+#'   geospatial analysis but are included here).
+#'
+#' @examples
+#' \dontrun{
+#' TODO:
+#' yelloweye <- tidy_iphc_survey(
+#'  get_iphc_hooks("yelloweye rockfish"),
+#'  get_iphc_skates_info(),
+#'  get_iphc_sets_info()
+#' )
+#' calc_iphc_ser_all(yelloweye)
+#' }
+#' @export
+calc_iphc_ser_E_and_F <- function(set_counts) {
+  stopifnot("in_area" %in% names(set_counts))
+  set_counts_usable <- filter(set_counts,
+                              usable == "Y",
+                              in_area == TRUE)
+
+  # Series E
+  ser_E_counts <- filter(
+    set_counts_usable,
+    !is.na(E_it20)
+  )
+  ser_E_boot <- boot_iphc(select(
+    ser_E_counts,
+    year,
+    C_it20
+  ))
+
+  ser_E <- summarise(group_by(ser_E_counts, year),
+    Sets = n(),
+    num_pos20 = sum(C_it20 > 0),
+    I_t20SampleMean = mean(C_it20)
+  ) %>%
+    filter(!is.na(I_t20SampleMean)) %>% # NA's got carried through, thinking may get error if this ends up empty
+    left_join(ser_E_boot, by = "year")
+  names(ser_E)[ names(ser_E) == "I_tBootMean"] <- "I_t20BootMean"
+  names(ser_E)[ names(ser_E) == "I_tBootLow"] <- "I_t20BootLow"
+  names(ser_E)[ names(ser_E) == "I_tBootHigh"] <- "I_t20BootHigh"
+  names(ser_E)[ names(ser_E) == "I_tBootCV"] <- "I_t20BootCV"
+
+
+  # Series F
+  ser_F_counts <- filter(
+    set_counts_usable,
+    !is.na(E_it)
+  )
+
+  ser_F_boot <- boot_iphc(select(
+    ser_F_counts,
+    year,
+    C_it
+  ))
+
+  ser_F <- summarise(group_by(ser_F_counts, year),
+    Sets = n(),
+    num_pos = sum(C_it > 0),
+    I_tSampleMean = mean(C_it)
+  ) %>%
+    filter(!is.na(I_tSampleMean)) %>% # NA's got carried through
+    left_join(ser_F_boot, by = "year")
+
+  list(ser_E = ser_E,
+       ser_F = ser_F)
+}
+
+
+##' Calculate Series EF and test if the scaled E and F are significantly different
+##'
+##' Calculate Series EF (Series E with 1995 and 1996 appropriately scaled from
+##'  Series F)
+##' @param series_all List of tibbles, one for each of Series E and F,
+##'   resulting from [calc_iphc_ser_E_and_F()]
+##' @return List containing
+##'
+##'   ser_longest: the longest time series possible from
+##'   Series E and F,
+##'
+##'   test_EF: the results from the paired t-test, NULL if Series F is longest.
+##'
+##'   G_E, G_F: geometric means of nonzero values in Series E and Series F
+##'   (based on bootstrapped means).
+##'
+##'   Longest series is either
+##'
+##'   (i) Series EF (Series E with 1995 and 1996 appropriately scaled from
+##'   Series F) if `test_EF$p.value >= 0.05`, because the p-value means that we
+##'   cannot reject the null hypothesis that the true difference
+##'   in means of the rescaled (by their geometric means) Series E and F equals 0,
+##'
+##'   (ii) Series E, which is the longest series available if the rescaled
+##'  series are significantly different.
+##'
+##'   (iii) Series F, if the years for which only the first 20 hooks are enumerated
+##'    never caught the species (but other years do). Then Series EF becomes Series
+##'    E plus some zeros, so we may as well use Series F that uses all the hooks
+##'    and so is more likely to catch the species. This is a rare situation (and
+##'    likely arises because not all species were specifically identified in
+##'    earlier years (or 2013?), but seems to occur for China Rockfish for
+##'   Series AB analysis. Return NULL
+##'    for t_EF (to then use later to identify that Series F is the longest
+##'    series).
+##'
+calc_iphc_ser_EF <- function(series_all) {
+  years_EF <- intersect(series_all$ser_E$year,
+                        series_all$ser_F$year)
+  # TODO: NOT CHECKED THIS:
+  # Series B for English Sole catches none, and only returns 1995 and 1996.
+  #  Series A caught one English Sole in 2001. Therefore use A as the longest.
+  #  No overlapping years since never caught one when all hooks were evaluated
+  #  and we have hook-by-hook data. Could have 1995 and 1996 catching one, so
+  #  then may want Series B; but this is only when we catch the odd fish.
+  if (length(years_EF) == 0) {
+    if (nrow(series_all$ser_E) > nrow(series_all$ser_F)) {
+      return(list(
+        ser_longest = series_all$ser_E,
+        test_EF = list(
+          t_EF = NULL,
+          G_E = NA,
+          G_F = NA
+        )
+      ))
+    } else {
+      return(list(
+        ser_longest = series_all$ser_F,
+        test_EF = list(
+          t_EF = NULL,
+          G_E = NA,
+          G_F = NA
+        )
+      ))
+    }
+  }
+  # If Series E in overlapping years ends up with no catch (Bluntnose Sixgill
+  #  Shark for Series A), then return Series F.
+  if (nrow(filter(series_all$ser_E, year %in% years_EF, I_t20BootMean > 0)) == 0) {
+    return(list(
+      ser_longest = series_all$ser_F,
+      test_EF = list(
+        t_EF = NULL,
+        G_E = NA,
+        G_F = NA
+      )
+    ))
+  }
+  # Geometric means of each series for the overlapping years, excluding zeros
+  G_E <- exp(mean(log(filter(
+    series_all$ser_E,
+    year %in% years_EF,
+    I_t20BootMean > 0
+  )$I_t20BootMean)))
+
+  G_F <- exp(mean(log(filter(
+    series_all$ser_F,
+    year %in% years_EF,
+    I_tBootMean > 0
+  )$I_tBootMean)))
+
+  # If Series E has no more years than Series F then just return Series F....
+  if (length(unique(series_all$ser_E$year)) ==
+      length(unique(series_all$ser_F$year))) {
+    if (all(unique(series_all$ser_E$year) == unique(series_all$ser_F$year))) {
+      # TODO: check/think about for EF:....unless also B and C have the same years, then return C for the
+      # full coast. Sandpaper skate may be the only one - turns out 2013
+      # and pre-2003 are empty so Series D is not longer (may not have that
+      # possibility included) .
+      if (all.equal(series_all$ser_F$year,
+HERE
+GOT TO HERE BUT THINK CAN JUST REMOVE ser_C stuff, not relevant here
+
+                    series_all$ser_C$year)) {
+        return(list(
+          ser_longest = series_all$ser_C,
+          test_AB = list(
+            t_AB = NULL,
+            G_A = NA,
+            G_B = NA
+          )
+        ))
+      } else {
+        return(list(
+          ser_longest = series_all$ser_B,
+          test_AB = list(
+            t_AB = NULL,
+            G_A = G_A,
+            G_B = G_B
+          )
+        ))
+      }
+    }
+  }
+
+then change A->E and B->F for the rest of this
+  # Scale by G_A, geometric mean of bootstrapped means.
+  ser_A_scaled <- filter(
+    series_all$ser_A,
+    year %in% years_AB
+  ) %>%
+    mutate(
+      I_t20SampleMean = I_t20SampleMean / G_A,
+      I_t20BootMean = I_t20BootMean / G_A,
+      I_t20BootLow = I_t20BootLow / G_A,
+      I_t20BootHigh = I_t20BootHigh / G_A
+    )
+  # exp(mean(log(ser_A_scaled$I_t20BootMean)))  # =1
+
+  ser_B_scaled <- filter(
+    series_all$ser_B,
+    year %in% years_AB
+  ) %>%
+    mutate(
+      I_tSampleMean = I_tSampleMean / G_B,
+      I_tBootMean = I_tBootMean / G_B,
+      I_tBootLow = I_tBootLow / G_B,
+      I_tBootHigh = I_tBootHigh / G_B
+    )
+  # exp(mean(log(ser_B_scaled$I_tBootMean)))  # =1
+
+  t_AB <- stats::t.test(ser_A_scaled$I_t20BootMean,
+    ser_B_scaled$I_tBootMean,
+    paired = TRUE
+  )
+
+  if (t_AB$p.value >= 0.05) { # Can't reject null hypothesis that true difference
+    #  in means equals 0
+    # Multiply the ser_B years not in years_AB by G_A/G_B,
+    #  naming columns with 20 since rescaling (and to combine with
+    #  series_all$ser_A. Note that num_pos20 is not scaled (as
+    #  we're implicitly scaling all the catch rates, but the numbers
+    #  of sets won't change).
+    ser_AB <- filter(series_all$ser_B, !year %in% years_AB) %>%
+      mutate(
+        num_pos20 = num_pos,
+        I_t20SampleMean = I_tSampleMean * G_A / G_B,
+        I_t20BootMean = I_tBootMean * G_A / G_B,
+        I_t20BootLow = I_tBootLow * G_A / G_B,
+        I_t20BootHigh = I_tBootHigh * G_A / G_B,
+        I_t20BootCV = I_tBootCV
+      ) %>%
+      select(-c(
+        "num_pos",
+        "I_tSampleMean",
+        "I_tBootMean",
+        "I_tBootLow",
+        "I_tBootHigh",
+        "I_tBootCV"
+      )) %>%
+      rbind(series_all$ser_A)
+    return(list(
+      ser_longest = ser_AB,
+      test_AB = list(
+        t_AB = t_AB,
+        G_A = G_A,
+        G_B = G_B
+      )
+    ))
+  } else {
+    return(list(
+      ser_longest = series_all$ser_A,
+      test_AB = list(
+        t_AB = t_AB,
+        G_A = G_A,
+        G_B = G_B
+      )
+    ))
+  }
+}
+
+##' Do all the calculations for the IPHC survey.
+##'
+##' From species-specific set-level counts, derive all the required Series and
+##'  test their equivalence.
+##' @param set_counts species-specific set-level counts from [tidy_iphc_survey()]
+#'  or other.
+##' @return List containing
+##'
+##' ser_longest: tibble for the longest time series that can be made for this
+##'     species, as output from [calc_iphc_ser_AB()]; either Series A or AB.
+##'     Or Series B if a species is never caught when only the first 20 hooks
+##'     are enumerated (1997-2002 or 2013) but is caught when all hooks are
+##'     enumerated - then Series AB is just Series A but only includes years
+##'     that are in Series B, so we may as well use Series B (all hooks).
+##'     May need to think a little more. Just need results of test_BC to
+##'     be mentioned later.
+##' full_coast: whether or not the longest time series can be considered
+##'     representative of the full coast (based on the paired t-tests).
+##'
+##' ser_all: Series A, B, C and D, as output from [calc_iphc_ser_all()].
+##'
+##' test_AB: t-test results from [calc_iphc_ser_AB()]
+##'
+##' test_AD: t-test results from [compare_iphc_ser_A_D()]
+##'
+##' test_BC: t-test results from [compare_iphc_ser_B_C()]
+##'
+##' If no observations at all for the species then return NA (says NULL, no?).
+##' @export
+TODO_E_F_calc_iphc_full_res <- function(set_counts) {
+  if (length(unique(c(set_counts$N_it, set_counts$N_it20))) == 1) {
+    if (is.na(unique(c(set_counts$N_it, set_counts$N_it20)))) {
+      return(NULL)
+    }
+  }
+  series_all <- calc_iphc_ser_all(set_counts)
+  iphc_ser_longest <- calc_iphc_ser_AB(series_all)
+  # list of longest series and
+  #  paired t-test results
+  test_AD <- compare_iphc_ser_A_D(series_all)
+  # test_AD$t_AD$p.value                       # Need to say if >0.05 then
+  #  Series A representative
+  #  of whole coast (having
+  # compared with Series D)
+
+  test_BC <- compare_iphc_ser_B_C(series_all)
+  # Need to say if >0.05 then
+  #  Series B representative
+  #  of whole coast (having
+  #  compared with Series C)
+  # full_coast is TRUE if the longest time series is representative of
+  #  the full coast:
+  if (!is.null(test_AD$t_AD)) {
+    if (is.na(test_AD$t_AD$p.value)) {
+      full_coast <- (test_BC$t_BC$p.value >= 0.05) # as B is the longest, see comment below
+    } else {
+      if (test_AD$t_AD$p.value >= 0.05) {
+        full_coast <- (test_AD$t_AD$p.value >= 0.05 &
+          test_BC$t_BC$p.value >= 0.05)
+      } else {
+        full_coast <- (test_AD$t_AD$p.value >= 0.05) # as A is the longest
+      }
+    }
+  } else {
+    # test_AD$t_AD is NULL because no catches in either, so B or C then the
+    #  longest, currently can only be B (may not have the situation where C
+    # is yet - do now, sandpaper skate, so putting in extra check below)
+    full_coast <- (test_BC$t_BC$p.value >= 0.05) # as B is the longest
+  }
+  # Double check if B or C is longest. Maybe no longer all of the above checks.
+  if (isTRUE(all.equal(iphc_ser_longest$ser_longest, series_all$ser_B))) {
+    full_coast <- TRUE
+  }
+  if (isTRUE(all.equal(iphc_ser_longest$ser_longest, series_all$ser_C))) {
+    full_coast <- TRUE
+  }
+
+  list(
+    ser_longest = iphc_ser_longest$ser_longest,
+    full_coast = full_coast,
+    ser_all = series_all,
+    test_AB = iphc_ser_longest$test_AB,
+    test_AD = test_AD,
+    test_BC = test_BC
+  )
+}
+
+##' Get data, do calculations and plot longest series for the IPHC survey
+##'
+##' Get data, do calculations and plot longest series for the IPHC survey for
+##'  a given species. Will take a while since queries GFbio (and need to be on DFO
+##'  network). WON'T CURRENTLY WORK AS plot_iphc_index() won't currently work.
+##' @param sp Species names (as used in gfdata and gfplot).
+##' @return For the given species, list containing
+##'
+##'   iphc_set_counts_sp: list returned from [calc_iphc_full_res()]
+##'
+##'   iphc_set_counts_sp_format: just the longest series, returned from
+##'     [format_iphc_longest()] with calculations and formatting to match that
+##'     of other surveys
+##'
+##'   g_iphc_index: plot of just the iphc data (useful for testing all species)
+##'     providing there are some data
+##' @export
+TODO_E_F_iphc_get_calc_plot <- function(sp) {
+  set_counts <- get_all_iphc_set_counts(sp)
+  iphc_set_counts_sp <- calc_iphc_full_res(set_counts)
+  iphc_set_counts_sp_format <-
+    format_iphc_longest(iphc_set_counts_sp$ser_longest)
+
+  if (!is.null(iphc_set_counts_sp)) {
+    g_iphc_index <- plot_iphc_index(iphc_set_counts_sp_format)
+  } else {
+    g_iphc_index <- NULL
+  }
+  list(
+    iphc_set_counts_sp = iphc_set_counts_sp,
+    iphc_set_counts_sp_format = iphc_set_counts_sp_format,
+    g_iphc_index = g_iphc_index
+  )
+}
