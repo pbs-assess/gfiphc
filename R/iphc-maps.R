@@ -9,7 +9,8 @@
 ##' @param set_counts_of_sp input tibble of the species of interest, likely generated from
 ##'   `cache_pbs_data_iphc` (which seems to save a list with the first element
 ##'   the desired tibble), with column names `year`, `station`, `lat`, `lon`,
-##'   `E_it`, `N_it`, `C_it`, `E_it20`, `N_it20`, `C_it20`, `usable`
+##'   `E_it`, `N_it`, `C_it`, `E_it20`, `N_it20`, `C_it20`, `usable`, and
+##'   `in_area` if `indicate_in_area` is TRUE
 ##' @param sp_short_name short name species of interest to have in legend,
 ##'   if NULL then plots all stations labelled as
 ##'   usable and unusable, but with no catch rates. Still needs
@@ -26,12 +27,16 @@
 ##'   stations for 1995-1998. If NULL then nothing plotted
 ##' @param lon_cut_off_1 left-hand end of line (longitude) to show cut off
 ##' @param lon_cut_off_2 right-hand end of line (longitude) to show cut off
-##' @param pch_pos_count pch for positive counts
-##' @param pch_zero_count pch for positive counts
+##' @param pch_pos_count pch for positive counts (or sets inside area if
+##'   `indicate_in_area` is TRUE)
+##' @param pch_zero_count pch for zero counts (or sets outside area if
+##'   `indicate_in_area` is FALSE)
 ##' @param cex_val cex size of plotted circles (or whatever is chosen using
 ##'   above `pch` options
 ##' @param add_to_existing if TRUE then add to an existing plot, if FALSE then
 ##'   create new map using `plot_BC()`
+##' @param indicate_in_area indicate whether or not station is within a
+##'   specficied area, as indicated by TRUE/FALSE in `set_counts_of_sp$in_area`
 ##' @param ... extra arguments to `par()`
 ##' @return A map of the IPHC survey stations for that year and species, with a
 ##'   legend describing the points.
@@ -73,6 +78,7 @@ plot_iphc_map <- function(set_counts_of_sp,
                           pch_zero_count = 1,
                           cex_val = 1,
                           add_to_existing = FALSE,
+                          indicate_in_area = FALSE,
                           ...
                           ){
   par(mar = mar_val,
@@ -102,31 +108,64 @@ plot_iphc_map <- function(set_counts_of_sp,
            pt.cex = rep(cex_val, 3),
            col=c("red", "red", "grey"))
   } else {
+    # Just show stations for whole coast
+    if(!indicate_in_area){
 
-    # Just show stations
-    points(lat~lon,
-           data = filter(set_counts_of_sp_one_year,
-                         year == years,
-                         usable == "Y"),
-           col = "blue",
-           pch = pch_pos_count,
-           cex = cex_val)
+      points(lat~lon,
+             data = filter(set_counts_of_sp_one_year,
+                           year == years,
+                           usable == "Y"),
+             col = "blue",
+             pch = pch_pos_count,
+             cex = cex_val)
 
-    legend("bottomleft", legend=c(paste("Usable station"),
-                                  "Unusable station"),
-           pch = rep(pch_pos_count, 2),
-           pt.cex = rep(cex_val, 2),
-           col=c("blue", "grey"))
+      legend("bottomleft",
+             legend = c("Usable station",
+                        "Unusable station"),
+             pch = rep(pch_pos_count, 2),
+             pt.cex = rep(cex_val, 2),
+             col=c("blue", "grey"))
+    } else {
+      # Indicate whether stations are in or outside of a region (region to be
+      #  plotted outside of this function, see vignette)
+
+      points(lat~lon,
+             data = filter(set_counts_of_sp_one_year,
+                           year == years,
+                           usable == "Y",
+                           in_area == TRUE),
+             col = "blue",
+             pch = pch_pos_count,
+             cex = cex_val)
+
+      points(lat~lon,
+             data = filter(set_counts_of_sp_one_year,
+                           year == years,
+                           usable == "Y",
+                           in_area == FALSE),
+             col = "blue",
+             pch = pch_zero_count,
+             cex = cex_val)
+
+      legend("bottomleft",
+             legend = c("In area of interest",
+                        "Outside area of interest",
+                        "Unusable station"),
+             pch = c(pch_pos_count, pch_zero_count, pch_pos_count),
+             pt.cex = rep(cex_val, 3),
+             col = c("blue", "blue", "grey"))
     }
+  }
 
-    # Plot unusable stations (which have NA's for catch rates and E_it, E_it20)
-    points(lat~lon,
-           data = filter(set_counts_of_sp_one_year,
-                         year == years,
-                         usable == "N"),
-           col = "grey",
-           pch = pch_pos_count,
-           cex = cex_val)
+
+  # Plot unusable stations (which have NA's for catch rates and E_it, E_it20)
+  points(lat~lon,
+         data = filter(set_counts_of_sp_one_year,
+                       year == years,
+                       usable == "N"),
+         col = "grey",
+         pch = pch_pos_count,
+         cex = cex_val)
 
   # This is keeping in Series A or not - could just draw the horizontal line every time
   #points(lat~lon,
