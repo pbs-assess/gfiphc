@@ -18,6 +18,8 @@ plot_iphc_map(
   pch_pos_count = 19,
   pch_zero_count = 1,
   cex_val = 1,
+  add_to_existing = FALSE,
+  indicate_in_area = FALSE,
   ...
 )
 }
@@ -25,7 +27,8 @@ plot_iphc_map(
 \item{set_counts_of_sp}{input tibble of the species of interest, likely generated from
 \code{cache_pbs_data_iphc} (which seems to save a list with the first element
 the desired tibble), with column names \code{year}, \code{station}, \code{lat}, \code{lon},
-\code{E_it}, \code{N_it}, \code{C_it}, \code{E_it20}, \code{N_it20}, \code{C_it20}, \code{usable}}
+\code{E_it}, \code{N_it}, \code{C_it}, \code{E_it20}, \code{N_it20}, \code{C_it20}, \code{usable}, and
+\code{in_area} if \code{indicate_in_area} is TRUE}
 
 \item{sp_short_name}{short name species of interest to have in legend,
 if NULL then plots all stations labelled as
@@ -45,18 +48,26 @@ get tricky}
 \item{lat_cut_off}{latitudinal cut off near top of Vancouver Island, below
 which stations are excluded when constructing Series A and B; this is just
 below all stations from 1995-1998, so that Series A and B include all
-stations for 1995-1998}
+stations for 1995-1998. If NULL then nothing plotted}
 
 \item{lon_cut_off_1}{left-hand end of line (longitude) to show cut off}
 
 \item{lon_cut_off_2}{right-hand end of line (longitude) to show cut off}
 
-\item{pch_pos_count}{pch for positive counts}
+\item{pch_pos_count}{pch for positive counts (or sets inside area if
+\code{indicate_in_area} is TRUE)}
 
-\item{pch_zero_count}{pch for positive counts}
+\item{pch_zero_count}{pch for zero counts (or sets outside area if
+\code{indicate_in_area} is FALSE)}
 
 \item{cex_val}{cex size of plotted circles (or whatever is chosen using
 above \code{pch} options}
+
+\item{add_to_existing}{if TRUE then add to an existing plot, if FALSE then
+create new map using \code{plot_BC()}}
+
+\item{indicate_in_area}{indicate whether or not station is within a
+specficied area, as indicated by TRUE/FALSE in \code{set_counts_of_sp$in_area}}
 
 \item{...}{extra arguments to \code{par()}}
 }

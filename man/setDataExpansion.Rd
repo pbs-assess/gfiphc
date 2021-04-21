@@ -22,7 +22,9 @@ within, if applicable (else is character <NA>)}
 }
 }
 \source{
-Originally from file IPHC_Stations_All.csv from Dana Haggarty, with
+Originally from file IPHC_Stations_All.csv from Dana Haggarty (later
+updated as IPHC_FISS_All_Stn_GFBio.csv to include the seven stations
+originally missing but that were in GFbio), with
 details and further tidying done here in \code{data-raw/IPHC-stations-expanded.R}.
 }
 \usage{
