@@ -209,17 +209,9 @@ As noted in Issue #14, the standard refinement has not yet been done for the Ser
 etc. calculation code that was used for the synopsis report, but the latest
 Yelloweye Rockfish assessment did properly account for this.
 
-Also, there are 7 stations for 2018 in GFBio that are not identified yet in
-`setDataExpansion` (also noted in Issue #14):
-```{r spurious}
-summary(sp_set_counts$set_counts$standard)
-```
-Using `standard == "Y"` will weed these out anyway for now, and this will get
-resolved (through Issue #14). Can also check where they are by plotting a map.
-
 ## Analyses for full coast
 
-TODO
+TODO example
 
 ## Analyses for subset of stations
 
