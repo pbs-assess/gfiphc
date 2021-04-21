@@ -279,6 +279,22 @@ plot_iphc_map(sp_set_counts_with_area,
               indicate_in_area = TRUE)
 ```
 
+2018 had expanded (non-standard) stations, which are shown as open circles:
+```{r area2018, warnings = FALSE, messages = FALSE}
+plot_BC(main = "All 2018 stations")
+
+PBSmapping::addPolys(herring_HG_area,
+                     col = "pink")
+
+plot_iphc_map(sp_set_counts_with_area,
+              sp = NULL,
+              years = 2018,
+              lat_cut_off = NULL,
+              add_to_existing = TRUE,
+              indicate_in_area = TRUE)
+```
+
+
 Make a movie to check each year:
 ```{r, animation.hook = 'gifski', interval = 1.5, fig.height = 6, warnings = FALSE, messages = FALSE}
 for(i in unique(sp_set_counts_with_area$year)){
