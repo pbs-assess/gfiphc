@@ -95,7 +95,12 @@ calc_iphc_ser_E_and_F <- function(set_counts) {
 ##' Calculate Series EF (Series E with 1995 and 1996 appropriately scaled from
 ##'  Series F)
 ##' @param series_all List of tibbles, one for each of Series E and F,
-##'   resulting from [calc_iphc_ser_E_and_F()]
+##'   resulting from `calc_iphc_ser_E_and_F()`
+##' @param return_F_if_same_length logical to return Series F if Series E and F
+##'  have the same number of years. User should check which is more suitable and
+##'  then change this value if necessary (F uses all hooks but E includes 1995
+##'  and 1996)
+##'
 ##' @return List containing
 ##'
 ##'   ser_longest: the longest time series possible from
@@ -126,7 +131,14 @@ calc_iphc_ser_E_and_F <- function(set_counts) {
 ##'    for t_EF (to then use later to identify that Series F is the longest
 ##'    series).
 ##'
-calc_iphc_ser_EF <- function(series_all) {
+##'  (iv) Series F (since all hooks) if E and F contain the same number of
+##'   years, but user can change `return_F_if_same_length` as Series E may make
+##'   more sense (since goes back to 1995). If E and F contain the same exact
+##'   years then F is always returned.
+##'
+##' See vignette for example.
+calc_iphc_ser_EF <- function(series_all,
+                             return_F_if_same_length = TRUE) {
   years_EF <- intersect(series_all$ser_E$year,
                         series_all$ser_F$year)
   # TODO: NOT CHECKED THIS:
@@ -168,6 +180,7 @@ calc_iphc_ser_EF <- function(series_all) {
       )
     ))
   }
+
   # Geometric means of each series for the overlapping years, excluding zeros
   G_E <- exp(mean(log(filter(
     series_all$ser_E,
@@ -181,85 +194,86 @@ calc_iphc_ser_EF <- function(series_all) {
     I_tBootMean > 0
   )$I_tBootMean)))
 
-  # If Series E has no more years than Series F then just return Series F....
+  # If Series E has same number of years as Series F then return F if years are
+  # the same, or return E or F depending on `return_F_if_same_length`
   if (length(unique(series_all$ser_E$year)) ==
       length(unique(series_all$ser_F$year))) {
-    if (all(unique(series_all$ser_E$year) == unique(series_all$ser_F$year))) {
-      # TODO: check/think about for EF:....unless also B and C have the same years, then return C for the
-      # full coast. Sandpaper skate may be the only one - turns out 2013
-      # and pre-2003 are empty so Series D is not longer (may not have that
-      # possibility included) .
-      if (all.equal(series_all$ser_F$year,
-HERE
-GOT TO HERE BUT THINK CAN JUST REMOVE ser_C stuff, not relevant here
 
-                    series_all$ser_C$year)) {
+    if (all(unique(series_all$ser_E$year) == unique(series_all$ser_F$year))) {
+      return(list(
+        ser_longest = series_all$ser_F,
+        test_EF = list(
+          t_EF = NULL,
+          G_E = G_E,
+          G_F = G_F
+        )))
+    } else {
+      if(return_F_if_same_length){
         return(list(
-          ser_longest = series_all$ser_C,
-          test_AB = list(
-            t_AB = NULL,
-            G_A = NA,
-            G_B = NA
-          )
-        ))
+          ser_longest = series_all$ser_F,
+          test_EF = list(
+            t_EF = NULL,
+            G_E = G_E,
+            G_F = G_F
+          )))
       } else {
         return(list(
-          ser_longest = series_all$ser_B,
-          test_AB = list(
-            t_AB = NULL,
-            G_A = G_A,
-            G_B = G_B
-          )
-        ))
+          ser_longest = series_all$ser_E,
+          test_EF = list(
+            t_EF = NULL,
+            G_E = G_E,
+            G_F = G_F
+          )))
       }
     }
   }
 
-then change A->E and B->F for the rest of this
-  # Scale by G_A, geometric mean of bootstrapped means.
-  ser_A_scaled <- filter(
-    series_all$ser_A,
-    year %in% years_AB
+
+  # Scale by G_E, geometric mean of bootstrapped means.
+  ser_E_scaled <- filter(
+    series_all$ser_E,
+    year %in% years_EF
   ) %>%
     mutate(
-      I_t20SampleMean = I_t20SampleMean / G_A,
-      I_t20BootMean = I_t20BootMean / G_A,
-      I_t20BootLow = I_t20BootLow / G_A,
-      I_t20BootHigh = I_t20BootHigh / G_A
+      I_t20SampleMean = I_t20SampleMean / G_E,
+      I_t20BootMean = I_t20BootMean / G_E,
+      I_t20BootLow = I_t20BootLow / G_E,
+      I_t20BootHigh = I_t20BootHigh / G_E
     )
   # exp(mean(log(ser_A_scaled$I_t20BootMean)))  # =1
 
-  ser_B_scaled <- filter(
-    series_all$ser_B,
-    year %in% years_AB
+  ser_F_scaled <- filter(
+    series_all$ser_F,
+    year %in% years_EF
   ) %>%
     mutate(
-      I_tSampleMean = I_tSampleMean / G_B,
-      I_tBootMean = I_tBootMean / G_B,
-      I_tBootLow = I_tBootLow / G_B,
-      I_tBootHigh = I_tBootHigh / G_B
+      I_tSampleMean = I_tSampleMean / G_F,
+      I_tBootMean = I_tBootMean / G_F,
+      I_tBootLow = I_tBootLow / G_F,
+      I_tBootHigh = I_tBootHigh / G_F
     )
   # exp(mean(log(ser_B_scaled$I_tBootMean)))  # =1
 
-  t_AB <- stats::t.test(ser_A_scaled$I_t20BootMean,
-    ser_B_scaled$I_tBootMean,
-    paired = TRUE
-  )
+  t_EF <- stats::t.test(ser_E_scaled$I_t20BootMean,
+                        ser_F_scaled$I_tBootMean,
+                        paired = TRUE)
 
-  if (t_AB$p.value >= 0.05) { # Can't reject null hypothesis that true difference
+  if (t_EF$p.value >= 0.05) {
+    # Can't reject null hypothesis that true difference
     #  in means equals 0
-    # Multiply the ser_B years not in years_AB by G_A/G_B,
+    # Multiply the ser_F years not in years_EF by G_E/G_F,
     #  naming columns with 20 since rescaling (and to combine with
-    #  series_all$ser_A. Note that num_pos20 is not scaled (as
+    #  series_all$ser_E. Note that num_pos20 is not scaled (as
     #  we're implicitly scaling all the catch rates, but the numbers
     #  of sets won't change).
-    ser_AB <- filter(series_all$ser_B, !year %in% years_AB) %>%
+    ser_EF <- dplyr::filter(series_all$ser_F,
+                            !year %in% years_EF) %>%
       mutate(
         num_pos20 = num_pos,
-        I_t20SampleMean = I_tSampleMean * G_A / G_B,
-        I_t20BootMean = I_tBootMean * G_A / G_B,
-        I_t20BootLow = I_tBootLow * G_A / G_B,
-        I_t20BootHigh = I_tBootHigh * G_A / G_B,
+        I_t20SampleMean = I_tSampleMean * G_E / G_F,
+        I_t20BootMean = I_tBootMean * G_E / G_F,
+        I_t20BootLow = I_tBootLow * G_E / G_F,
+        I_t20BootHigh = I_tBootHigh * G_E / G_F,
         I_t20BootCV = I_tBootCV
       ) %>%
       select(-c(
@@ -270,22 +284,22 @@ then change A->E and B->F for the rest of this
         "I_tBootHigh",
         "I_tBootCV"
       )) %>%
-      rbind(series_all$ser_A)
+      rbind(series_all$ser_E)
     return(list(
-      ser_longest = ser_AB,
-      test_AB = list(
-        t_AB = t_AB,
-        G_A = G_A,
-        G_B = G_B
+      ser_longest = ser_EF,
+      test_EF = list(
+        t_EF = t_EF,
+        G_E = G_E,
+        G_F = G_F
       )
     ))
   } else {
     return(list(
-      ser_longest = series_all$ser_A,
-      test_AB = list(
-        t_AB = t_AB,
-        G_A = G_A,
-        G_B = G_B
+      ser_longest = series_all$ser_E,
+      test_EF = list(
+        t_EF = t_EF,
+        G_E = G_E,
+        G_F = G_F
       )
     ))
   }
