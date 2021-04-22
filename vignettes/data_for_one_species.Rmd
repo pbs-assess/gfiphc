@@ -304,6 +304,34 @@ for(i in unique(sp_set_counts_with_area$year)){
 }
 ```
 
+## Calculate longest time series possible for the area of interest
+
+In Appendix G of the synopsis report we described analyses to calculate as long
+a time series as possible by combining data from years when only the first 20 hooks
+were enumerated for each skate (Series A) and from years when all hooks could be enumerated
+from each skate (Series B); there are overlapping years when all hooks were
+enumerated and the data are available at the hook-by-hook level. The resulting
+Series AB applied to only north of WCVI, but was tested to see if it was
+representative of the whole coast.
+
+For stations restricted to the area of interest, here we define Series E to be
+based on the first 20 hooks from each skate, and Series F to be based on all
+hooks from each skate. We do a similar analysis as described in the synopsis
+report to generate the longer Series EF (or just one of Series E and F if there are
+insufficient data). It is up to the user to generate maps (or movie) of their area
+of interest to confirm that it makes sense to use all stations with the
+area. For example, considering the whole coast would not be appropriate because
+the west coast of Vancouver Island was not surveyed in some years (Table G.2 of
+synopsis report).
+
+The calculations are as follows:
+```{r serEF}
+ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
+ser_E_and_F
+
+series_longest <- calc_iphc_ser_EF(ser_E_and_F)
+series_longest
+```
 
 
 
