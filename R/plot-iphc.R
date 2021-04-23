@@ -60,16 +60,24 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                                  y_lab = "Catch rate index (numbers per effective skate)",
                                  ...){
 
-  if(is.null(y_lim)){
-  # TODO
-  }
-
-
   ##TODO:   axis(1, at=allYears, labels=FALSE, tck=tckL)   # not automated
 
   if(!is.null(series_longest)){
     G_E <- series_longest$test_EF$G_E
     G_F <- series_longest$test_EF$G_F
+  } else {
+    # Not needed for plotting but just for y_lim
+    G_E <- NA
+    G_F <- NA
+  }
+
+  if(is.null(y_lim)){
+    y_max <- max(c(ser_E_and_F$serE$I_t20BootHigh,
+                   ser_E_and_F$serE$I_t20BootHigh / G_E,
+                   ser_E_and_F$serF$I_tBootHigh,
+                   ser_E_and_F$serF$I_tBootHigh / G_F,
+                   series_longest$ser_longest$I_t20BootHigh),
+                 na.rm = TRUE)
   }
 
   if(plot_type == "E"){
