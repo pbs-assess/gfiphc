@@ -191,6 +191,21 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                      barcol = ser_F_col,
                      add = TRUE,
                      ...)
+
+      # Plot ser_EF calculated version to check it overlays, then in next commit
+      # just use this
+      # with colour coding (rather than recalculate here)
+
+      gplots::plotCI(series_longest$ser_longest$year - shift,
+                     series_longest$ser_longest$I_t20BootMean,
+                     li = series_longest$ser_longest$I_t20BootLow,
+                     ui = series_longest$ser_longest$I_t20BootHigh,
+                     col = "green",
+                     barcol = "green",
+                     add = TRUE,
+                     ...)
+
+
       legend("topright",
              legend = c("Original Series E", "Rescaled Series F"),
              pch = c(1,1),
