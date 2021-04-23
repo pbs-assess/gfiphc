@@ -190,10 +190,16 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                      ...)
 
       legend("topright",
-             legend = c("Original Series E", "Rescaled Series F"),
-             pch = c(1,1),
-             col = c(ser_E_col,
+             legend = c("Series EF",
+                        "",
+                        "Original Series E",
+                        "Rescaled Series F"),
+             pch = c(NA, NA, 1,1),
+             col = c(NA,
+                     NA,
+                     ser_E_col,
                      ser_F_col),
+             cex = c(1.2, 1, 1, 1),
              bty = "n")
   }
 
