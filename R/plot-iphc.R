@@ -65,19 +65,13 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
   if(!is.null(series_longest)){
     G_E <- series_longest$test_EF$G_E
     G_F <- series_longest$test_EF$G_F
-  } else {
-    # Not needed for plotting but just for y_lim
-    G_E <- NA
-    G_F <- NA
   }
 
   if(is.null(y_lim)){
     y_max <- max(c(ser_E_and_F$serE$I_t20BootHigh,
-                   ser_E_and_F$serE$I_t20BootHigh / G_E,
                    ser_E_and_F$serF$I_tBootHigh,
-                   ser_E_and_F$serF$I_tBootHigh / G_F,
-                   series_longest$ser_longest$I_t20BootHigh),
-                 na.rm = TRUE)
+                   series_longest$ser_longest$I_t20BootHigh))
+    y_lim <- c(0, y_max)
   }
 
   if(plot_type == "E"){
@@ -88,6 +82,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                    col = ser_E_col,
                    barcol = ser_E_col,
                    xlim = x_lim,
+                   ylim = y_lim,
                    xlab = x_lab,
                    ylab = y_lab,
                    ...)
@@ -109,6 +104,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                    col = ser_F_col,
                    barcol = ser_F_col,
                    xlim = x_lim,
+                   ylim = y_lim,
                    xlab = x_lab,
                    ylab = y_lab,
                    ...)
@@ -134,7 +130,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                    ui = ser_E_and_F$ser_E$I_t20BootHigh / G_E,
                    col = ser_E_col,
                    barcol = ser_E_col,
-                   xlim = x_lim,
+                   xlim = x_lim,    # not using y_lim since this is scaled
                    xlab = x_lab,
                    ylab = "Relative catch rate index", # Relative since scaled
                    ...)
@@ -181,6 +177,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                      col = years_col,
                      barcol = years_col,
                      xlim = x_lim,
+                     ylim = y_lim,
                      xlab = x_lab,
                      ylab = y_lab,
                      ...)
