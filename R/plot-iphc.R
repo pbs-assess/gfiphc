@@ -162,49 +162,32 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
 
     if(plot_type == "EF"){
 
-      # TODO put expect_equal to check this equals ser_EF
+      if(is.null(series_longest$test_EF$t_EF$p.value)){
+        stop("Plot needs tweaking if not Series EF due to species counts -- adapt based on calc_iphc_ser_EF() and maybe commit 26028b9.")
+      }
+      if(series_longest$test_EF$t_EF$p.value < 0.05){
+        stop("Plot needs tweaking if not Series EF due to p-value -- adapt based on calc_iphc_ser_EF() and maybe commit 26028b9.")
+      }
 
-      year_ind_only_F <- !is.element(ser_E_and_F$ser_F$year,
-                                     ser_E_and_F$ser_E$year) # indices of years only in F
+      years_only_F <- setdiff(ser_E_and_F$ser_F$year,
+                              ser_E_and_F$ser_E$year) # years only in F
 
-      gplots::plotCI(ser_E_and_F$ser_E$year,
-                     ser_E_and_F$ser_E$I_t20BootMean,
-                     li = ser_E_and_F$ser_E$I_t20BootLow,
-                     ui = ser_E_and_F$ser_E$I_t20BootHigh,
-                     col = ser_E_col,
-                     barcol = ser_E_col,
+
+      years_col <- rep(ser_E_col,
+                       length(series_longest$ser_longest$year))
+
+      years_col[which(years_only_F %in% series_longest$ser_longest$year)] <- ser_F_col
+
+      gplots::plotCI(series_longest$ser_longest$year,
+                     series_longest$ser_longest$I_t20BootMean,
+                     li = series_longest$ser_longest$I_t20BootLow,
+                     ui = series_longest$ser_longest$I_t20BootHigh,
+                     col = years_col,
+                     barcol = years_col,
                      xlim = x_lim,
                      xlab = x_lab,
                      ylab = y_lab,
                      ...)
-
-      # Years only in Series F (1995 and 1996, maybe after 2020 but doubtful)
-      ser_F_only <- dplyr::filter(ser_E_and_F$ser_F,
-                                  year %in% setdiff(ser_E_and_F$ser_F$year,
-                                                    ser_E_and_F$ser_E$year))
-
-      gplots::plotCI(ser_F_only$year,
-                     ser_F_only$I_tBootMean * G_E / G_F,
-                     li = ser_F_only$I_tBootLow * G_E / G_F,
-                     ui = ser_F_only$I_tBootHigh * G_E / G_F,
-                     col = ser_F_col,
-                     barcol = ser_F_col,
-                     add = TRUE,
-                     ...)
-
-      # Plot ser_EF calculated version to check it overlays, then in next commit
-      # just use this
-      # with colour coding (rather than recalculate here)
-
-      gplots::plotCI(series_longest$ser_longest$year - shift,
-                     series_longest$ser_longest$I_t20BootMean,
-                     li = series_longest$ser_longest$I_t20BootLow,
-                     ui = series_longest$ser_longest$I_t20BootHigh,
-                     col = "green",
-                     barcol = "green",
-                     add = TRUE,
-                     ...)
-
 
       legend("topright",
              legend = c("Original Series E", "Rescaled Series F"),
