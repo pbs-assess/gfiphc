@@ -14,7 +14,7 @@
 #' @param set_counts species-specific set-level counts from [tidy_iphc_survey()]
 #'  or other, but with extra column `in_area` indicating if each station is in
 #'   the area being considered or not. See vignette for example.
-#' @return list containing two tibbles, one for each series (ser_E and ser_F).
+#' @return list of class `IPHC_ser_E_and_F` containing two tibbles, one for each series (ser_E and ser_F).
 #'   Each tibble has one row for each set in each year, restricted to only the
 #'   sets within the defined area, with columns
 #'   year, station, lat, lon, E_it (effective skate number), N_it (number of
@@ -85,8 +85,10 @@ calc_iphc_ser_E_and_F <- function(set_counts) {
     filter(!is.na(I_tSampleMean)) %>% # NA's got carried through
     left_join(ser_F_boot, by = "year")
 
-  list(ser_E = ser_E,
-       ser_F = ser_F)
+  structure(
+    list(ser_E = ser_E,
+         ser_F = ser_F),
+    class = c("IPHC_ser_E_and_F", "list"))
 }
 
 
@@ -285,23 +287,25 @@ calc_iphc_ser_EF <- function(series_all,
         "I_tBootCV"
       )) %>%
       rbind(series_all$ser_E)
-    return(list(
-      ser_longest = ser_EF,
-      test_EF = list(
-        t_EF = t_EF,
-        G_E = G_E,
-        G_F = G_F
-      )
-    ))
+    return(
+      structure(
+        list(
+          ser_longest = ser_EF,
+          test_EF = list(
+            t_EF = t_EF,
+            G_E = G_E,
+            G_F = G_F)),
+        class = "IPHC_ser_EF"))  # TODO - add to above ones once happy with
   } else {
-    return(list(
-      ser_longest = series_all$ser_E,
-      test_EF = list(
-        t_EF = t_EF,
-        G_E = G_E,
-        G_F = G_F
-      )
-    ))
+    return(
+      structure(
+        list(
+          ser_longest = series_all$ser_E,
+          test_EF = list(
+            t_EF = t_EF,
+            G_E = G_E,
+            G_F = G_F)),
+        class = "IPHC_ser_EF"))
   }
 }
 
