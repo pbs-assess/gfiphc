@@ -49,7 +49,7 @@
 plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                                   series_longest = NULL,
                                  plot_type = "E",    # change back to default as EF
-                                 x_lim = c(1995, 2020),
+                                 x_lim = NULL,
                                  y_lim = NULL,
                                  shift = 0.15,
                                  tck_length = -0.02,
@@ -59,8 +59,6 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                                  x_lab = "Year",
                                  y_lab = "Catch rate index (numbers per effective skate)",
                                  ...){
-
-  ##TODO:   axis(1, at=allYears, labels=FALSE, tck=tckL)   # not automated
 
   if(!is.null(series_longest)){
     G_E <- series_longest$test_EF$G_E
@@ -74,6 +72,14 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
     y_lim <- c(0, y_max)
   }
 
+  if(is.null(x_lim)){
+    x_lim <- range(c(ser_E_and_F$serE$year,
+                     ser_E_and_F$serF$year,
+                     series_longest$ser_longest$year))
+  }
+
+  x_ticks <- x_lim[1]:x_lim[2]
+
   if(plot_type == "E"){
     gplots::plotCI(ser_E_and_F$ser_E$year,
                    ser_E_and_F$ser_E$I_t20BootMean,
@@ -86,7 +92,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                    xlab = x_lab,
                    ylab = y_lab,
                    ...)
-
+    axis(1, at = x_ticks, labels = FALSE, tck = tck_length)
     if(is.null(legend_text)) {
       legend_text = "Series E"
     }
@@ -109,6 +115,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                    ylab = y_lab,
                    ...)
 
+    axis(1, at = x_ticks, labels = FALSE, tck = tck_length)
     if(is.null(legend_text)) {
       legend_text = "Series F"
     }
@@ -144,6 +151,8 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                    barcol = ser_F_col,
                    add = TRUE,
                    ...)
+
+    axis(1, at = x_ticks, labels = FALSE, tck = tck_length)
     legend("topright",
            legend = c("Series E scaled", "Series F scaled"),
            pch = c(1,1),
@@ -182,6 +191,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                      ylab = y_lab,
                      ...)
 
+      axis(1, at = x_ticks, labels = FALSE, tck = tck_length)
       legend("topright",
              legend = c("Series EF",
                         "",
