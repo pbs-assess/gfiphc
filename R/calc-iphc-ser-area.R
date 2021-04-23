@@ -184,17 +184,15 @@ calc_iphc_ser_EF <- function(series_all,
   }
 
   # Geometric means of each series for the overlapping years, excluding zeros
-  G_E <- exp(mean(log(filter(
-    series_all$ser_E,
-    year %in% years_EF,
-    I_t20BootMean > 0
-  )$I_t20BootMean)))
+  G_E <- exp(mean(log(dplyr::filter(series_all$ser_E,
+                                    year %in% years_EF,
+                                    I_t20BootMean > 0
+                                    )$I_t20BootMean)))
 
-  G_F <- exp(mean(log(filter(
-    series_all$ser_F,
-    year %in% years_EF,
-    I_tBootMean > 0
-  )$I_tBootMean)))
+  G_F <- exp(mean(log(dplyr::filter(series_all$ser_F,
+                                    year %in% years_EF,
+                                    I_tBootMean > 0
+                                    )$I_tBootMean)))
 
   # If Series E has same number of years as Series F then return F if years are
   # the same, or return E or F depending on `return_F_if_same_length`
@@ -263,13 +261,14 @@ calc_iphc_ser_EF <- function(series_all,
   if (t_EF$p.value >= 0.05) {
     # Can't reject null hypothesis that true difference
     #  in means equals 0
+
     # Multiply the ser_F years not in years_EF by G_E/G_F,
     #  naming columns with 20 since rescaling (and to combine with
-    #  series_all$ser_E. Note that num_pos20 is not scaled (as
+    #  series_all$ser_E). Note that num_pos20 is not scaled (as
     #  we're implicitly scaling all the catch rates, but the numbers
     #  of sets won't change).
     ser_EF <- dplyr::filter(series_all$ser_F,
-                            !year %in% years_EF) %>%
+                            !year %in% years_EF) %>%   # years in F but not E
       mutate(
         num_pos20 = num_pos,
         I_t20SampleMean = I_tSampleMean * G_E / G_F,

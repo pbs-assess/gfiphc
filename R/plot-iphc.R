@@ -152,13 +152,6 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                    barcol = ser_F_col,
                    add = TRUE,
                    ...)
-
-
-    if(is.null(legend_text)) {
-      legend_text = "Series E"
-    }
-
-
     legend("topright",
            legend = c("Series E scaled", "Series F scaled"),
            pch = c(1,1),
@@ -167,27 +160,47 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
            bty = "n")
   }
 
+    if(plot_type == "EF"){
+
+      # TODO put expect_equal to check this equals ser_EF
+
+      year_ind_only_F <- !is.element(ser_E_and_F$ser_F$year,
+                                     ser_E_and_F$ser_E$year) # indices of years only in F
+
+      gplots::plotCI(ser_E_and_F$ser_E$year,
+                     ser_E_and_F$ser_E$I_t20BootMean,
+                     li = ser_E_and_F$ser_E$I_t20BootLow,
+                     ui = ser_E_and_F$ser_E$I_t20BootHigh,
+                     col = ser_E_col,
+                     barcol = ser_E_col,
+                     xlim = x_lim,
+                     xlab = x_lab,
+                     ylab = y_lab,
+                     ...)
+
+      # Years only in Series F (1995 and 1996, maybe after 2020 but doubtful)
+      ser_F_only <- dplyr::filter(ser_E_and_F$ser_F,
+                                  year %in% setdiff(ser_E_and_F$ser_F$year,
+                                                    ser_E_and_F$ser_E$year))
+
+      gplots::plotCI(ser_F_only$year,
+                     ser_F_only$I_tBootMean * G_E / G_F,
+                     li = ser_F_only$I_tBootLow * G_E / G_F,
+                     ui = ser_F_only$I_tBootHigh * G_E / G_F,
+                     col = ser_F_col,
+                     barcol = ser_F_col,
+                     add = TRUE,
+                     ...)
+      legend("topright",
+             legend = c("Original Series E", "Rescaled Series F"),
+             pch = c(1,1),
+             col = c(ser_E_col,
+                     ser_F_col),
+             bty = "n")
+  }
+
 }
 
-## yMax = max(bcaKeepSerA[ ,"B'ed $I_t$ higher"] / geomA,
-##     bcaKeepSerB[ ,"B'ed $I_t$ higher"] / geomB)
-
-## gplot::plotCI( bcaKeepSerA$Year - (bcaKeepSerA$Year >= overlapYears[1]) * shift, bcaKeepSerA[ , "B'ed $I_t$"] / geomA,
-##        li=bcaKeepSerA[ ,"B'ed $I_t$ lower"] / geomA,
-##        ui=bcaKeepSerA[ ,"B'ed $I_t$ higher"] / geomA,
-##        col=colA, barcol=colA, lwd=1,
-##        xlim = yearLim,
-##        ylim=c(0, yMax),
-##        xlab="", ylab="Relative catch rate index")
 
 
 ##TODO:   axis(1, at=allYears, labels=FALSE, tck=tckL)   # not automated
-
-
-## plotCI(bcaKeepSerB$Year + (bcaKeepSerB$Year >= overlapYears[1]) * shift,
-##        bcaKeepSerB[ , "B'ed $I_t$"] / geomB,
-##        li=bcaKeepSerB[ ,"B'ed $I_t$ lower"] / geomB,
-##        ui=bcaKeepSerB[ ,"B'ed $I_t$ higher"] / geomB,
-##        col=colB, barcol=colB, lwd=1, add = TRUE)
-## legend("topright", legend=c("Series A", "Series B"), pch=c(1, 1),
-##        col=c(colA, colB))
