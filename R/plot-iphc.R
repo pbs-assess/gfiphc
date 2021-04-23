@@ -1,15 +1,4 @@
 ##' Plotting functions for gfiphc
-##'
-##' Currently just for Series EF
-##'
-##' @param ser_list
-##' @param ...
-plot.ser_long_EF <- function(ser_list,
-                             ...){
-
-# Think using one below instead
-
-}
 
 
 
@@ -18,10 +7,6 @@ plot.ser_long_EF <- function(ser_list,
 # plot(ser_E_and_F)  # this doesn't work, even though
 # class(ser_E_and_F)
 # [1] "IPHC_ser_E_and_F" "list"
-#single plot function with arguments
-#ser_E, ser_F, ser_EF
-#
-#call them all class IPHC_ser_E_F_EF
 ##' Single plotting function for Series E, F or EF
 ##'
 ##' If you have EF then you have ser_E_and_F....
@@ -78,6 +63,9 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
   if(is.null(y_lim)){
   # TODO
   }
+
+
+  ##TODO:   axis(1, at=allYears, labels=FALSE, tck=tckL)   # not automated
 
   if(!is.null(series_longest)){
     G_E <- series_longest$test_EF$G_E
@@ -205,6 +193,40 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
 
 }
 
+##' Wrapper to plot all four versions of Series E and F plots in one figure
+##' ##'
+##' @param ser_E_and_F
+##' @param series_longest
+##' @param ... further arguments to `plot.IPHC_ser_E_and_F()`
+##' @return simple panel plot of four figures
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' @ # see vignette
+##' @}
+plot_IPHC_ser_four_panels <- function(ser_E_and_F,
+                                      series_longest,
+                                      ...){
+  par(mfcol = c(2,2))
 
+  plot.IPHC_ser_E_and_F(ser_E_and_F,
+                        series_longest,
+                        plot_type = "E",
+                        ...)
 
-##TODO:   axis(1, at=allYears, labels=FALSE, tck=tckL)   # not automated
+  plot.IPHC_ser_E_and_F(ser_E_and_F,
+                        series_longest,
+                        plot_type = "F",
+                        ...)
+
+  plot.IPHC_ser_E_and_F(ser_E_and_F,
+                        series_longest,
+                        plot_type = "E_F_scaled",
+                        ...)
+
+  plot.IPHC_ser_E_and_F(ser_E_and_F,
+                        series_longest,
+                        plot_type = "EF",
+                        ...)
+}
