@@ -33,7 +33,7 @@ example, defined here:
 
 ```{r species}
 sp <- "yelloweye rockfish"
-sp_short_name <- "HELLOOOOOO"   #"Yelloweye"  # short name for legends
+sp_short_name <- "Yelloweye"  # short name for legends
 ```
 
 Someone at PBS has to run the first chunk of code to extract data from
@@ -213,6 +213,9 @@ Yelloweye Rockfish assessment did properly account for this.
 ## Analyses for full coast
 
 TODO example
+
+TODO include plots of Series A, B, and scaled versions like pp301-302 of
+synopsis. See `plot_IPHC_ser_four_panels(ser_E_and_F, series_longest)`.
 
 ## Analyses for subset of stations
 
