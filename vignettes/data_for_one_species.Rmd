@@ -324,16 +324,16 @@ area. For example, considering the whole coast would not be appropriate because
 the west coast of Vancouver Island was not surveyed in some years (Table G.2 of
 synopsis report).
 
-HERE - haven't tested this yet in doing full vignette:
-The calculations are as follows:
-```{r serEF}
+The calculations are as follows, yielding figure with four plots similar to Figures G.1 and
+G.2 of the synopsis report (that were for Series A and B):
+```{r serEF, fig.width = 10, fig.height = 8}
 ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
 ser_E_and_F
 
 series_longest <- calc_iphc_ser_EF(ser_E_and_F)
 series_longest
 
-plot_IPHC_ser_four_panels(ser_E_and_F, series_longest)>
+plot_IPHC_ser_four_panels(ser_E_and_F, series_longest)
 ```
 
 
