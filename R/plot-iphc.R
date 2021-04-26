@@ -31,14 +31,17 @@
 ##'  * `F` to plot just Series F
 ##'  * `E_F_scaled` to plot Series E and F each scaled by their geometric mean
 ##'  * `EF` to plot Series EF [with E rescaled in red]
-##' @param year_lim
-##' @param y_lim
+##' @param ser_E_col
+##' @param ser_F_col
+##' @param legend_text
+##' @param x_lab
+##' @param y_lab
+##' @param gap_ci gap (units of 'height of letter O') between cirlce and
+##'   whiskers for confidence intervals
+##' @param ...
 ##' @param shift if plotting two then shift Series E to left and F to right by
 ##'   `shift` amount
 ##' @param tck_length small tickmark lengths
-##' @param ser_E_col
-##' @param ser_F_col
-##' @param ...
 ##' @return
 ##' @export
 ##' @author Andrew Edwards
@@ -58,6 +61,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                                  legend_text = NULL,
                                  x_lab = "Year",
                                  y_lab = "Catch rate index (numbers per effective skate)",
+                                 gap_ci = 0.5,
                                  ...){
 
   if(!is.null(series_longest)){
@@ -91,6 +95,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                    ylim = y_lim,
                    xlab = x_lab,
                    ylab = y_lab,
+                   gap = gap_ci,
                    ...)
     axis(1, at = x_ticks, labels = FALSE, tck = tck_length)
     if(is.null(legend_text)) {
@@ -113,6 +118,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                    ylim = y_lim,
                    xlab = x_lab,
                    ylab = y_lab,
+                   gap = gap_ci,
                    ...)
 
     axis(1, at = x_ticks, labels = FALSE, tck = tck_length)
@@ -129,7 +135,11 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
 
     overlap_years <- intersect(ser_E_and_F$ser_E$year,
                                ser_E_and_F$ser_F$year)  # overlapping years for
-                                        # shifting horizontally
+                                                        # shifting horizontally
+
+    y_lim_E_F_scaled <- c(0, max(c(ser_E_and_F$ser_E$I_t20BootHigh / G_E,
+                                   ser_E_and_F$ser_F$I_tBootHigh / G_F)))
+
     gplots::plotCI(ser_E_and_F$ser_E$year -
                      (ser_E_and_F$ser_E$year %in% overlap_years) * shift,
                    ser_E_and_F$ser_E$I_t20BootMean / G_E,
@@ -137,9 +147,11 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                    ui = ser_E_and_F$ser_E$I_t20BootHigh / G_E,
                    col = ser_E_col,
                    barcol = ser_E_col,
-                   xlim = x_lim,    # not using y_lim since this is scaled
+                   xlim = x_lim,
+                   ylim = y_lim_E_F_scaled,  # include 0, and diff to y_lim
                    xlab = x_lab,
                    ylab = "Relative catch rate index", # Relative since scaled
+                   gap = gap_ci,
                    ...)
 
     gplots::plotCI(ser_E_and_F$ser_F$year +
@@ -150,6 +162,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                    col = ser_F_col,
                    barcol = ser_F_col,
                    add = TRUE,
+                   gap = gap_ci,
                    ...)
 
     axis(1, at = x_ticks, labels = FALSE, tck = tck_length)
@@ -189,6 +202,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                      ylim = y_lim,
                      xlab = x_lab,
                      ylab = y_lab,
+                     gap = gap_ci,
                      ...)
 
       axis(1, at = x_ticks, labels = FALSE, tck = tck_length)

@@ -33,6 +33,7 @@ example, defined here:
 
 ```{r species}
 sp <- "yelloweye rockfish"
+sp_short_name <- "HELLOOOOOO"   #"Yelloweye"  # short name for legends
 ```
 
 Someone at PBS has to run the first chunk of code to extract data from
@@ -123,7 +124,7 @@ in that year:
 
 ```{r onemap, fig.height = 6}
 plot_iphc_map(sp_set_counts$set_counts,
-              sp_short_name = "Yelloweye", # for the legend
+              sp_short_name = sp_short_name,
               years = 2008)
 ```
 
@@ -148,7 +149,7 @@ html viewer and save it.
 # ```{r, animation.hook = 'gifski', interval = 1.5, fig.height = 6}
 for(i in unique(sp_set_counts$set_counts$year)){
   plot_iphc_map(sp_set_counts$set_counts,
-                sp_short_name = "Yelloweye",
+                sp_short_name = sp_short_name,
                 years = i)
 }
 ```
