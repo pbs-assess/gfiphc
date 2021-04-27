@@ -42,7 +42,7 @@ cache_pbs_data_iphc("yelloweye rockfish")
                                        #  what gfsynopsis::get_data_iphc() calls,
                                        #  via gfsynopsis::get_data() in
                                        #  report/make.R of gfsynopsis repo.]
-yelloweye_rockfish_set_counts <- readRDS("yelloweye-rockfish.rds")
+yelloweye_rockfish <- readRDS("yelloweye-rockfish.rds")
 
-usethis::use_data(yelloweye_rockfish_set_counts,
+usethis::use_data(yelloweye_rockfish,
                   overwrite = TRUE)
