@@ -23,7 +23,7 @@ the Pacific Biological Station network that have permission to access the
 database, an example data set for Yelloweye Rockfish is included in the
 package.
 
-```{r setup, results = hide}
+```{r setup, results = FALSE}
 library(gfiphc)
 library(dplyr)
 ```
@@ -54,36 +54,35 @@ cache_pbs_data_iphc(sp)
                                        #  report/make.R of gfsynopsis repo.]
 ```
 
-Once an external person has the `species-name.rds` file, the next line can be
-uncommented and used to load the data. For this vignette we will use the
-Yelloweye Rockfish data included in the package.
+Once an external person has the `species-name.rds` file, the two lines in the
+next chunk can be appropriately commented/uncommented to load the data. For this
+vignette we will use the Yelloweye Rockfish data included in the package.
 ```{r loadrds}
 # Comment this out to analyse non-yelloweye data:
 sp_set_counts <- yelloweye_rockfish
 
 # Uncomment this to analyse non-yelloweye data:
 # sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
-
-# For each set, contains the various  catch rates for this species, the lat
-# and lon, and whether the set is usable or not. Includes the basic
-# information for each set, but further details are available in the
-# objects described below.
 ```
 
 
 Other data sets are already built into the gfiphc package, the main ones being:
 ```{r builtin}
 setData1995      # Locations and effective skate values of stations for the 1995 survey
+
 countData1995    # Counts of each species at each station in 1995
+
 data1996to2002   # Catches at each station from 1996 to 2002
+
 setData2013      # Station details for 2013 survey
+
 setDataExpansion # Station details regarding expansion stations from 2018 (and
                  # possibly onwards)
 ```
 
 The following data sets are extracted from GFBio but extracted at PBS and then included
 in the package (using `data-raw/sets-skates-hooks-yelloweye.R`), which will be
-run each year to update the data objects.
+run each year to update the data objects:
 ```{r builtinfromgfbio}
 sets_other_years   # Station details from GFBio for years not mentioned above
 
@@ -96,7 +95,6 @@ hooks_with_bait    # Counts of hooks returned with bait on them, for each set,
 
 yelloweye_rockfish # Counts of Yelloweye Rockfish on each set for all years
                    #  (note it is a list containing one tibble)
-
 ```
 
 See `?<dataset>` for details of each, and `data(package = "gfiphc")` for other
@@ -114,16 +112,14 @@ the species (built-in data sets plus data extracted from GFBio):
 ```{r load}
 sp_set_counts
                   # For each set, the calculatable catch rates for that
-                  # species, plus lat and lon and whether the set is usable.
+                  #  species, plus lat and lon and whether the set is usable.
+                  # Includes the basic information for each set, with further
+                  #  details in the objects mentioned above.
                   # See ?get_all_iphc_set_counts for full details.
 
 tail(sp_set_counts$set_counts)
 
 summary(sp_set_counts$set_counts)
-
-sets_each_year <- sp_set_counts$set_counts %>%
-  group_by(year) %>%
-  summarise(total = n())
 ```
 
 ## Maps of stations
@@ -186,6 +182,10 @@ In the movie you see that the number of sets jumped in 2018 due to the expanded
 survey grid that year that involved extra stations (there should only ever be
 one set at a station):
 ```{r plotsets, fig.height = 4}
+sets_each_year <- sp_set_counts$set_counts %>%
+  group_by(year) %>%
+  summarise(total = n())
+
 plot(sets_each_year$year, sets_each_year$total, type = "o",
      xlab = "Year", ylab = "Sets each year", ylim = c(0, max(sets_each_year$total)))
 ```
