@@ -1,5 +1,5 @@
 ---
-title: "Extract and analyse the IPHC data for one species"
+title: "Extract and analyse the IPHC data for a restricted area"
 author: "Andrew Edwards"
 output: rmarkdown::html_vignette
 vignette: >
@@ -17,20 +17,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette shows how to extract and analyse the data for a single
-species. Since the extraction from the GFBio database only works for users on
-the Pacific Biological Station network that have permission to access the
-database, an example data set for Yelloweye Rockfish is included in the
-package.
+This vignette shows how to extract and analyse the data for a restricted area
+(rather than the full coast). The example area is for predators of Haida Gwaii
+Herring, and we'll stick with Yelloweye Rockfish as the example species (since
+those data are saved in the package).
 
 ```{r setup, results = FALSE}
 library(gfiphc)
-library(dplyr)
+library(dplyr)   # TODO hopefully not need?
 ```
-
-<!-- Adapting code written by Andrew Edwards for Beau Doherty at Landmark -->
-<!-- Fisheries in March 2019 and updated in September 2019.-->
-<!-- Also using MEE_reproduce_2.Rmd vignette from sizeSpectra as a template -->
 
 ## Data for species of interest
 
@@ -40,23 +35,17 @@ sp <- "yelloweye rockfish"
 sp_short_name <- "Yelloweye"  # short name for legends
 ```
 
-Someone at PBS has to run the next chunk of code to extract data from
-the GFBio database and send the external collaborator the resulting .rds file,
-which will have the format `species-name.rds`, e.g. `longnose-skate.rds`. As an
-example, the data for Yelloweye Rockfish have been extracted and included as
-data in the package. Hence this chunk is not evaluated for this vignette:
+As for the `data_for_one_species.Rmd` vignette, change the above names to your
+species of interest and have someone at PBS run the next chunk of code to extract data from
+the GFBio database.
 ```{r extract, eval = FALSE}
 # This chunk will only work within PBS
 cache_pbs_data_iphc(sp)
-                                       # That creates species-name. [This is
-                                       #  what gfsynopsis::get_data_iphc() calls,
-                                       #  via gfsynopsis::get_data() in
-                                       #  report/make.R of gfsynopsis repo.]
 ```
 
 Once an external person has the `species-name.rds` file, the two lines in the
-next chunk can be appropriately commented/uncommented to load the data. For this
-vignette we will use the Yelloweye Rockfish data included in the package.
+next chunk can be appropriately commented/uncommented to load the data. For the
+vignette to always run we will stick with the Yelloweye Rockfish data.
 ```{r loadrds}
 # Comment this out to analyse non-yelloweye data:
 sp_set_counts <- yelloweye_rockfish
@@ -65,175 +54,9 @@ sp_set_counts <- yelloweye_rockfish
 # sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
 ```
 
-## Details for all skates and stations, and hooks returned with bait
-
-Other data sets are already built into the gfiphc package, the main ones being:
-```{r builtin}
-setData1995      # Locations and effective skate values of stations for the 1995 survey
-
-countData1995    # Counts of each species at each station in 1995
-
-data1996to2002   # Catches at each station from 1996 to 2002
-
-setData2013      # Station details for 2013 survey
-
-setDataExpansion # Station details regarding expansion stations from 2018 (and
-                 # possibly onwards)
-```
-
-The following data sets are extracted from GFBio but extracted at PBS and then included
-in the package (using `data-raw/sets-skates-hooks-yelloweye.R`), which will be
-run each year to update the data objects:
-```{r builtinfromgfbio}
-sets_other_years   # Station details from GFBio for years not mentioned above
-
-skates_other_years # Skate-level details from GFBio (such data are not available
-                   # for years for which data are only available at the
-                   # set-by-set level).
-
-hooks_with_bait    # Counts of hooks returned with bait on them, for each set,
-                   # for all years (note it is a list containing one tibble)
-
-yelloweye_rockfish # Counts of Yelloweye Rockfish on each set for all years
-                   #  (note it is a list containing one tibble)
-```
-
-See `?<dataset>` for details of each, and `data(package = "gfiphc")` for other
-data sets. Notation such as `E_it20` matches the write-up in the Groundfish
-Synopsis report.
-
-The formats are different to each other due to the data that are
-available. For example, there are no `hooksObserved` values available for 1995
-and 2013, which will complicate consideration of hook competition
-for those years. `setDataExpansion` is needed to identify stations in the expanded
-grid (that were not fished in previous years).
-
-Look at the data for the species of interest, which combines all the data for
-the species (built-in data sets plus data extracted from GFBio):
-```{r load}
-sp_set_counts
-                  # For each set, the calculatable catch rates for that
-                  #  species, plus lat and lon and whether the set is usable.
-                  # Includes the basic information for each set, with further
-                  #  details in the objects mentioned above.
-                  # See ?get_all_iphc_set_counts for full details.
-
-tail(sp_set_counts$set_counts)
-
-summary(sp_set_counts$set_counts)
-```
-
-## Maps of stations
-
-For a single year, and whether or not the survey caught the species of interest
-in that year:
-
-```{r onemap, fig.height = 6}
-plot_iphc_map(sp_set_counts$set_counts,
-              sp_short_name = sp_short_name,
-              years = 2008)
-```
-
-Unusable stations are determined by the IPHC and any data are excluded from our
-calculations. The horizontal line is the cut-off for calculations for different
-Series (see the synopsis Research Document). Note that the `sp_short_name`
-argument is only for the legend, the first argument needs to contain the data
-for the species of interest.
-
-To see a movie of the station locations through time:
-
-![IPHC-stations-movie-1995-2019.gif](IPHC-stations-movie-1995-2019.gif).
-
-Here is the code to build the movie, but it is commented out since it causes Travis
-to fail (Travis is the continuous integration service that automatically
-checks the packages builds every time a change is committed to GitHub, giving the
-little green symbol `passing` icon on the main page). To make the movie, run the
-run this vignette code with commented line uncommented (you need to install the
-`gifski` package), right-click on the animation in the
-html viewer and save it.
-```{r, eval=FALSE}
-# ```{r, animation.hook = 'gifski', interval = 1.5, fig.height = 6}
-for(i in unique(sp_set_counts$set_counts$year)){
-  plot_iphc_map(sp_set_counts$set_counts,
-                sp_short_name = sp_short_name,
-                years = i)
-}
-```
-
-To see the stations without reference to any species:
-```{r, fig.height = 6}
-plot_iphc_map(sp_set_counts$set_counts,
-              sp = NULL,
-              years = 2008)
-```
-
-noting that you still need `sp_set_counts$set_counts` (for an arbitrary species)
-as an argument.
-
-Can also use `hooks_with_bait$set_counts` to see stations that came back with no
-bait (the legend will need adapting though; empty circles are no baits with
-hooks returned):
-```{r, fig.height = 6}
-plot_iphc_map(hooks_with_bait$set_counts,
-              sp = "Hooks with bait",
-              years = 2008)
-```
-
-## Expanded survey grid in 2018
-
-In the above movie you see that the number of sets jumped in 2018 due to the expanded
-survey grid that year that involved extra stations (there should only ever be
-one set at a station):
-```{r plotsets, fig.height = 4}
-sets_each_year <- sp_set_counts$set_counts %>%
-  group_by(year) %>%
-  summarise(total = n())
-
-plot(sets_each_year$year, sets_each_year$total, type = "o",
-     xlab = "Year", ylab = "Sets each year", ylim = c(0, max(sets_each_year$total)))
-```
-
-The extra stations are identified as `standard` being `N`, with `Y` being the
-standard stations. Removing the non-standard stations brings the number of sets
-in 2018 into line with other years, and so this should be done for (most)
-analyses:
-```{r plotsetsstd, fig.height = 4}
-sets_each_year_standard <- sp_set_counts$set_counts %>%
-  filter(standard == "Y") %>%
-  group_by(year) %>%
-  summarise(total = n())
-
-plot(sets_each_year_standard$year, sets_each_year_standard$total, type = "o",
-     xlab = "Year", ylab = "Sets each year", ylim = c(0, max(sets_each_year$total)))
-```
-
-Note that (as of 2019 data at least) the expansion (non-standard) stations only
-appear in 2018:
-```{r checkexpansion}
-filter(sp_set_counts$set_counts, standard == "N") %>%
-  select(year) %>%
-  range()
-```
-
-So use `filter(..., standard == "Y", usable == "Y")` for analyses (to also include
-only the usable stations).
-
-**NOTE** As noted in Issue #14, the standard refinement has not yet been done
-for the Series A, B, C, D etc. calculation code that was used for the synopsis report, but the latest
-Yelloweye Rockfish assessment did properly account for this.
-
-## Analyses for full coast
-
-TODO example
-
-TODO include plots of Series A, B, and scaled versions like pp301-302 of
-synopsis. See `plot_IPHC_ser_four_panels(ser_E_and_F, series_longest)`.
-
 ## Analyses for subset of stations
 
-One application is for generating time series of predators of Haida Gwaii
-Pacific Herring, for which we do not want to consider the full coast. The area
-of interest is saved in `gfiphc` as `HG_herring_pred_area`:
+The area of interest is saved in `gfiphc` as `HG_herring_pred_area`:
 ```{r predators, warnings=FALSE, messages = FALSE}
 plot_BC(main = "All 2008 stations")
 
@@ -249,9 +72,9 @@ plot_iphc_map(sp_set_counts$set_counts,
 
 Get data into format needed for PBSmapping findPolys:
 ```{r format}
-# Probably rename this, see what we need. This is to go forwards with EID
-# (unique event identifier needed for PBSmapping::findPolys) and in_area
-# (whether or not the location is in the area of interest)
+# TODO maybe make a function??
+# This adds `in_area` column (whether or not the location is in the area of
+# interest) and an EID for each set (unique event identifier needed for PBSmapping::findPolys)
 sp_set_counts_with_area <- sp_set_counts$set_counts %>%
   dplyr::mutate(in_area = FALSE) %>%       # then adjusted below
   dplyr::bind_cols("EID" = 1:nrow(sp_set_counts$set_counts))
@@ -299,7 +122,6 @@ plot_iphc_map(sp_set_counts_with_area,
               indicate_in_area = TRUE)
 ```
 
-
 Make a movie to check each year:
 ```{r, animation.hook = 'gifski', interval = 1.5, fig.height = 6, warnings = FALSE, messages = FALSE}
 for(i in unique(sp_set_counts_with_area$year)){
@@ -333,88 +155,25 @@ hooks from each skate. We do a similar analysis as described in the synopsis
 report to generate the longer Series EF (or just one of Series E and F if there are
 insufficient data). It is up to the user to generate maps (or movie) of their area
 of interest to confirm that it makes sense to use all stations with the
-area. For example, considering the whole coast would not be appropriate because
-the west coast of Vancouver Island was not surveyed in some years (Table G.2 of
-synopsis report).
+area. For example, considering an area that reaches further down the west coast
+of Vancouver Island would not be appropriate since it was not surveyed in some
+years (Table G.2 of synopsis report).
 
 The calculations are as follows, yielding figure with four plots similar to Figures G.1 and
 G.2 of the synopsis report (that were for Series A and B):
-```{r serEF, fig.width = 10, fig.height = 8}
+```{r serEF}
 ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
 ser_E_and_F
+```
 
+Then to calculate the longest possible time series:
+```{r serlongest, fig.width = 10, fig.height = 8}
 series_longest <- calc_iphc_ser_EF(ser_E_and_F)
 series_longest
 
 plot_IPHC_ser_four_panels(ser_E_and_F, series_longest)
 ```
 
-
-## Not running yet, can ignore for now:
-
-Robyn did this for Pacific Cod (but will not get 2018 right since code doesn't
-yet correct for expansion stations). This was to take a quick look at the data,
-but she didn't end up using it. Will be useful as an example here.
-
-```{r pcod, eval = FALSE}
-iphc_raw <- gfiphc::tidy_iphc_survey(
-  get_iphc_hooks("pacific cod"),
-  get_iphc_skates_info(),
-  get_iphc_sets_info()
-)
-iphc_index <- gfiphc::calc_iphc_full_res(iphc_raw)
-```
-
-
-The code used in `gfsynopsis/R/make-pages.R` is the following, simplifying it
-here to then check that it matches what is done above (not finished checking yet):
-```{r gfsynopsis, eval = FALSE}
-#if (!is.null(dat_iphc)) {
-#    if (!file.exists(iphc_index_cache_spp)) {
-      iphc_set_counts_sp <-
-        gfiphc::calc_iphc_full_res(dat_iphc$set_counts)
-
-      saveRDS(iphc_set_counts_sp, file = iphc_index_cache_spp, compress = FALSE)
-    } else {
-      iphc_set_counts_sp <- readRDS(iphc_index_cache_spp)
-    }
-
-    iphc_set_counts_sp_format <- tryCatch({
-      gfiphc::format_iphc_longest(iphc_set_counts_sp)
-    }, error = function(e) NA)
-    # Remove existing (GFbio) based IPHC series with longer ones from new calcs
-    if (!is.na(iphc_set_counts_sp_format)) {
-      dat_tidy_survey_index <- dat_tidy_survey_index %>%
-        filter(survey_abbrev != "IPHC FISS") %>%
-        rbind(iphc_set_counts_sp_format)
-    }
-  }
-```
-
-## Extracting multiple species (not run here)
-
-Did these for Joe Watson (16/12/20). May as well document here as will need to
-do again when the 2020 data are uploaded. Realised can just make a species vector
-so doing that here, though not fully tested.
-
-```{r multiple, eval=FALSE}
-sp_vec <- c("yelloweye rockfish",
-            "arrowtooth flounder",
-            "lingcod",
-            "north pacific spiny dogfish",
-            "pacific cod",
-            "pacific halibut",
-            "redbanded rockfish",
-            "sablefish",
-            "longnose skate",
-            "walleye pollock")
-
-cache_pbs_data_iphc(sp_vec)   # not double checked, as just ran them all individually
-
-# Do in console to just print the first and last values:
-for(sp in sp_vec){
-  print(sp)
-  print(readRDS(paste0(gsub(" ", "-", sp), ".rds")))
-  print(tail(readRDS(paste0(gsub(" ", "-", sp), ".rds"))$set_counts))
-}
-```
+Note that the code may not yet fully account for all possibilities (for all
+areas and species), particularly for rarer species. So do check that the output
+is sensible.
