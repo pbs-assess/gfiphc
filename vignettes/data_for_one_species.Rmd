@@ -32,7 +32,7 @@ library(dplyr)
 <!-- Fisheries in March 2019 and updated in September 2019.-->
 <!-- Also using MEE_reproduce_2.Rmd vignette from sizeSpectra as a template -->
 
-## Data for all skates and stations, and counts for one species
+## Data for species of interest
 
 Define common species name:
 ```{r species}
@@ -65,6 +65,7 @@ sp_set_counts <- yelloweye_rockfish
 # sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
 ```
 
+## Details for all skates and stations, and hooks returned with bait
 
 Other data sets are already built into the gfiphc package, the main ones being:
 ```{r builtin}
@@ -178,7 +179,9 @@ plot_iphc_map(hooks_with_bait$set_counts,
               years = 2008)
 ```
 
-In the movie you see that the number of sets jumped in 2018 due to the expanded
+## Expanded survey grid in 2018
+
+In the above movie you see that the number of sets jumped in 2018 due to the expanded
 survey grid that year that involved extra stations (there should only ever be
 one set at a station):
 ```{r plotsets, fig.height = 4}
@@ -215,8 +218,8 @@ filter(sp_set_counts$set_counts, standard == "N") %>%
 So use `filter(..., standard == "Y", usable == "Y")` for analyses (to also include
 only the usable stations).
 
-As noted in Issue #14, the standard refinement has not yet been done for the Series A, B, C, D
-etc. calculation code that was used for the synopsis report, but the latest
+**NOTE** As noted in Issue #14, the standard refinement has not yet been done
+for the Series A, B, C, D etc. calculation code that was used for the synopsis report, but the latest
 Yelloweye Rockfish assessment did properly account for this.
 
 ## Analyses for full coast
