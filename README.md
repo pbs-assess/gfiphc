@@ -35,21 +35,21 @@ Redbanded Rockfsh [(Edwards et al. 2017)](https://www.dfo-mpo.gc.ca/csas-sccs/Pu
 A particular issue is that the data resolution is not the same across the years. This is explained in Table G.1 in the synopsis report. An updated version of that table is given here:
 
 
-| Year        | Hooks enumerated         | Data resolution   | Location of data      | WCVI? |
+|Year         |Hooks enumerated          |Data resolution    |Location of data       |WCVI? |
 |-------------|--------------------------|-------------------|-----------------------|-------|
 |1995         |All                       |Set-by-set         |Spreadsheets^1^        |N      |
-1996        All                      Set-by-set        Spreadsheet^2^         N
-1997-1998   First 20 of each skate   Set-by-set        Spreadsheet^2^         N
-1999        First 20 of each skate   Set-by-set        Spreadsheet^2^         Y
-2000        First 20 of each skate   Set-by-set        Spreadsheet^2^         N
-2001-2002   First 20 of each skate   Set-by-set        Spreadsheet^2^         Y
-2003-2011   All                      Hook-by-hook      DFO database `GFBio`   Y
-2012        All (bait experiment)    Hook-by-hook      DFO database `GFBio`   Y
-2013        First 20 of each skate   Set-by-set        Spreadsheet^3^         Y
-2014-2017   All                      Hook-by-hook      DFO database `GFBio`   Y
-2018        All (+ expansions stns)  Hook-by-hook      DFO database `GFBio`   Y
-2019        All                      Hook-by-hook      DFO database `GFBio`   Y
-2020        First 20 of each skate   Set-by-set        TODO                   Y 
+|1996         |All                       |Set-by-set         |Spreadsheet^2^         |N      |
+|1997-1998    |First 20 of each skate    |Set-by-set         |Spreadsheet^2^         |N      |
+|1999         |First 20 of each skate    |Set-by-set         |Spreadsheet^2^         |Y      |
+|2000         |First 20 of each skate    |Set-by-set         |Spreadsheet^2^         |N      |
+|2001-2002    |First 20 of each skate    |Set-by-set         |Spreadsheet^2^         |Y      |
+|2003-2011    |All                       |Hook-by-hook       |DFO database `GFBio`   |Y      |
+|2012         |All (bait experiment)     |Hook-by-hook       |DFO database `GFBio`   |Y      |
+|2013         |First 20 of each skate    |Set-by-set         |Spreadsheet^3^         |Y      |
+|2014-2017    |All                       |Hook-by-hook       |DFO database `GFBio`   |Y      |
+|2018         |All (+ expansions stns)   |Hook-by-hook       |DFO database `GFBio`   |Y      |
+|2019         |All                       |Hook-by-hook       |DFO database `GFBio`   |Y      |
+|2020         |First 20 of each skate    |Set-by-set         |TODO                   |Y      |
 
 <!-- for putting back into gfsynopsis, note that 2018 is now separated out) -->
 
