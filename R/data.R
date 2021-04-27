@@ -219,3 +219,44 @@ NULL
 #'   shown, possibly to do with islands on lakes on islands in the sea. Details
 #'   in `data-raw/herring-predators-HG/herring-predators-HG-area.R`.
 "HG_herring_pred_area"
+
+
+#' Details of sets for data extracted from GFBio
+#'
+#' @format A `tibble` with one row for each set, with columns:
+#'
+#'
+#'
+#' also of class `PolySet` (from PBSmapping) with
+#'   columns:
+#' \describe{
+#'   \item{year}{year}
+#'   \item{tripID}{trip ID number from GFBio}
+#'   \item{setID}{set ID number from GFBio}
+#'   \item{station}{IPHC station number}
+#'   \item{setInTrip}{set number during the trip}
+#'   \item{{long}{longitude}
+#'   \item{lat}{latitude}
+#'   \item{obsHooksPerSet}{observed number of hooks for that set}
+#'   \item{deplHooksPerSet}{deployed number of hooks for that set}
+#'   \item{skatesCount}{number of skates on the set}
+#'   \item{effSkateIPHC}{effective skate number from the IPHC}
+#'   \item{iphcUsabilityCode}{usability code from the IPHC}
+#'   \item{iphcUsabilityDesc}{usability description from the IPHC}
+#'   \item{usable}{whether or not (Y/N) the set is usable, as determined by the
+#'     IPHC}
+#'   \item{standard}{whether or not (Y/N) the set is in the standard area or the
+#'   expansion area (in 2018, and maybe later)}
+#' }
+#' @source Extracted from GFBio using `data-raw/sets-skates-hooks-yelloweye.R`.
+"sets_other_years"
+
+skates_other_years # Skate-level details from GFBio (such data are not available
+                   # for years for which data are only available at the
+                   # set-by-set level).
+
+hooks_with_bait    # Counts of hooks returned with bait on them, for each set,
+                   # for all years (note it is a list containing one tibble)
+
+yelloweye_rockfish # Counts of Yelloweye Rockfish on each set for all years
+                   #  (note it is a list containing one tibble)
