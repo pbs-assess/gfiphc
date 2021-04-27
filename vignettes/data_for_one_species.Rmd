@@ -221,14 +221,11 @@ synopsis. See `plot_IPHC_ser_four_panels(ser_E_and_F, series_longest)`.
 
 One application is for generating time series of predators of Haida Gwaii
 Pacific Herring, for which we do not want to consider the full coast. The area
-of interest is
-TODO: currently saved in non-pushed files:
+of interest is saved in `gfiphc` as `HG_herring_pred_area`:
 ```{r predators, warnings=FALSE, messages = FALSE}
-load("herring-predators-HG/AoI.rda")     # Rowan's tidied up file
-herring_HG_area <- AoI
-
 plot_BC(main = "All 2008 stations")
-PBSmapping::addPolys(herring_HG_area,
+
+PBSmapping::addPolys(HG_herring_pred_area,
                      col = "pink")
 
 plot_iphc_map(sp_set_counts$set_counts,
@@ -251,7 +248,7 @@ events <- sp_set_counts_with_area %>%
   dplyr::rename(X = lon, Y = lat) %>%
   dplyr::select(year, EID, Y, X)
 
-locData <- PBSmapping::findPolys(as.data.frame(events), herring_HG_area)
+locData <- PBSmapping::findPolys(as.data.frame(events), HG_herring_pred_area)
 EIDs_in_poly <- unique(locData$EID)
 
 sp_set_counts_with_area$in_area <- sp_set_counts_with_area$EID %in% EIDs_in_poly
@@ -264,7 +261,7 @@ Colour code on map:
 ```{r area, warnings = FALSE, messages = FALSE}
 plot_BC(main = "All 2008 stations")
 
-PBSmapping::addPolys(herring_HG_area,
+PBSmapping::addPolys(HG_herring_pred_area,
                      col = "pink")
 
 plot_iphc_map(sp_set_counts_with_area,
@@ -279,7 +276,7 @@ plot_iphc_map(sp_set_counts_with_area,
 ```{r area2018, warnings = FALSE, messages = FALSE}
 plot_BC(main = "All 2018 stations")
 
-PBSmapping::addPolys(herring_HG_area,
+PBSmapping::addPolys(HG_herring_pred_area,
                      col = "pink")
 
 plot_iphc_map(sp_set_counts_with_area,
@@ -296,7 +293,7 @@ Make a movie to check each year:
 for(i in unique(sp_set_counts_with_area$year)){
   plot_BC(main = paste0("All ", i, " stations"))
 
-  PBSmapping::addPolys(herring_HG_area,
+  PBSmapping::addPolys(HG_herring_pred_area,
                        col = "pink")
 
   plot_iphc_map(sp_set_counts_with_area,

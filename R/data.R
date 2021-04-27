@@ -180,7 +180,7 @@
 
 #' Conversion from GFbio names to IPHC species names (for data not in GFbio)
 #'
-#' A data fraom with the GFbio name and the corresponding name used by IPHC in
+#' A data frame with the GFbio name and the corresponding name used by IPHC in
 #'  the datasets that are at the set level and so not extracted from GFbio.
 #' @format A csv file:
 #' \describe{
@@ -194,3 +194,28 @@
 #'   **And may also want "Hook with Bait" if different in GFbio******
 #' @name iphc-spp-names.csv
 NULL
+
+
+#' Area considered for predators of Haida Gwaii Pacific Herring
+#'
+#' Primarily to determine which stations are within the relevant area to then
+#' generate indices of abundance for groundfish predators of Haida Gwaii Pacific
+#' Herring. See vignette.
+#'
+#' @format A `data.frame`, also of class `PolySet` (from PBSmapping) with
+#'   columns, of which X and Y (longitude and latitude) are then used to
+#'   determine which IPHC stations are inside the relevant area:
+#' \describe{
+#'   \item{PID}{primary identifier}
+#'   \item{SID}{secondary identify}
+#'   \item{POS}{not sure what this is}
+#'   \item{X}{longitude of station}
+#'   \item{Y}{latitude of station}
+#' }
+#' @source Jennifer Boldt sent Andrew Edwards the shape files for the area
+#'   (corresponding to those used for Pacific Hake predators of Pacific
+#'   Herring), which Rowan Haigh helped use with `PBSmapping` (primarily helping
+#'   overdrawing of islands) There are still some minor issues and extra lines
+#'   shown, possibly to do with islands on lakes on islands in the sea. Details
+#'   in `data-raw/herring-predators-HG/herring-predators-HG-area.R`.
+"HG_herring_pred_area"

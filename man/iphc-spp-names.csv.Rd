@@ -18,6 +18,6 @@ Currently this only has Type A species \strong{\strong{Andy to update with Type 
 \strong{And may also want "Hook with Bait" if different in GFbio}}}
 }
 \description{
-A data fraom with the GFbio name and the corresponding name used by IPHC in
+A data frame with the GFbio name and the corresponding name used by IPHC in
 the datasets that are at the set level and so not extracted from GFbio.
 }
