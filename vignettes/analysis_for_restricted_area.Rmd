@@ -1,5 +1,5 @@
 ---
-title: "Extract the IPHC data for one species"
+title: "Extract and analyse the IPHC data for one species"
 author: "Andrew Edwards"
 output: rmarkdown::html_vignette
 vignette: >
@@ -17,7 +17,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+This vignette shows how to extract and analyse the data for a single
+species. Since the extraction from the GFBio database only works for users on
+the Pacific Biological Station network that have permission to access the
+database, an example data set for Yelloweye Rockfish is included in the
+package.
+
+```{r setup, results = FALSE}
 library(gfiphc)
 library(dplyr)
 ```
@@ -26,75 +32,77 @@ library(dplyr)
 <!-- Fisheries in March 2019 and updated in September 2019.-->
 <!-- Also using MEE_reproduce_2.Rmd vignette from sizeSpectra as a template -->
 
-## Data for all skates and stations, and counts for one species
+## Data for species of interest
 
-Extract and save the IPHC data for a single species, using Yelloweye Rockfish as an
-example, defined here:
-
+Define common species name:
 ```{r species}
 sp <- "yelloweye rockfish"
 sp_short_name <- "Yelloweye"  # short name for legends
 ```
 
-Someone at PBS has to run the first chunk of code to extract data from
-the GFBio database and send the external collaborator the resulting four .rds
-files. The remaining code will run outside of PBS. Within PBS, the first chunk doesn't need
-to be re-run once the .rds files have been saved locally (and so it is not
-evaluated here).
-
+Someone at PBS has to run the next chunk of code to extract data from
+the GFBio database and send the external collaborator the resulting .rds file,
+which will have the format `species-name.rds`, e.g. `longnose-skate.rds`. As an
+example, the data for Yelloweye Rockfish have been extracted and included as
+data in the package. Hence this chunk is not evaluated for this vignette:
 ```{r extract, eval = FALSE}
 # This chunk will only work within PBS
 cache_pbs_data_iphc(sp)
-                                       # That creates yelloweye-rockfish.rds. [This is
+                                       # That creates species-name. [This is
                                        #  what gfsynopsis::get_data_iphc() calls,
                                        #  via gfsynopsis::get_data() in
                                        #  report/make.R of gfsynopsis repo.]
-
-cache_pbs_data_iphc("hook with bait")
-                                       # creates hook-with-bait.rds, same as
-                                       # sp_set_counts but for 'species' hook
-                                       # with bait; needed if looking into hook competition.
-
-saveRDS(get_iphc_sets_info(), "sets-other-years.rds", compress = TRUE)
-                                       # extracts the set level data from
-                                       #  GFBio for 2003 onwards (excluding 2013)
-
-saveRDS(get_iphc_skates_info(), "skates-other-years.rds", compress = TRUE)
-                                       # extracts skate level data from GFBio
-                                       #  for 2003 onwards (excluding 2013)
 ```
 
-Once an external person has the four .rds files, the rest of this code will run
-outside of PBS.
+Once an external person has the `species-name.rds` file, the two lines in the
+next chunk can be appropriately commented/uncommented to load the data. For this
+vignette we will use the Yelloweye Rockfish data included in the package.
 ```{r loadrds}
-sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
-                                       # For each set, contains the various
-                                       # catch rates for this species, the lat
-                                       # and lon, and whether the set
-                                       # is usable or not. Includes the basic
-                                       # information for each set, but further
-                                       # details are available in the
-                                       # objects described below
-hooks_with_bait <- readRDS("hook-with-bait.rds")
-sets_other_years <- readRDS("sets-other-years.rds")
-skates_other_years <- readRDS("skates-other-years.rds")
+# Comment this out to analyse non-yelloweye data:
+sp_set_counts <- yelloweye_rockfish
+
+# Uncomment this to analyse non-yelloweye data:
+# sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
 ```
 
+## Details for all skates and stations, and hooks returned with bait
 
 Other data sets are already built into the gfiphc package, the main ones being:
 ```{r builtin}
 setData1995      # Locations and effective skate values of stations for the 1995 survey
+
 countData1995    # Counts of each species at each station in 1995
+
 data1996to2002   # Catches at each station from 1996 to 2002
+
 setData2013      # Station details for 2013 survey
+
 setDataExpansion # Station details regarding expansion stations from 2018 (and
                  # possibly onwards)
 ```
+
+The following data sets are extracted from GFBio but extracted at PBS and then included
+in the package (using `data-raw/sets-skates-hooks-yelloweye.R`), which will be
+run each year to update the data objects:
+```{r builtinfromgfbio}
+sets_other_years   # Station details from GFBio for years not mentioned above
+
+skates_other_years # Skate-level details from GFBio (such data are not available
+                   # for years for which data are only available at the
+                   # set-by-set level).
+
+hooks_with_bait    # Counts of hooks returned with bait on them, for each set,
+                   # for all years (note it is a list containing one tibble)
+
+yelloweye_rockfish # Counts of Yelloweye Rockfish on each set for all years
+                   #  (note it is a list containing one tibble)
+```
+
 See `?<dataset>` for details of each, and `data(package = "gfiphc")` for other
 data sets. Notation such as `E_it20` matches the write-up in the Groundfish
 Synopsis report.
 
-The formats are different to each other due to the data are
+The formats are different to each other due to the data that are
 available. For example, there are no `hooksObserved` values available for 1995
 and 2013, which will complicate consideration of hook competition
 for those years. `setDataExpansion` is needed to identify stations in the expanded
@@ -105,16 +113,14 @@ the species (built-in data sets plus data extracted from GFBio):
 ```{r load}
 sp_set_counts
                   # For each set, the calculatable catch rates for that
-                  # species, plus lat and lon and whether the set is usable.
+                  #  species, plus lat and lon and whether the set is usable.
+                  # Includes the basic information for each set, with further
+                  #  details in the objects mentioned above.
                   # See ?get_all_iphc_set_counts for full details.
 
 tail(sp_set_counts$set_counts)
 
 summary(sp_set_counts$set_counts)
-
-sets_each_year <- sp_set_counts$set_counts %>%
-  group_by(year) %>%
-  summarise(total = n())
 ```
 
 ## Maps of stations
@@ -173,10 +179,16 @@ plot_iphc_map(hooks_with_bait$set_counts,
               years = 2008)
 ```
 
-In the movie you see that the number of sets jumped in 2018 due to the expanded
+## Expanded survey grid in 2018
+
+In the above movie you see that the number of sets jumped in 2018 due to the expanded
 survey grid that year that involved extra stations (there should only ever be
 one set at a station):
 ```{r plotsets, fig.height = 4}
+sets_each_year <- sp_set_counts$set_counts %>%
+  group_by(year) %>%
+  summarise(total = n())
+
 plot(sets_each_year$year, sets_each_year$total, type = "o",
      xlab = "Year", ylab = "Sets each year", ylim = c(0, max(sets_each_year$total)))
 ```
@@ -206,8 +218,8 @@ filter(sp_set_counts$set_counts, standard == "N") %>%
 So use `filter(..., standard == "Y", usable == "Y")` for analyses (to also include
 only the usable stations).
 
-As noted in Issue #14, the standard refinement has not yet been done for the Series A, B, C, D
-etc. calculation code that was used for the synopsis report, but the latest
+**NOTE** As noted in Issue #14, the standard refinement has not yet been done
+for the Series A, B, C, D etc. calculation code that was used for the synopsis report, but the latest
 Yelloweye Rockfish assessment did properly account for this.
 
 ## Analyses for full coast
