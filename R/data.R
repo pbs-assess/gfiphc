@@ -272,15 +272,26 @@ NULL
 #'   \item{obsHooksPerSkate20}{observed hooks per skate for just the first 20 hooks}
 #' }
 #' @source Extracted from GFBio using `data-raw/sets-skates-hooks-yelloweye.R`.
-skates_other_years # Skate-level details from GFBio (such data are not available
-                   # for years for which data are only available at the
-                   # set-by-set level).
+"skates_other_years"
 
 
+#' Available counts of hooks returned with bait on them, for each set for all years
+#'
+#' Extracts and calculates all avaiable counts, at the set level, of hooks
+#' returned with bait (which is essentially equivalent to a species).
+#'
+#' @format A `list` containing a single `tibble` called `set_counts`, with
+#'   columns as described in `?get_all_iphc_set_counts`.
+#' @source Extracted from GFBio using `data-raw/sets-skates-hooks-yelloweye.R`.
+"hooks_with_bait"
 
 
-hooks_with_bait    # Counts of hooks returned with bait on them, for each set,
-                   # for all years (note it is a list containing one tibble)
-
-yelloweye_rockfish # Counts of Yelloweye Rockfish on each set for all years
-                   #  (note it is a list containing one tibble)
+#' Available counts of Yelloweye Rockfish, for each set for all years
+#'
+#' Extracts and calculates all avaiable counts, at the set level, of Yelloweye
+#'  Rockfish, as an example dataset (see vignettes).
+#'
+#' @format A `list` containing a single `tibble` called `set_counts`, with
+#'   columns as described in `?get_all_iphc_set_counts`.
+#' @source Extracted from GFBio using `data-raw/sets-skates-hooks-yelloweye.R`.
+"yelloweye_rockfish"
