@@ -1,5 +1,5 @@
 ---
-title: "Extract the IPHC data for one species"
+title: "Extract and analyse the IPHC data for one species"
 author: "Andrew Edwards"
 output: rmarkdown::html_vignette
 vignette: >
@@ -17,7 +17,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+This vignette shows how to extract and analyse the data for a single
+species. Since the extraction from the GFBio database only works for users on
+the Pacific Biological Station network, an example data set for Yelloweye
+Rockfish is included in the package.
+
+```{r setup, results = hide}
 library(gfiphc)
 library(dplyr)
 ```
@@ -36,7 +41,7 @@ sp <- "yelloweye rockfish"
 sp_short_name <- "Yelloweye"  # short name for legends
 ```
 
-Someone at PBS has to run the first chunk of code to extract data from
+Someone at PBS has to run the next chunk of code to extract data from
 the GFBio database and send the external collaborator the resulting four .rds
 files. The remaining code will run outside of PBS. Within PBS, the first chunk doesn't need
 to be re-run once the .rds files have been saved locally (and so it is not
