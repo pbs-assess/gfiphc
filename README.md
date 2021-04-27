@@ -43,15 +43,16 @@ A particular issue is that the data resolution is not the same across the years.
 |1999         |First 20 of each skate    |Set-by-set         |Spreadsheet^2^         |Y      |
 |2000         |First 20 of each skate    |Set-by-set         |Spreadsheet^2^         |N      |
 |2001-2002    |First 20 of each skate    |Set-by-set         |Spreadsheet^2^         |Y      |
-|2003-2011    |All                       |Hook-by-hook       |DFO database `GFBio`   |Y      |
-|2012         |All (bait experiment)     |Hook-by-hook       |DFO database `GFBio`   |Y      |
+|2003-2011    |All                       |Hook-by-hook       |DFO database GFBio     |Y      |
+|2012         |All (bait experiment)     |Hook-by-hook       |DFO database GFBio     |Y      |
 |2013         |First 20 of each skate    |Set-by-set         |Spreadsheet^3^         |Y      |
-|2014-2017    |All                       |Hook-by-hook       |DFO database `GFBio`   |Y      |
-|2018         |All (+ expansions stns)   |Hook-by-hook       |DFO database `GFBio`   |Y      |
-|2019         |All                       |Hook-by-hook       |DFO database `GFBio`   |Y      |
+|2014-2017    |All                       |Hook-by-hook       |DFO database GFBio     |Y      |
+|2018         |All (+ expansions stns)   |Hook-by-hook       |DFO database GFBio     |Y      |
+|2019         |All                       |Hook-by-hook       |DFO database GFBio     |Y      |
 |2020         |First 20 of each skate    |Set-by-set         |TODO                   |Y      |
 
 <!-- for putting back into gfsynopsis, note that 2018 is now separated out) -->
+In 2018 there were extra expansion stations surveyed (see the vignettes), and in 2020 only the first 20 hooks were enumerated.
 
 ## Installation
 
