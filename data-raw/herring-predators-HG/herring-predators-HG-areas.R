@@ -9,7 +9,19 @@
 #  AoI.*. Note that he also extracted some manually from the .csv file, so am
 #  just importing and saving the relevant file here.
 
-# library(PBSmapping)
+# Andy's original code before Rowan did it in mergePolys.r. Worked but Rowan had
+# to fix some of the spurious extra lines (he thought they might be islands on
+# lakes on islands in the sea.... :
+#
+# herring_polys <- PBSmapping::importShapefile("herring-predators-HG/AreaOfInterest.shp")
+# plot_BC()
+# PBSmapping::addPolys(herring_polys)
+## That's many polygons, can join them together:
+# herring_HG_area <- PBSmapping::joinPolys(herring_polys, op="UNION")
+# plot_BC()
+# PBSmapping::addPolys(herring_HG_area, col = "red", )
+
+
 load("AoI.rda")
 
 HG_herring_pred_area <- AoI

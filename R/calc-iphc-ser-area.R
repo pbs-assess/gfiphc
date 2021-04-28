@@ -308,6 +308,68 @@ calc_iphc_ser_EF <- function(series_all,
   }
 }
 
+
+
+
+##' Take set count data for a species and add column indicating whether or not
+##' it is inside a given area
+##'
+##' See example and the vignette.
+##'
+##' @param set_counts_of_sp input tibble of the species of interest, likely generated from
+##'   `cache_pbs_data_iphc` (which seems to save a list with the first element
+##'   the desired tibble), with column names `year`, `station`, `lat`, `lon`,
+##'   `E_it`, `N_it`, `C_it`, `E_it20`, `N_it20`, `C_it20`, `usable`, and
+##'   `in_area` if `indicate_in_area` is TRUE
+##' @param area `data.frame` of (PBSmapping) class `PolySet` with column names
+##'   `PID`, `SID`, `POS`, `X`, `Y`,
+##' @return tibble of `set_counts_of_sp` with extra logical column `in_area` to
+##'   say whether or not each set is within `area`. Internally a column `EID` is
+##'   created to assign each set-year a unique ID, needed for
+##'   `PBSmapping::findPolys`, but this is not returned.
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' sp_set_counts_with_area <- add_in_area(yelloweye_rockfish$set_counts,
+##'                                        HG_herring_pred_area)
+##' # Gives a warning about hole vertices, can ignore.
+##' @}
+add_in_area <- function(set_counts_of_sp,
+                        area = HG_herring_pred_area){
+
+  sp_set_counts_with_area <- set_counts_of_sp %>%
+    dplyr::mutate(in_area = FALSE) %>%       # then adjusted below
+    dplyr::bind_cols("EID" = 1:nrow(set_counts_of_sp))
+
+  events <- sp_set_counts_with_area %>%
+    dplyr::rename(X = lon, Y = lat) %>%
+    dplyr::select(year, EID, Y, X)
+
+  locData <- PBSmapping::findPolys(as.data.frame(events),
+                                   area)
+
+  EIDs_in_poly <- unique(locData$EID)
+
+  # Give each set an `in_area` logical attribute TRUE/FALSE
+  sp_set_counts_with_area$in_area <- sp_set_counts_with_area$EID %in% EIDs_in_poly
+
+  sp_set_counts_with_area <- select(sp_set_counts_with_area,
+                                    -c("EID"))
+
+  return(sp_set_counts_with_area)
+}
+
+
+
+
+
+
+
+
+
+
+
 ##' Get data, do calculations and plot longest series for the IPHC survey TODO -
 ##'  may be worth doing, need the format part for gfsynopsis
 ##'
