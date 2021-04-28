@@ -1,0 +1,98 @@
+---
+title: "Extract and analyse the IPHC data for predators of Haida Gwaii Pacific Herring"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Extract the IPHC data herring predators}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 6
+)
+```
+
+This vignette shows how to extract and analyse the data for predators of Haida
+Gwaii Pacific Herring, including lumping species together
+(e.g. `all_skates`). This information is for a DFO Ecosystem Approach to
+Fisheries Management Case Study on ecoystem influences of Haida Gwaii Pacific
+Herring.
+
+The area of interest is the same as shown in the [Restricted
+area](vignettes/analysis_for_restricted_area.Rmd) vignette, and the shapefile is
+saved in the package as `HG_herring_pred_area`.
+
+```{r setup, results = FALSE}
+library(gfiphc)
+```
+
+## Data for species of interest
+
+First, just running for multiple individual species.
+
+TODO: will get the vignette working then add code for groupings
+such as `all_skates`.
+
+TODO Then re-run again with 2020 data added and 2018
+expanded areas accounted for (may be done already for Series EF).
+
+```{r definesp}
+sp_vec <- c("yelloweye rockfish",
+            "arrowtooth flounder",
+            "lingcod",
+            "north pacific spiny dogfish",
+            "pacific cod",
+            "pacific halibut",
+            "redbanded rockfish",
+            "sablefish",
+            "longnose skate",
+            "walleye pollock")
+```
+
+Had already extracted the following data for Joe, so not evaluating the next
+chunk and just using what I saved for him.
+```{r multiple, eval=FALSE}
+cache_pbs_data_iphc(sp_vec)   # not double checked, as just ran them all individually
+```
+
+```{r showmult, fig.width = 10, fig.height = 8}
+
+for(sp in sp_vec[1:2]){
+  print(paste("***** ", sp, " *****"))
+  sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
+  # Print the first and last values:
+  sp_set_counts
+  tail(sp_set_counts$set_counts)
+
+  sp_set_counts_with_area <- add_in_area(sp_set_counts$set_counts,
+                                         area = HG_herring_pred_area)
+
+  ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
+  ser_E_and_F
+
+  series_longest <- calc_iphc_ser_EF(ser_E_and_F)
+  series_longest
+  plot_IPHC_ser_four_panels(ser_E_and_F, series_longest)
+}
+```
+
+
+Note that the code may not yet fully account for all possibilities (for all
+areas and species), particularly for rarer species. So do check that the output
+is sensible.
+
+do analysis, with wrapper function for:
+   - sp with area
+   - series E and F
+   - series EF
+
+  plot results
+  save results
+
+
+show movie (link from other vignette)

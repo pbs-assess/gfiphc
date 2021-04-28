@@ -3,7 +3,7 @@ title: "Extract and analyse the IPHC data for a restricted area"
 author: "Andrew Edwards"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Extract the IPHC data for one species}
+  %\VignetteIndexEntry{Extract the IPHC data for a restricted area}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -24,7 +24,6 @@ those data are saved in the package).
 
 ```{r setup, results = FALSE}
 library(gfiphc)
-library(dplyr)   # TODO hopefully not need?
 ```
 
 ## Data for species of interest
