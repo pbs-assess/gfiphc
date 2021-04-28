@@ -57,7 +57,7 @@ sp_set_counts <- yelloweye_rockfish
 ## Analyses for subset of stations
 
 The area of interest is saved in `gfiphc` as `HG_herring_pred_area`:
-```{r predators, warnings=FALSE, messages = FALSE}
+```{r predators, results = FALSE}
 plot_BC(main = "All 2008 stations")
 
 PBSmapping::addPolys(HG_herring_pred_area,
@@ -93,7 +93,7 @@ dplyr::select(sp_set_counts_with_area, year, station, lat, lon, E_it, C_it, usab
 ```
 
 Colour code on map:
-```{r area, warnings = FALSE, messages = FALSE}
+```{r area, results = FALSE}
 plot_BC(main = "All 2008 stations")
 
 PBSmapping::addPolys(HG_herring_pred_area,
@@ -108,7 +108,7 @@ plot_iphc_map(sp_set_counts_with_area,
 ```
 
 2018 had expanded (non-standard) stations, which are shown as open circles:
-```{r area2018, warnings = FALSE, messages = FALSE}
+```{r area2018, results = FALSE}
 plot_BC(main = "All 2018 stations")
 
 PBSmapping::addPolys(HG_herring_pred_area,
@@ -123,7 +123,7 @@ plot_iphc_map(sp_set_counts_with_area,
 ```
 
 Make a movie to check each year:
-```{r, animation.hook = 'gifski', interval = 1.5, fig.height = 6, warnings = FALSE, messages = FALSE}
+```{r, animation.hook = 'gifski', interval = 1.5, fig.height = 6, results = FALSE}
 for(i in unique(sp_set_counts_with_area$year)){
   plot_BC(main = paste0("All ", i, " stations"))
 
@@ -177,3 +177,5 @@ plot_IPHC_ser_four_panels(ser_E_and_F, series_longest)
 Note that the code may not yet fully account for all possibilities (for all
 areas and species), particularly for rarer species. So do check that the output
 is sensible.
+
+HERE - check this then start multiple species one.
