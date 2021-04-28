@@ -2,7 +2,8 @@
 % Please edit documentation in R/calc-iphc-ser-area.R
 \name{TODO_E_F_iphc_get_calc_plot}
 \alias{TODO_E_F_iphc_get_calc_plot}
-\title{Get data, do calculations and plot longest series for the IPHC survey}
+\title{Get data, do calculations and plot longest series for the IPHC survey TODO -
+may be worth doing, need the format part for gfsynopsis}
 \usage{
 TODO_E_F_iphc_get_calc_plot(sp)
 }

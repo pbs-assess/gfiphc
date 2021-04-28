@@ -2,8 +2,8 @@
 
 S3method(plot,IPHC_ser_E_and_F)
 export("%>%")
-export(TODO_E_F_calc_iphc_full_res)
 export(TODO_E_F_iphc_get_calc_plot)
+export(add_in_area)
 export(add_stations)
 export(cache_pbs_data_iphc)
 export(calc_iphc_full_res)

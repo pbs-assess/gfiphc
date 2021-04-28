@@ -309,8 +309,6 @@ calc_iphc_ser_EF <- function(series_all,
 }
 
 
-
-
 ##' Take set count data for a species and add column indicating whether or not
 ##' it is inside a given area
 ##'
