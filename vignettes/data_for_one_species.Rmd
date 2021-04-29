@@ -25,7 +25,7 @@ package.
 
 ```{r setup, results = FALSE}
 library(gfiphc)
-library(dplyr)
+library(dplyr)    # Need to print tibble properly
 ```
 
 <!-- Adapting code written by Andrew Edwards for Beau Doherty at Landmark -->

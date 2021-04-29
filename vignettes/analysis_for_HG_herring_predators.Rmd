@@ -41,6 +41,19 @@ such as `all_skates`.
 TODO Then re-run again with 2020 data added and 2018
 expanded areas accounted for (may be done already for Series EF).
 
+<!-- From Jen: -->
+<!-- What would work best for me is a csv file with 3 columns: “Year”, “Indicator”, “Value”  -->
+<!-- Non-standardized values are best. -->
+<!-- The “Indicator” column could include:   -->
+<!-- 1. ArrowtoothFlounder_IPHC_SurveyCatchRate  -->
+<!-- 2. ArrowtoothFlounder_IPHC_UpperCI -->
+<!-- 3. ArrowtoothFlounder_IPHC_LowerCI -->
+<!-- 4. Rockfish_IPHC_SurveyCatchRate -->
+<!-- 5. ... -->
+<!-- ... -->
+
+
+These are the original species (herring predators) extracted for Joe.
 ```{r definesp}
 sp_vec <- c("yelloweye rockfish",
             "arrowtooth flounder",
@@ -53,6 +66,42 @@ sp_vec <- c("yelloweye rockfish",
             "longnose skate",
             "walleye pollock")
 ```
+
+We want a general rockfish category and general skates one, I just picked
+yelloweye, redbanded, and longnose as examples above. Going through groundfish
+synopsis report and picking skate species, then rockfish, that have sufficient
+data to look useful.
+
+## Rockfish species
+
+Looking through 2019 synopsis report, here are the decisions and comments on
+including each skate species:
+
+ - Aleutian Skate: Looks like only enumerated explicitly since 2007, 2018 map
+   shows mean 0.31 fish/skate. Include (especially if lumped in an all-skate
+   category early on? TODO check early IPHC data).
+ - Abyssal Skate - no catch, ignore.
+ - Broad Skate - no catch, ignore.
+ - Big Skate - looks like enumerated explicitly since 1998, and 2018 map shows
+   mean 0.69 fish/skate. Include.
+ - Roughtail Skate - looks like only caught in 3 or four years (mean +ve sets
+   1/177). No catch in 2018. Include (but look at numbers carefully first).
+ - Sandpaper Skate - only shows up since 2003 (but not shown as zeros before
+   that, just no data, TODO so look into). Mean +ve sets 5/177, 2018 mean 0.14 fish/skate. Include.
+ - Longnose Skate - only shows up since 1998, mean +ve sets 57/135, 2018 mean
+   0.96 fish/skate. Include.
+-  Alaska Skate - only showed up in four years, 2018 mean 0.14 fish/skate. Only
+   plotted since 2003 (like Sandpaper), so TODO look into. Include even though
+   rare.
+-
+
+
+TODO: were no skate enumerated in 1995 and 1996? If so then just use Series E -
+check if the code does that automatically. And add an extra variable in the list
+output to easily say which species it is (determined from p-value, but do in the
+calculation function just the once).
+
+
 
 Had already extracted the following data for Joe, so not evaluating the next
 chunk and just using what I saved for him.
