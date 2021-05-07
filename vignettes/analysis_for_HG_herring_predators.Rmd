@@ -123,41 +123,38 @@ Now want to lump the skates in `skate_sp` together. Merge two together manually
 then write a function for that
 
 ```{r testing}
-sp_1 <- readRDS(paste0(gsub(" ", "-", skate_sp[1]), ".rds"))
-sp_2 <- readRDS(paste0(gsub(" ", "-", skate_sp[2]), ".rds"))
+# HERE check this
+# Do a function for this first: from sp_vec load in the big_skate data just once
+  sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
 
-# First attempt
-res <- dplyr::bind_rows(sp_1$set_counts,
-                        sp_2$set_counts) %>%
-  dplyr::group_by(year,
-                  station, lat, lon, E_it, E_it20, usable,
-                  standard) %>%    # to keep all those in output
-  dplyr::summarise(dplyr::across(c(N_it,
-                                   C_it,
-                                   N_it20,
-                                   C_it20),
-                                 sum)) %>%
-  select(names(sp_1$set_counts))    # reorder columns
+get_combined_species <- function(sp_vec){
+  for(i in 1:length(sp_vec)){
+    this_sp <- readRDS(paste0(gsub(" ", "-", sp_vec[i]),
+                              ".rds"))   # this will become part of the above function
 
-expect_equal(sp_2$set_counts$station, res$station)
-```
-That didn't quite work, I think the group_by can rearrange maybe. Try a simpler
-approach:
-```{r testing2}
-expect_equal(sp_1$set_counts$station, sp_2$set_counts$station)
-res <- sp_1$set_counts %>%
-  dplyr::select(-c(N_it,
-                   C_it,
-                   N_it20,
-                   C_it20))
-res$N_it = sp_1$set_counts$N_it +
-  sp_1$set_counts$N_it
-res$C_it = sp_1$set_counts$C_it +
-  sp_1$set_counts$C_it
-res$N_it20 = sp_1$set_counts$N_it20 +
-  sp_1$set_counts$N_it20
-res$C_it20 = sp_1$set_counts$C_it20 +
-  sp_1$set_counts$C_it20
+    if(i == 1){
+      res <- this_sp$set_counts %>%
+        dplyr::select(-c(N_it,
+                         C_it,
+                         N_it20,
+                         C_it20))} else {
+      expect_equal(res$station,
+                   this_sp$set_counts$station)
+    }
+
+    res$N_it <- res$N_it + this_sp$set_counts$N_it
+    res$C_it <- res$C_it + this_sp$set_counts$C_it
+    res$N_it20 <- res$N_it20 + this_sp$set_counts$N_it20
+    res$C_it20 <- res$C_it20 + this_sp$set_counts$C_it20
+  }
+
+  # HERE not checked this
+  combined_species <- list()
+  combined_species$set_counts <- res
+  return(combined_species)
+}
+
+
 
 # Need to check how NA's pass through. Want them to stay NA's if true, but do we
 # ever get N_it = NA  when E_it != NA but usable = "Y"?
