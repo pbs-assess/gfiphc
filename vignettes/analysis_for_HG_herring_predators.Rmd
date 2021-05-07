@@ -35,8 +35,6 @@ library(gfiphc)
 
 First, just running for multiple individual species.
 
-TODO: will get the vignette working then add code for groupings
-such as `all_skates`.
 
 TODO Then re-run again with 2020 data added and 2018
 expanded areas accounted for (may be done already for Series EF).
@@ -72,7 +70,7 @@ yelloweye, redbanded, and longnose as examples above. Going through groundfish
 synopsis report and picking skate species, then rockfish, that have sufficient
 data to look useful.
 
-## Rockfish species
+## Skate species
 
 Looking through 2019 synopsis report, here are the decisions and comments on
 including each skate species:
@@ -90,24 +88,110 @@ including each skate species:
    that, just no data, TODO so look into). Mean +ve sets 5/177, 2018 mean 0.14 fish/skate. Include.
  - Longnose Skate - only shows up since 1998, mean +ve sets 57/135, 2018 mean
    0.96 fish/skate. Include.
--  Alaska Skate - only showed up in four years, 2018 mean 0.14 fish/skate. Only
+ -  Alaska Skate - only showed up in four years, 2018 mean 0.14 fish/skate. Only
    plotted since 2003 (like Sandpaper), so TODO look into. Include even though
    rare.
--
+
+```{r skatedefn}
+skate_sp <- c("aleutian skate",
+              "big skate",
+              "roughtail skate",
+              "sandpaper skate",
+              "longnose skate",
+              "alaska skate")
+skate_ignore <- c("abyssal skate",
+                  "broad skate")
+```
+
+Cache the data once (this is not evaluated each time):
+```{r get_skates, eval=FALSE}
+cache_pbs_data_iphc(skate_sp)
+cache_pbs_data_iphc(skate_ignore)
+```
+
 
 
 TODO: were no skate enumerated in 1995 and 1996? If so then just use Series E -
 check if the code does that automatically. And add an extra variable in the list
 output to easily say which species it is (determined from p-value, but do in the
 calculation function just the once).
-
-
-
-Had already extracted the following data for Joe, so not evaluating the next
 chunk and just using what I saved for him.
-```{r multiple, eval=FALSE}
-cache_pbs_data_iphc(sp_vec)   # not double checked, as just ran them all individually
+
+TO HERE
+
+Now want to lump the skates in `skate_sp` together. Merge two together manually
+then write a function for that
+
+```{r testing}
+sp_1 <- readRDS(paste0(gsub(" ", "-", skate_sp[1]), ".rds"))
+sp_2 <- readRDS(paste0(gsub(" ", "-", skate_sp[2]), ".rds"))
+
+# First attempt
+res <- dplyr::bind_rows(sp_1$set_counts,
+                        sp_2$set_counts) %>%
+  dplyr::group_by(year,
+                  station, lat, lon, E_it, E_it20, usable,
+                  standard) %>%    # to keep all those in output
+  dplyr::summarise(dplyr::across(c(N_it,
+                                   C_it,
+                                   N_it20,
+                                   C_it20),
+                                 sum)) %>%
+  select(names(sp_1$set_counts))    # reorder columns
+
+expect_equal(sp_2$set_counts$station, res$station)
 ```
+That didn't quite work, I think the group_by can rearrange maybe. Try a simpler
+approach:
+```{r testing2}
+expect_equal(sp_1$set_counts$station, sp_2$set_counts$station)
+res <- sp_1$set_counts %>%
+  dplyr::select(-c(N_it,
+                   C_it,
+                   N_it20,
+                   C_it20))
+res$N_it = sp_1$set_counts$N_it +
+  sp_1$set_counts$N_it
+res$C_it = sp_1$set_counts$C_it +
+  sp_1$set_counts$C_it
+res$N_it20 = sp_1$set_counts$N_it20 +
+  sp_1$set_counts$N_it20
+res$C_it20 = sp_1$set_counts$C_it20 +
+  sp_1$set_counts$C_it20
+
+# Need to check how NA's pass through. Want them to stay NA's if true, but do we
+# ever get N_it = NA  when E_it != NA but usable = "Y"?
+
+# These works, need to functionalise and do for >2 species
+
+```
+
+
+```{r merge}
+for(sp in skate_sp[1:2]){
+  print(paste("*****", sp, "*****"))
+  sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
+  # Print the first and last values:
+  print(sp_set_counts)
+  print(tail(sp_set_counts$set_counts))
+
+  sp_set_counts_with_area <- add_in_area(sp_set_counts$set_counts,
+                                         area = HG_herring_pred_area)
+
+  ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
+  print(ser_E_and_F)
+
+  series_longest <- calc_iphc_ser_EF(ser_E_and_F)
+  print(series_longest)
+  print(paste("*****", sp, "*****"))
+
+  plot_IPHC_ser_four_panels(ser_E_and_F, series_longest)
+}
+```
+
+
+
+## Individual species
 
 ```{r showmult, fig.width = 10, fig.height = 8}
 
