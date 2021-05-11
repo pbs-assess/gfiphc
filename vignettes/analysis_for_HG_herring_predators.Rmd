@@ -126,36 +126,6 @@ then write a function for that
 # HERE check this
 # Do a function for this first: from sp_vec load in the big_skate data just once
 
-get_combined_species <- function(sp_vec){
-  for(i in 1:length(sp_vec)){
-    this_sp <- readRDS(paste0(gsub(" ", "-", sp_vec[i]),
-                              ".rds"))   # this will become part of the above function
-
-    if(i == 1){
-      all_sp_set_counts <- this_sp$set_counts
-    } else {
-      expect_equal(all_sp_set_counts$station,
-                   this_sp$set_counts$station)
-
-      # Creates columns N_it...<number>
-      all_sp_set_counts <- dplyr::bind_cols(all_sp_set_counts,
-                                            select(this_sp$set_counts,
-                                                   N_it,
-                                                   N_it20))
-    }
-
-  }
-
-  combined_species <- list()
-  combined_species$set_counts <- rowwise(all_sp_set_counts) %>%
-    mutate(N_it_sum = sum(c_across(contains("N_it...")), na.rm = TRUE),
-           N_it20_sum = sum(c_across(contains("N_it20...")), na.rm = TRUE),
-           C_it_sum = N_it_sum / E_it,
-           C_it20_sum = N_it20_sum / E_it20) %>%
-    ungroup()
-
-  return(combined_species)
-}
 
 res <- get_combined_species(sp_vec=skate_sp)
 

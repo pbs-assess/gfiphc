@@ -615,3 +615,91 @@ read_sql <- function(x) {
     stop("The sql file does not exist.")
   }
 }
+
+
+##' Get combined catch counts for a set of species
+##'
+##' The .rds file for each species needs to already exist, from running
+##' `cache_pbs_data_iphc(sp_vec)`.
+##' This combines the values together, for example to give data for a number of
+##' skates combined, rather than individual species.
+##'
+##' @param sp_vec vector of IPHC species names
+##'
+##' @return list with  tibble `set_counts` (same format as for individual
+##'   species) that contains year, station name, lat, lon, and
+##'  *  E_it - effective skate number for that station, based on all hooks (so
+##'   NA for 1997-2002, 2013, 2020),
+##'  * N_it...<num> - number of 'species' caught on all hooks, so NA for
+##'   1997-2002, 2013, 2020, where <num> is the column number appended by dplyr within this
+##'   function,
+##'  * N_it_all - sum of `N_it...<num>`, with NA's removed (treated as zeros)
+##'   TODO: say what happens if some have NA
+##'  * C_it_all - catch rate of all 'species' as number per effective skate,
+##'   based on all hooks, so NA for 1997-2002, 2013, 2020,
+##'  *  E_it20 - effective skate number for that station, based on first 20
+##'   hooks, so NA for 1995 and 1996,
+##'  * N_it20...<num number of 'species' caught in first 20 hooks, so NA for
+##'   1995 and 1996, where <num> is the column number appended by dplyr within this
+##'  * N_it20_all - sum of `N_it20...<num>`, with NA's removed (treated as zeros)
+##'   TODO: say what happens if some have NA
+##'  * C_it20_all - catch rate all 'species' as number per effective skate,
+##'   based on the first 20 hooks, so NA for 1995 and 1996,
+##'  * usable  - whether or not that station is usable, as deemed by IPHC,
+##'  * standard - whether or not station is a standard one or in the
+##'               expansion set after 2018; all Y here since pre-2018; for
+##'               1996 and 1997 the station layout is not the standard grid
+##'               and the naming of stations is different,
+##'               `intersect(filter(sp_set_counts$set_counts, year == 1996)$station, setDataExpansion$station`
+##'               is empty, but the area fished is similar to later standard
+##'               years so we put Y here
+##'
+##' If no data on any of the species in `sp_vec` then `C_it_all` and N_it are
+##'   NA's. This happens for sure for years when the counts are not
+##'   available. Examine each individual species count for NA's to check they
+##'   have propagated through okay.
+##'
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##'  skate_sp <- c("aleutian skate",
+##'                "big skate",
+##'                "roughtail skate",
+##'                "sandpaper skate",
+##'                "longnose skate",
+##'                "alaska skate")
+##' res <- get_combined_species(sp_vec = skate_sp)
+##' # And see `analysis_for_HG_predators` vignette.
+##' @}
+get_combined_species <- function(sp_vec){
+  for(i in 1:length(sp_vec)){
+    this_sp <- readRDS(paste0(gsub(" ", "-", sp_vec[i]),
+                              ".rds"))   # this will become part of the above function
+
+    if(i == 1){
+      all_sp_set_counts <- this_sp$set_counts %>%
+        select(-c(C_it,
+                  C_it20))
+    } else {
+      expect_equal(all_sp_set_counts$station,
+                   this_sp$set_counts$station)
+
+      # Creates columns N_it...<number>
+      all_sp_set_counts <- dplyr::bind_cols(all_sp_set_counts,
+                                            select(this_sp$set_counts,
+                                                   N_it,
+                                                   N_it20))
+    }
+  }
+
+  combined_species <- list()
+  combined_species$set_counts <- dplyr::rowwise(all_sp_set_counts) %>%
+    mutate(N_it_sum = sum(dplyr::c_across(contains("N_it...")), na.rm = TRUE),
+           N_it20_sum = sum(dplyr::c_across(contains("N_it20...")), na.rm = TRUE),
+           C_it_sum = N_it_sum / E_it,
+           C_it20_sum = N_it20_sum / E_it20) %>%
+    ungroup()
+
+  return(combined_species)
+}
