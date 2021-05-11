@@ -133,11 +133,6 @@ get_combined_species <- function(sp_vec){
 
     if(i == 1){
       all_sp_set_counts <- this_sp$set_counts
-      #%>%
-      #  dplyr::select(-c(N_it,
-      #                   C_it,
-      #                   N_it20,
-      #                   C_it20))
     } else {
       expect_equal(all_sp_set_counts$station,
                    this_sp$set_counts$station)
@@ -147,19 +142,14 @@ get_combined_species <- function(sp_vec){
                                             select(this_sp$set_counts,
                                                    N_it,
                                                    N_it20))
-
-      ## res$N_it <- res$N_it + this_sp$set_counts$N_it
-      ## res$C_it <- res$C_it + this_sp$set_counts$C_it
-      ## res$N_it20 <- res$N_it20 + this_sp$set_counts$N_it20
-      ## res$C_it20 <- res$C_it20 + this_sp$set_counts$C_it20
     }
 
   }
 
   combined_species <- list()
   combined_species$set_counts <- rowwise(all_sp_set_counts) %>%
-    mutate(N_it_sum = sum(c_across(contains("N_it..."))),
-           N_it20_sum = sum(c_across(contains("N_it20..."))),
+    mutate(N_it_sum = sum(c_across(contains("N_it...")), na.rm = TRUE),
+           N_it20_sum = sum(c_across(contains("N_it20...")), na.rm = TRUE),
            C_it_sum = N_it_sum / E_it,
            C_it20_sum = N_it20_sum / E_it20) %>%
     ungroup()
@@ -171,8 +161,6 @@ res <- get_combined_species(sp_vec=skate_sp)
 
 # Need to check how NA's pass through. Want them to stay NA's if true, but do we
 # ever get N_it = NA  when E_it != NA but usable = "Y"?
-
-# These works, need to functionalise and do for >2 species
 
 ```
 
