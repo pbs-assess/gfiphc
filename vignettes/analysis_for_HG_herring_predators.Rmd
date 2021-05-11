@@ -117,26 +117,39 @@ output to easily say which species it is (determined from p-value, but do in the
 calculation function just the once).
 chunk and just using what I saved for him.
 
-TO HERE
-
 Now want to lump the skates in `skate_sp` together. Merge two together manually
 then write a function for that
 
 ```{r testing}
-# HERE check this
-# Do a function for this first: from sp_vec load in the big_skate data just once
-
-
 res <- get_combined_species(sp_vec=skate_sp)
 
+summary(res$set_counts)
+
 # Need to check how NA's pass through. Want them to stay NA's if true, but do we
-# ever get N_it = NA  when E_it != NA but usable = "Y"?
+# ever get N_it_sum = NA  when E_it != NA but usable = "Y"?
 
+testthat::expect_equal(res$set_counts %>% dplyr::filter(is.na(N_it_sum) &
+                                                        !is.na(E_it) & usable ==
+                                                        "Y") %>%
+                       nrow(),
+                       0)
+
+# And check the same for the 20-hook counts:
+testthat::expect_equal(res$set_counts %>% dplyr::filter(is.na(N_it20_sum) &
+                                                        !is.na(E_it20) & usable
+                                                        == "Y") %>%
+                       nrow(),
+                       0)
+
+res$set_counts %>% dplyr::select(-c("station", "lat", "lon", "usable", "standard")) %>%
+  dplyr::summarise_all( ~ sum(is.na(.x))) %>%
+    t()
 ```
-
+Can see that the number of NA's is not the same for all species. See below for
+each individual species,
 
 ```{r merge}
-for(sp in skate_sp[1:2]){
+for(sp in skate_sp){
   print(paste("*****", sp, "*****"))
   sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
   # Print the first and last values:
