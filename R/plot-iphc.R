@@ -30,7 +30,8 @@
 ##'  * `E` to plot just Series E
 ##'  * `F` to plot just Series F
 ##'  * `E_F_scaled` to plot Series E and F each scaled by their geometric mean
-##'  * `EF` to plot Series EF [with E rescaled in red]
+##'  * `EF` to plot Series EF [with E rescaled in red], empty plot if longest
+##'   series is just E or F
 ##' @param ser_E_col
 ##' @param ser_F_col
 ##' @param legend_text
@@ -70,9 +71,13 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
   }
 
   if(is.null(y_lim)){
+    y_max_series_longest <- ifelse(series_longest$test_EF$type == "F",
+                                   series_longest$ser_longest$I_tBootHigh,
+                                   series_longest$ser_longest$I_t20BootHigh)
+
     y_max <- max(c(ser_E_and_F$serE$I_t20BootHigh,
                    ser_E_and_F$serF$I_tBootHigh,
-                   series_longest$ser_longest$I_t20BootHigh))
+                   y_max_series_longest))
     y_lim <- c(0, y_max)
   }
 
@@ -176,50 +181,50 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
 
     if(plot_type == "EF"){
 
-      if(is.null(series_longest$test_EF$t_EF$p.value)){
-        stop("Plot needs tweaking if not Series EF due to species counts -- adapt based on calc_iphc_ser_EF() and maybe commit 26028b9.")
+      if(series_longest$test_EF$type != "EF"){
+        # is.null(series_longest$test_EF$t_EF$p.value) | series_longest$test_EF$t_EF$p.value < 0.05){
+        # stop("Plot needs tweaking if not Series EF due to species counts -- adapt based on calc_iphc_ser_EF() and maybe commit 26028b9.")
+        # stop("Plot needs tweaking if not Series EF due to p-value -- adapt
+        # based on calc_iphc_ser_EF() and maybe commit 26028b9.")
+        # plot nothing
+      } else {
+        years_only_F <- setdiff(ser_E_and_F$ser_F$year,
+                                ser_E_and_F$ser_E$year) # years only in F
+
+
+        years_col <- rep(ser_E_col,
+                         length(series_longest$ser_longest$year))
+
+        years_col[which(years_only_F %in% series_longest$ser_longest$year)] <- ser_F_col
+
+        gplots::plotCI(series_longest$ser_longest$year,
+                       series_longest$ser_longest$I_t20BootMean,
+                       li = series_longest$ser_longest$I_t20BootLow,
+                       ui = series_longest$ser_longest$I_t20BootHigh,
+                       col = years_col,
+                       barcol = years_col,
+                       xlim = x_lim,
+                       ylim = y_lim,
+                       xlab = x_lab,
+                       ylab = y_lab,
+                       gap = gap_ci,
+                       ...)
+
+        axis(1, at = x_ticks, labels = FALSE, tck = tck_length)
+        legend("topright",
+               legend = c("Series EF",
+                          "",
+                          "Original Series E",
+                          "Rescaled Series F"),
+               pch = c(NA, NA, 1,1),
+               col = c(NA,
+                       NA,
+                       ser_E_col,
+                       ser_F_col),
+               cex = c(1.2, 1, 1, 1),
+               bty = "n")
       }
-      if(series_longest$test_EF$t_EF$p.value < 0.05){
-        stop("Plot needs tweaking if not Series EF due to p-value -- adapt based on calc_iphc_ser_EF() and maybe commit 26028b9.")
-      }
-
-      years_only_F <- setdiff(ser_E_and_F$ser_F$year,
-                              ser_E_and_F$ser_E$year) # years only in F
-
-
-      years_col <- rep(ser_E_col,
-                       length(series_longest$ser_longest$year))
-
-      years_col[which(years_only_F %in% series_longest$ser_longest$year)] <- ser_F_col
-
-      gplots::plotCI(series_longest$ser_longest$year,
-                     series_longest$ser_longest$I_t20BootMean,
-                     li = series_longest$ser_longest$I_t20BootLow,
-                     ui = series_longest$ser_longest$I_t20BootHigh,
-                     col = years_col,
-                     barcol = years_col,
-                     xlim = x_lim,
-                     ylim = y_lim,
-                     xlab = x_lab,
-                     ylab = y_lab,
-                     gap = gap_ci,
-                     ...)
-
-      axis(1, at = x_ticks, labels = FALSE, tck = tck_length)
-      legend("topright",
-             legend = c("Series EF",
-                        "",
-                        "Original Series E",
-                        "Rescaled Series F"),
-             pch = c(NA, NA, 1,1),
-             col = c(NA,
-                     NA,
-                     ser_E_col,
-                     ser_F_col),
-             cex = c(1.2, 1, 1, 1),
-             bty = "n")
-  }
-
+    }
 }
 
 ##' Wrapper to plot all four versions of Series E and F plots in one figure

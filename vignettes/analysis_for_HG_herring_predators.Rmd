@@ -149,7 +149,7 @@ Can see that the number of NA's is not the same for all species. See below for
 each individual species,
 
 ```{r merge}
-for(sp in skate_sp){
+for(sp in skate_sp[3]){
   print(paste("*****", sp, "*****"))
   sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
   # Print the first and last values:

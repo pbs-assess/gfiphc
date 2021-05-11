@@ -113,6 +113,9 @@ calc_iphc_ser_E_and_F <- function(set_counts) {
 ##'   G_E, G_F: geometric means of nonzero values in Series E and Series F
 ##'   (based on bootstrapped means).
 ##'
+##'   type: which type the longest series is, either `EF`, `E`, or `F`, based on
+##'   the descriptions below.
+##'
 ##'   Longest series is either
 ##'
 ##'   (i) Series EF (Series E with 1995 and 1996 appropriately scaled from
@@ -156,7 +159,8 @@ calc_iphc_ser_EF <- function(series_all,
         test_EF = list(
           t_EF = NULL,
           G_E = NA,
-          G_F = NA
+          G_F = NA,
+          type = "E"
         )
       ))
     } else {
@@ -165,7 +169,8 @@ calc_iphc_ser_EF <- function(series_all,
         test_EF = list(
           t_EF = NULL,
           G_E = NA,
-          G_F = NA
+          G_F = NA,
+          type = "F"
         )
       ))
     }
@@ -178,7 +183,8 @@ calc_iphc_ser_EF <- function(series_all,
       test_EF = list(
         t_EF = NULL,
         G_E = NA,
-        G_F = NA
+        G_F = NA,
+        type = "F"
       )
     ))
   }
@@ -205,7 +211,8 @@ calc_iphc_ser_EF <- function(series_all,
         test_EF = list(
           t_EF = NULL,
           G_E = G_E,
-          G_F = G_F
+          G_F = G_F,
+          type = "F"
         )))
     } else {
       if(return_F_if_same_length){
@@ -214,7 +221,8 @@ calc_iphc_ser_EF <- function(series_all,
           test_EF = list(
             t_EF = NULL,
             G_E = G_E,
-            G_F = G_F
+            G_F = G_F,
+            type = "F"
           )))
       } else {
         return(list(
@@ -222,7 +230,8 @@ calc_iphc_ser_EF <- function(series_all,
           test_EF = list(
             t_EF = NULL,
             G_E = G_E,
-            G_F = G_F
+            G_F = G_F,
+            type = "E"
           )))
       }
     }
@@ -293,7 +302,8 @@ calc_iphc_ser_EF <- function(series_all,
           test_EF = list(
             t_EF = t_EF,
             G_E = G_E,
-            G_F = G_F)),
+            G_F = G_F,
+            type = "EF")),
         class = "IPHC_ser_EF"))  # TODO - add to above ones once happy with,
                                  # though plot function didn't seem to work
   } else {
@@ -304,7 +314,8 @@ calc_iphc_ser_EF <- function(series_all,
           test_EF = list(
             t_EF = t_EF,
             G_E = G_E,
-            G_F = G_F)),
+            G_F = G_F,
+            type = "E")),
         class = "IPHC_ser_EF"))
   }
 }
@@ -358,13 +369,6 @@ add_in_area <- function(set_counts_of_sp,
 
   return(sp_set_counts_with_area)
 }
-
-
-
-
-
-
-
 
 
 
