@@ -146,9 +146,7 @@ get_combined_species <- function(sp_vec){
       all_sp_set_counts <- dplyr::bind_cols(all_sp_set_counts,
                                             select(this_sp$set_counts,
                                                    N_it,
-                                                   C_it,
-                                                   N_it20,
-                                                   C_it20))
+                                                   N_it20))
 
       ## res$N_it <- res$N_it + this_sp$set_counts$N_it
       ## res$C_it <- res$C_it + this_sp$set_counts$C_it
@@ -160,7 +158,10 @@ get_combined_species <- function(sp_vec){
 
   combined_species <- list()
   combined_species$set_counts <- rowwise(all_sp_set_counts) %>%
-    mutate(N_it_sum = sum(c_across(contains("N_it...")))) %>%
+    mutate(N_it_sum = sum(c_across(contains("N_it..."))),
+           N_it20_sum = sum(c_across(contains("N_it20..."))),
+           C_it_sum = N_it_sum / E_it,
+           C_it20_sum = N_it20_sum / E_it20) %>%
     ungroup()
 
   return(combined_species)
