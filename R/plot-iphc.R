@@ -53,7 +53,9 @@
 plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
                                   series_longest = NULL,
                                  plot_type = "E",    # change back to default as EF
-                                 x_lim = NULL,
+                                 x_lim = c(1995, as.integer(format(Sys.Date(),
+                                                                   "%Y")) - 1),
+                                     # not automatic since not loading in full data
                                  y_lim = NULL,
                                  shift = 0.15,
                                  tck_length = -0.02,

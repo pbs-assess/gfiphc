@@ -12,8 +12,8 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.width = 6,
-  fig.height = 6
+  fig.width = 10,
+  fig.height = 8
 )
 ```
 
@@ -148,7 +148,7 @@ res$set_counts %>% dplyr::select(-c("station", "lat", "lon", "usable", "standard
 Can see that the number of NA's is not the same for all species. See below for
 each individual species,
 
-```{r merge}
+```{r merge, warning = FALSE}
 for(sp in skate_sp){
   print(paste("*****", sp, "*****"))
   sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
@@ -174,7 +174,7 @@ for(sp in skate_sp){
 
 ## Individual species
 
-```{r showmult, fig.width = 10, fig.height = 8}
+```{r showmult, warning = FALSE}
 
 for(sp in sp_vec){
   print(paste("*****", sp, "*****"))
