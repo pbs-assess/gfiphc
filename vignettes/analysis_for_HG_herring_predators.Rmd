@@ -121,7 +121,7 @@ Now want to lump the skates in `skate_sp` together. Merge two together manually
 then write a function for that
 
 ```{r testing}
-res <- get_combined_species(sp_vec=skate_sp)
+res <- get_combined_species(sp_vec = skate_sp)
 
 summary(res$set_counts)
 
@@ -149,7 +149,8 @@ Can see that the number of NA's is not the same for all species. See below for
 each individual species,
 
 ```{r merge}
-for(sp in skate_sp[3]){
+for(sp in skate_sp){
+sp = "longnose skate"
   print(paste("*****", sp, "*****"))
   sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
   # Print the first and last values:

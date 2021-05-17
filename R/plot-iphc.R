@@ -69,7 +69,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
     G_E <- series_longest$test_EF$G_E
     G_F <- series_longest$test_EF$G_F
   }
-
+browser()
   if(is.null(y_lim)){
     y_max_series_longest <- ifelse(series_longest$test_EF$type == "F",
                                    series_longest$ser_longest$I_tBootHigh,
