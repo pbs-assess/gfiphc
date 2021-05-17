@@ -150,7 +150,6 @@ each individual species,
 
 ```{r merge}
 for(sp in skate_sp){
-sp = "longnose skate"
   print(paste("*****", sp, "*****"))
   sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
   # Print the first and last values:
