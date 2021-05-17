@@ -30,22 +30,22 @@ The functions in this package were originally part of gfplot and have now been s
 Methods are described in detail in Appendix G of the groundfish synopsis report [Anderson et al. (2019)](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2019/2019_041-eng.html). The methods build on those developed for assessments of
 Redbanded Rockfsh [(Edwards et al. 2017)](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2017/2017_058-eng.html) and Yelloweye Rockfsh [(Yamanaka et al. 2018)](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_001-eng.html) . The Redbanded assessment was the first to develop an abundance index from the IPHC survey that went back to 1995, and included data up to 2012. For the Yelloweye assessment the methods were extended to demonstrate that the index based on waters north of Vancouver Island could be considered representative of the coastwide population. The synopsis report includes preliminary investigations into hook competition.
 
-## Differing data collection protocols
+## Differing data-collection protocols
 
 A particular issue is that the data resolution is not the same across the years. This is explained in Table G.1 in the synopsis report. An updated version of that table is given here:
 
 
 |Year         |Hooks enumerated          |Data resolution    |Location of data       |WCVI? |
 |-------------|--------------------------|-------------------|-----------------------|-------|
-|1995         |All                       |Set-by-set         |Spreadsheets^1^        |N      |
-|1996         |All                       |Set-by-set         |Spreadsheet^2^         |N      |
-|1997-1998    |First 20 of each skate    |Set-by-set         |Spreadsheet^2^         |N      |
-|1999         |First 20 of each skate    |Set-by-set         |Spreadsheet^2^         |Y      |
-|2000         |First 20 of each skate    |Set-by-set         |Spreadsheet^2^         |N      |
-|2001-2002    |First 20 of each skate    |Set-by-set         |Spreadsheet^2^         |Y      |
+|1995         |All                       |Set-by-set         |Spreadsheets           |N      |
+|1996         |All                       |Set-by-set         |Spreadsheet            |N      |
+|1997-1998    |First 20 of each skate    |Set-by-set         |Spreadsheet            |N      |
+|1999         |First 20 of each skate    |Set-by-set         |Spreadsheet            |Y      |
+|2000         |First 20 of each skate    |Set-by-set         |Spreadsheet            |N      |
+|2001-2002    |First 20 of each skate    |Set-by-set         |Spreadsheet            |Y      |
 |2003-2011    |All                       |Hook-by-hook       |DFO database GFBio     |Y      |
 |2012         |All (bait experiment)     |Hook-by-hook       |DFO database GFBio     |Y      |
-|2013         |First 20 of each skate    |Set-by-set         |Spreadsheet^3^         |Y      |
+|2013         |First 20 of each skate    |Set-by-set         |Spreadsheet            |Y      |
 |2014-2017    |All                       |Hook-by-hook       |DFO database GFBio     |Y      |
 |2018         |All (+ expansions stns)   |Hook-by-hook       |DFO database GFBio     |Y      |
 |2019         |All                       |Hook-by-hook       |DFO database GFBio     |Y      |
@@ -53,6 +53,18 @@ A particular issue is that the data resolution is not the same across the years.
 
 <!-- for putting back into gfsynopsis, note that 2018 is now separated out) -->
 In 2018 there were extra expansion stations surveyed (see the vignettes), and in 2020 only the first 20 hooks were enumerated.
+
+## Summary of Series that can be constructed
+
+Due to the differing data-collection protocols, we developed different ways to obtain as long a time series as possible (Appendix G again). We first defined Series A, B, C, and D in Table G.2 (reproduced below), combined and compared them as possible to define Series AB for the north of West Coast of Vancouver Island (WCVI), and tested whether Series AB could be considered as representing the full coast (see Appendix G for full details). Here we also look at a user-defined restricted area of interest, defining Series E to be based on the first 20 hooks from each skate, and Series F to be based on all hooks from each skate (see the vignette TODO(add link) for details). Series A-F are defined as:
+
+|                                | Only north of WCVI | Full coast | Restricted area of interest |
+|--------------------------------|--------------------|------------|-----------------------------|
+| First 20 hooks from each skate | A (22)             | D (19)     | E                           |
+| All hooks from each skate      | B (17)             | C (15)     | F                           |
+ 
+with numbers in parentheses indicating the number of years for which data for each Series are available. For E and F this depends on the particular area of interest. 
+
 
 ## Installation
 
