@@ -169,28 +169,16 @@ Next steps:
 
 ## Individual skate species
 
-```{r merge, warning = FALSE}
-# TODO turn into a function maybe, with a verbose mode to show results
+Calculate series for each skate species in turn
+
+```{r repeat, warning = FALSE}
 for(sp in skate_sp){
-  print(paste("*****", sp, "*****"))
-  sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
-  # Print the first and last values:
-  # print(sp_set_counts)
-  # print(tail(sp_set_counts$set_counts))
+  iphc_get_calc_plot_area(sp)
 
-  sp_set_counts_with_area <- add_in_area(sp_set_counts$set_counts,
-                                         area = HG_herring_pred_area)
-
-  ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
-  # print(ser_E_and_F)
-
-  series_longest <- calc_iphc_ser_EF(ser_E_and_F)
-  # print(series_longest)
-  # print(paste("*****", sp, "*****"))
-
-  plot_IPHC_ser_four_panels(ser_E_and_F, series_longest)
+  # TODO add sp_name_area <-
 }
 ```
+
 
 
 
@@ -199,23 +187,7 @@ for(sp in skate_sp){
 ```{r showmult, warning = FALSE}
 # TODO replace by above function
 for(sp in sp_vec){
-  print(paste("*****", sp, "*****"))
-  sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
-  # Print the first and last values:
-  print(sp_set_counts)
-  print(tail(sp_set_counts$set_counts))
-
-  sp_set_counts_with_area <- add_in_area(sp_set_counts$set_counts,
-                                         area = HG_herring_pred_area)
-
-  ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
-  print(ser_E_and_F)
-
-  series_longest <- calc_iphc_ser_EF(ser_E_and_F)
-  print(series_longest)
-  print(paste("*****", sp, "*****"))
-
-  plot_IPHC_ser_four_panels(ser_E_and_F, series_longest)
+  iphc_get_calc_plot_area(sp)
 }
 ```
 
