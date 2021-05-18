@@ -674,8 +674,8 @@ read_sql <- function(x) {
 ##' @}
 get_combined_species <- function(sp_vec){
   for(i in 1:length(sp_vec)){
-    this_sp <- readRDS(paste0(gsub(" ", "-", sp_vec[i]),
-                              ".rds"))   # this will become part of the above function
+    this_sp <- readRDS(sp_hyphenate(sp_vec[i]))
+                             # this will become part of the above function
 
     if(i == 1){
       all_sp_set_counts <- this_sp$set_counts %>%

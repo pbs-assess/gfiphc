@@ -46,7 +46,7 @@
 ##' @donttest{
 ##' @ See vignette `data_for_one_species`
 ##' sp <- "yelloweye rockfish"
-##' sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))    # Need .rds
+##' sp_set_counts <- readRDS(sp_hyphenate(sp))    # Need .rds
 ##'   saved already
 ##' plot_iphc_map(sp_set_counts$set_counts, sp_short_name = "Yelloweye", years =
 ##'   2003)  # one year

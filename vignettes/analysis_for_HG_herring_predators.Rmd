@@ -169,25 +169,23 @@ Next steps:
 
 ## Individual skate species
 
-Calculate series for each skate species in turn
+Calculate series for each skate species in turn (saved as `species_name_area`)
+and plot figures of Series E and F and longest from those:
 
 ```{r repeat, warning = FALSE}
 for(sp in skate_sp){
-  iphc_get_calc_plot_area(sp)
-
-  # TODO add sp_name_area <-
+  assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
+         iphc_get_calc_plot_area(sp))
 }
 ```
-
-
-
 
 ## Individual non-skate species
 
 ```{r showmult, warning = FALSE}
 # TODO replace by above function
 for(sp in sp_vec){
-  iphc_get_calc_plot_area(sp)
+  assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
+         iphc_get_calc_plot_area(sp))
 }
 ```
 

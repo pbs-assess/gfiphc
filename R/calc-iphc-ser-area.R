@@ -418,7 +418,7 @@ iphc_get_calc_plot_area <- function(sp,
     print(paste("*****", sp, "*****"))
   }
 
-  sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
+  sp_set_counts <- readRDS(sp_hyphenate(sp))
 
   sp_set_counts_with_area <- add_in_area(sp_set_counts$set_counts,
                                          area = area)
