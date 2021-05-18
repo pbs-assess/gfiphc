@@ -26,6 +26,9 @@ test_EF: the results from the paired t-test, NULL if Series F is longest.
 G_E, G_F: geometric means of nonzero values in Series E and Series F
 (based on bootstrapped means).
 
+type: which type the longest series is, either \code{EF}, \code{E}, or \code{F}, based on
+the descriptions below.
+
 Longest series is either
 
 (i) Series EF (Series E with 1995 and 1996 appropriately scaled from

@@ -9,7 +9,7 @@ Single plotting function for Series E, F or EF}
   ser_E_and_F,
   series_longest = NULL,
   plot_type = "E",
-  x_lim = NULL,
+  x_lim = c(1995, as.integer(format(Sys.Date(), "\%Y")) - 1),
   y_lim = NULL,
   shift = 0.15,
   tck_length = -0.02,
@@ -35,7 +35,8 @@ each series.}
 \item \code{E} to plot just Series E
 \item \code{F} to plot just Series F
 \item \code{E_F_scaled} to plot Series E and F each scaled by their geometric mean
-\item \code{EF} to plot Series EF \link{with E rescaled in red}
+\item \code{EF} to plot Series EF \link{with E rescaled in red}, empty plot if longest
+series is just E or F
 }}
 
 \item{shift}{if plotting two then shift Series E to left and F to right by
