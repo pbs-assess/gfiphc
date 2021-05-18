@@ -165,7 +165,7 @@ Next steps:
  - doing a combined rockfish one?
  - plot normalised values
  - create wrapper for format for Jennifer
- - go and get 2020 data
+ - go and get 2020 data.
 
 ## Individual skate species
 
