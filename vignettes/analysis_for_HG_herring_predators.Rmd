@@ -146,25 +146,47 @@ res$set_counts %>% dplyr::select(-c("station", "lat", "lon", "usable", "standard
     t()
 ```
 Can see that the number of NA's is not the same for all species. See below for
-each individual species,
+each individual species. The figures show us that:
+
+1. Skates were not identified to the species level in 1995 and 1996; however the
+   data for then show "unident. Skate" so we can still maybe go back that far
+   and need to include those when adding in. Need to check all years for
+   mentions of skate.
+
+1.
+
+Next steps:
+ - functionalise next bit, saving results (like in other vignette?)
+ - show unident skate also
+ - search all years for anything with skate
+ - add unident and anything else to skate_sp, ensure consistent defns through time
+ - create time series for combined skate_sp
+ - create time series for the other predators
+ - doing a combined rockfish one?
+ - plot normalised values
+ - create wrapper for format for Jennifer
+ - go and get 2020 data
+
+## Individual skate species
 
 ```{r merge, warning = FALSE}
+# TODO turn into a function maybe, with a verbose mode to show results
 for(sp in skate_sp){
   print(paste("*****", sp, "*****"))
   sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
   # Print the first and last values:
-  print(sp_set_counts)
-  print(tail(sp_set_counts$set_counts))
+  # print(sp_set_counts)
+  # print(tail(sp_set_counts$set_counts))
 
   sp_set_counts_with_area <- add_in_area(sp_set_counts$set_counts,
                                          area = HG_herring_pred_area)
 
   ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
-  print(ser_E_and_F)
+  # print(ser_E_and_F)
 
   series_longest <- calc_iphc_ser_EF(ser_E_and_F)
-  print(series_longest)
-  print(paste("*****", sp, "*****"))
+  # print(series_longest)
+  # print(paste("*****", sp, "*****"))
 
   plot_IPHC_ser_four_panels(ser_E_and_F, series_longest)
 }
@@ -172,10 +194,10 @@ for(sp in skate_sp){
 
 
 
-## Individual species
+## Individual non-skate species
 
 ```{r showmult, warning = FALSE}
-
+# TODO replace by above function
 for(sp in sp_vec){
   print(paste("*****", sp, "*****"))
   sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
