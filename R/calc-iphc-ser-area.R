@@ -372,39 +372,79 @@ add_in_area <- function(set_counts_of_sp,
 
 
 
-
-##' Get data, do calculations and plot longest series for the IPHC survey TODO -
-##'  may be worth doing, need the format part for gfsynopsis
+##' Get data, do calculations and plot longest series for the IPHC survey
+##'  restricted to a specified area
 ##'
 ##' Get data, do calculations and plot longest series for the IPHC survey for
-##'  a given species. Will take a while since queries GFbio (and need to be on DFO
-##'  network). WON'T CURRENTLY WORK AS plot_iphc_index() won't currently work.
+##'  a given species restricted to a given area. Will take a while if queries
+##'  GFbio (for which need to be on DFO network), else can use cached data.
+##'
 ##' @param sp Species names (as used in gfdata and gfplot).
+##' @param area `data.frame` of (PBSmapping) class `PolySet` with column names
+##'   `PID`, `SID`, `POS`, `X`, `Y`,
+##' @param cached if TRUE then used cached data (sp-name.rds)
+##' @param verbose if TRUE then print out some of the data (useful in vignette loops)
+##' @param print_sp_name if TRUE then print out species name (useful in vignette
+##'   loops)
 ##' @return For the given species, list containing
 ##'
-##'   iphc_set_counts_sp: list returned from [calc_iphc_full_res()]
+##'   sp_set_counts_with_area: tibble returned from [add_in_area()] of set
+##'   counts of the species with with extra logical column `in_area` to
+##'   say whether or not each set is within `area`.
 ##'
-##'   iphc_set_counts_sp_format: just the longest series, returned from
-##'     [format_iphc_longest()] with calculations and formatting to match that
-##'     of other surveys
+##'   ser_E_and_F: list of class `IPHC_ser_E_and_F` containing two tibbles, one
+##'   for each series (ser_E and ser_F), as output from [calc_iphc_ser_E_and_F()].
 ##'
-##'   g_iphc_index: plot of just the iphc data (useful for testing all species)
-##'     providing there are some data
+##'   series_longest: list containing `ser_longest`, the longest possible time
+##'   series from Series E and F, and other objects, as output form [calc_iphc_ser_EF()].
 ##' @export
-TODO_E_F_iphc_get_calc_plot <- function(sp) {
-  set_counts <- get_all_iphc_set_counts(sp)
-  iphc_set_counts_sp <- calc_iphc_full_res(set_counts)
-  iphc_set_counts_sp_format <-
-    format_iphc_longest(iphc_set_counts_sp$ser_longest)
-
-  if (!is.null(iphc_set_counts_sp)) {
-    g_iphc_index <- plot_iphc_index(iphc_set_counts_sp_format)
-  } else {
-    g_iphc_index <- NULL
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' iphc_get_calc_plot_area("yelloweye rockfish")
+##' ##' # Gives a warning about hole vertices, can ignore.
+##' @}
+iphc_get_calc_plot_area <- function(sp,
+                                    area = HG_herring_pred_area,
+                                    cached = TRUE,
+                                    verbose = FALSE,
+                                    print_sp_name = TRUE
+                                    ) {
+  if(!cached){
+    cache_pbs_data_iphc(skate_sp)
   }
+
+  if(print_sp_name){
+    print(paste("*****", sp, "*****"))
+  }
+
+
+  sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))
+
+  sp_set_counts_with_area <- add_in_area(sp_set_counts$set_counts,
+                                         area = area)
+
+  ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
+
+  series_longest <- calc_iphc_ser_EF(ser_E_and_F)
+
+  # Not creating gfsynopsis formatted output since shouldn't need that for a
+  #  restricted area -- see iphc_get_calc_plot() to add something here.
+
+  if(verbose){
+    # Print the first and last values:
+    print(sp_set_counts)
+    print(tail(sp_set_counts$set_counts))
+    print(ser_E_and_F)
+    print(series_longest)
+    print(paste("*****", sp, "*****"))
+  }
+
+  plot_IPHC_ser_four_panels(ser_E_and_F,
+                            series_longest)
   list(
-    iphc_set_counts_sp = iphc_set_counts_sp,
-    iphc_set_counts_sp_format = iphc_set_counts_sp_format,
-    g_iphc_index = g_iphc_index
+    sp_set_counts_with_area = sp_set_counts_with_area,
+    ser_E_and_F = ser_E_and_F,
+    series_longest = series_longest
   )
 }

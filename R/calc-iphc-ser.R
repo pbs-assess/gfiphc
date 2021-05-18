@@ -793,6 +793,7 @@ plot_iphc_index <- function(iphc_set_counts_sp_format) {
 ##' Get data, do calculations and plot longest series for the IPHC survey for
 ##'  a given species. Will take a while since queries GFbio (and need to be on DFO
 ##'  network). WON'T CURRENTLY WORK AS plot_iphc_index() won't currently work.
+##' TODO: Am creating similar one for restricted area, may use cached data.
 ##' @param sp Species names (as used in gfdata and gfplot).
 ##' @return For the given species, list containing
 ##'
