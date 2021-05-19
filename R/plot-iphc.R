@@ -30,6 +30,7 @@
 ##'  * `E` to plot just Series E
 ##'  * `F` to plot just Series F
 ##'  * `E_F_scaled` to plot Series E and F each scaled by their geometric mean
+##'   of the overlapping years (no scaling if no overlapping years)
 ##'  * `EF` to plot Series EF [with E rescaled in red], empty plot if longest
 ##'   series is just E or F
 ##' @param ser_E_col
@@ -77,8 +78,8 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
       y_max_series_longest <- series_longest$ser_longest$I_tBootHigh} else {
       y_max_series_longest <- series_longest$ser_longest$I_t20BootHigh}
 
-    y_max <- max(c(ser_E_and_F$serE$I_t20BootHigh,
-                   ser_E_and_F$serF$I_tBootHigh,
+    y_max <- max(c(ser_E_and_F$ser_E$I_t20BootHigh,
+                   ser_E_and_F$ser_F$I_tBootHigh,
                    y_max_series_longest))
     y_lim <- c(0, y_max)
   }
@@ -143,6 +144,10 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
     overlap_years <- intersect(ser_E_and_F$ser_E$year,
                                ser_E_and_F$ser_F$year)  # overlapping years for
                                                         # shifting horizontally
+    if(length(overlap_years) == 0){
+      G_E = 1
+      G_F = 1
+    }   # just don't rescale, since can't.
 
     y_lim_E_F_scaled <- c(0, max(c(ser_E_and_F$ser_E$I_t20BootHigh / G_E,
                                    ser_E_and_F$ser_F$I_tBootHigh / G_F)))
