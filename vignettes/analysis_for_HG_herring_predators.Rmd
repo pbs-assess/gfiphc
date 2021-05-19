@@ -101,12 +101,14 @@ skate_sp <- c("aleutian skate",
               "alaska skate")
 skate_ignore <- c("abyssal skate",
                   "broad skate")
+skate_unident <- "unident. Skate"
 ```
 
 Cache the data once (this is not evaluated each time):
 ```{r get_skates, eval=FALSE}
 cache_pbs_data_iphc(skate_sp)
 cache_pbs_data_iphc(skate_ignore)
+cache_pbs_data_iphc(skate_unident)
 ```
 
 
@@ -156,16 +158,69 @@ each individual species. The figures show us that:
 1.
 
 Next steps:
- - functionalise next bit, saving results (like in other vignette?)
+ D functionalise next bit, saving results (like in other vignette?)
+
  - show unident skate also
+
  - search all years for anything with skate
+
  - add unident and anything else to skate_sp, ensure consistent defns through time
+
  - create time series for combined skate_sp
+
  - create time series for the other predators
+
  - doing a combined rockfish one?
+
  - plot normalised values
+
  - create wrapper for format for Jennifer
+
  - go and get 2020 data.
+
+## Unidentified skate
+
+For at least 1995 and 1996 there are 'Unident. skate', and can see from figures
+below that no skate species were indeed identified for those years. And it looks
+like maybe later years also have undentified skate yet big and longnose were
+identified.
+
+```{r unidentcheck}
+# 1995
+unique(countData1995$spNameIPHC)[grep("Skate", unique(countData1995$spNameIPHC))]
+grep("skate", unique(countData1995$spNameIPHC)) # none
+# And a manual check through confirms, that all we need is "unident. Skate"
+
+#1995 to 2002
+unique(data1996to2002$spNameIPHC)[grep("Skate",
+                                       unique(data1996to2002$spNameIPHC))]
+grep("skate", unique(data1996to2002$spNameIPHC)) # none
+
+# 2013 (not in GFbio)
+unique(countData2013$spNameIPHC)[grep("Skate", unique(countData2013$spNameIPHC))]
+grep("skate", unique(countData2013$spNameIPHC))
+
+# 2020 (not in GFbio) TODO
+```
+So, we can use `unident. Skate` as a species name (done above). Load in and
+examine that data:
+```{r uni}
+uni <- readRDS(sp_hyphenate(skate_unident))  # gives no catches at all:
+summary(uni)
+
+# But there should be some:
+dplyr::filter(countData1995, spNameIPHC == "unident. Skate")
+```
+
+
+
+
+```{r unident, warning = FALSE}
+#for(sp in skate_unident){
+#  assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
+#         iphc_get_calc_plot_area(sp))
+#}
+```
 
 ## Individual skate species
 
@@ -181,8 +236,8 @@ for(sp in skate_sp){
 
 ## Individual non-skate species
 
-```{r showmult, warning = FALSE}
-# TODO replace by above function
+Not evaluating for now:
+```{r showmult, warning = FALSE, eval=FALSE}
 for(sp in sp_vec){
   assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
          iphc_get_calc_plot_area(sp))
