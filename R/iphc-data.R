@@ -99,9 +99,10 @@ get_iphc_hooks <- function(species, usability = NULL) {
     .d <- gfdata::run_sql("GFBioSQL", .q)
     .d$species <- tolower(.d$species)
     if (dim(.d)[1] == 0) {
-      .d[1, ] <- c(2003, rep(NA, dim(.d)[2] - 1))
+      # No data, give NA's, did have 2003 for year but now removing year = NA in get_all_iphc_set_counts()
+      .d[1, ] <- c(NA, rep(NA, dim(.d)[2] - 1))
     }
-    # No data, give NA's
+
     return(as_tibble(.d))
   } else {
     .q <- read_sql("get-iphc-hook-level-bait-on-hook.sql")
@@ -122,9 +123,9 @@ get_iphc_hooks <- function(species, usability = NULL) {
         .data$hookCondCode
       ) # return same order as for species
     if (dim(.d)[1] == 0) {
-      .d[1, ] <- c(2003, rep(NA, dim(.d)[2] - 1))
+      # No data, give NA's, did have 2003 for year but now removing year = NA in get_all_iphc_set_counts()
+      .d[1, ] <- c(NA, rep(NA, dim(.d)[2] - 1))
     }
-    # No data, give NA's
     as_tibble(.d)
   }
 }
@@ -605,6 +606,7 @@ get_all_iphc_set_counts <- function(species) {
       get_iphc_sets_info()
     )
   ) %>%
+    dplyr::filter(!is.na(year)) %>%
     arrange(year)
 }
 

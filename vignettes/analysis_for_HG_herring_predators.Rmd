@@ -229,19 +229,17 @@ summary(uni$set_counts)
 dplyr::select(uni$set_counts,
               year) %>%
   table()
-
 ```
 
-So the problem is that we find no records in GFbio, and in such a case the
-extraction code a row of NA's (to return something):
+This commit changes the empty data to not have 2003 with a row of NA's, so that
+the above now has no 2003 data.
+
+And check 2013 has no unidentified skate:
 ```{r details}
-dplyr::filter(uni$set_counts, year == 2003)
+dplyr::filter(uni$set_counts, year == 2013) %>% dplyr::select(C_it20) %>% max()
 ```
-but the area code then doesn't like that. May as well remove this row from
-analyses.
 
-
-
+This doesn't quite work:
 ```{r unident, warning = FALSE}
 for(sp in skate_unident){
   assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
