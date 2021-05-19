@@ -101,7 +101,7 @@ skate_sp <- c("aleutian skate",
               "alaska skate")
 skate_ignore <- c("abyssal skate",
                   "broad skate")
-skate_unident <- "unident. Skate"
+skate_unident <- "unidentified skate"
 ```
 
 Cache the data once (this is not evaluated each time):
@@ -201,12 +201,14 @@ unique(countData2013$spNameIPHC)[grep("Skate", unique(countData2013$spNameIPHC))
 grep("skate", unique(countData2013$spNameIPHC))
 
 # 2020 (not in GFbio) TODO
+
 ```
-So, we can use `unident. Skate` as a species name (done above). Load in and
+
+So, we can use `unidentified skate` as a species name (done above). Load in and
 examine that data:
 ```{r uni}
 uni <- readRDS(sp_hyphenate(skate_unident))  # gives no catches at all:
-summary(uni)
+summary(uni$set_counts)
 
 # But there should be some:
 dplyr::filter(countData1995, spNameIPHC == "unident. Skate")

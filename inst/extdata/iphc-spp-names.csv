@@ -1,4 +1,4 @@
-# NA means haven't seen yet in the non-GFbio IPHC data. **COPIED THIS FROM gfplot TO HOPEFULLY DEPRECATE FROM THERE (can't test right now), SO IF YOU CHANGE SOMETHING HERE CHANGE IT IN gfplot REPO ALSO**
+# NA means haven't seen yet in the non-GFbio IPHC data.
 species_common_name,iphc_common_name
 north pacific spiny dogfish,Spiny Dogfish
 big skate,Big Skate
@@ -114,3 +114,4 @@ sand sole,NA
 hook with bait,Hook with Bait
 pacific hake,Pacific Hake
 pacific halibut,Pacific Halibut
+unidentified skate,unident. Skate
