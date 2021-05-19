@@ -54,6 +54,8 @@ A particular issue is that the data resolution is not the same across the years.
 <!-- for putting back into gfsynopsis, note that 2018 is now separated out) -->
 In 2018 there were extra expansion stations surveyed (see the vignettes), and in 2020 only the first 20 hooks were enumerated.
 
+The structure of the data in GFBio is described by [Cooke and Olsen (2020)](https://waves-vagues.dfo-mpo.gc.ca/Library/40879100.pdf).
+
 ## Summary of Series that can be constructed
 
 Due to the differing data-collection protocols, we developed different ways to obtain as long a time series as possible (Appendix G again). We first defined Series A, B, C, and D in Table G.2 (reproduced below), combined and compared them as possible to define Series AB for the north of West Coast of Vancouver Island (WCVI), and tested whether Series AB could be considered as representing the full coast (see Appendix G for full details). Here we also look at a user-defined restricted area of interest, defining Series E to be based on the first 20 hooks from each skate, and Series F to be based on all hooks from each skate (see the vignette TODO(add link) for details). Series A-F are defined as:
