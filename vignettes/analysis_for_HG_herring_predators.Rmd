@@ -239,13 +239,16 @@ And check 2013 has no unidentified skate:
 dplyr::filter(uni$set_counts, year == 2013) %>% dplyr::select(C_it20) %>% max()
 ```
 
-This doesn't quite work:
+This works now:
 ```{r unident, warning = FALSE}
 for(sp in skate_unident){
   assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
          iphc_get_calc_plot_area(sp))
 }
 ```
+
+HERE - go through this from top, and finally can add unidentified to the species
+vector.
 
 ## Individual skate species
 
@@ -261,7 +264,7 @@ for(sp in skate_sp){
 
 ## Individual non-skate species
 
-Not evaluating for now:
+Not evaluating for now (since copied from above):
 ```{r showmult, warning = FALSE, eval=FALSE}
 for(sp in sp_vec){
   assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
