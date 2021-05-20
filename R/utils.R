@@ -32,3 +32,12 @@ sp_hyphenate <- function(sp,
     return(paste0(gsub(" ", "-", sp), ".rds"))
   }
 }
+
+##' Capitalise first letters of words (from ?toupper)
+##'
+##' @param x
+simple_cap <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  paste(toupper(substring(s, 1,1)), substring(s, 2),
+      sep="", collapse=" ")
+}

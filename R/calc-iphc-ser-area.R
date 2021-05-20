@@ -440,7 +440,8 @@ iphc_get_calc_plot_area <- function(sp,
   }
 
   plot_IPHC_ser_four_panels(ser_E_and_F,
-                            series_longest)
+                            series_longest,
+                            sp = sp)
   list(
     sp_set_counts_with_area = sp_set_counts_with_area,
     ser_E_and_F = ser_E_and_F,

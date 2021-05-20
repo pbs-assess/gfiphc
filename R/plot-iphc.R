@@ -234,10 +234,13 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
     }
 }
 
-##' Wrapper to plot all four versions of Series E and F plots in one figure
-##' ##'
+##' Wrapper to plot all four versions of Series E and F plots in one figure,
+##' with species name as main title
+##'
 ##' @param ser_E_and_F
 ##' @param series_longest
+##' @param sp species common name
+##' @param line_title
 ##' @param ... further arguments to `plot.IPHC_ser_E_and_F()`
 ##' @return simple panel plot of four figures
 ##' @export
@@ -248,6 +251,8 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
 ##' @}
 plot_IPHC_ser_four_panels <- function(ser_E_and_F,
                                       series_longest,
+                                      sp = NULL,
+                                      line_title = -2,
                                       ...){
   par(mfcol = c(2,2))
 
@@ -270,4 +275,7 @@ plot_IPHC_ser_four_panels <- function(ser_E_and_F,
                         series_longest,
                         plot_type = "EF",
                         ...)
+  title(simple_cap(sp),
+        line = line_title,
+        outer = TRUE)
 }
