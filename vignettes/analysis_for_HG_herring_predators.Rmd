@@ -72,25 +72,28 @@ data to look useful.
 
 ## Skate species
 
-Looking through 2019 synopsis report, here are the decisions and comments on
-including each skate species:
+Unidentified (species of) skates were enumerated in the early years, but then
+declined dramatically and had zero counts in 2001, 2002 and 2013, and presumably
+for 2003 onwards (but those data are in GFbio which would have to be checked --
+seems clear that the identification protocol improved through time).
+
+Looking through 2019 synopsis report and the plots below (and a look at the
+data), here are the decisions on including each skate species:
 
  - Aleutian Skate: Looks like only enumerated explicitly since 2007, 2018 map
-   shows mean 0.31 fish/skate. Include (especially if lumped in an all-skate
-   category early on? TODO check early IPHC data).
+   shows mean 0.31 fish/skate. Include.
  - Abyssal Skate - no catch, ignore.
  - Broad Skate - no catch, ignore.
  - Big Skate - looks like enumerated explicitly since 1998, and 2018 map shows
    mean 0.69 fish/skate. Include.
- - Roughtail Skate - looks like only caught in 3 or four years (mean +ve sets
-   1/177). No catch in 2018. Include (but look at numbers carefully first).
- - Sandpaper Skate - only shows up since 2003 (but not shown as zeros before
-   that, just no data, TODO so look into). Mean +ve sets 5/177, 2018 mean 0.14 fish/skate. Include.
- - Longnose Skate - only shows up since 1998, mean +ve sets 57/135, 2018 mean
-   0.96 fish/skate. Include.
- -  Alaska Skate - only showed up in four years, 2018 mean 0.14 fish/skate. Only
-   plotted since 2003 (like Sandpaper), so TODO look into. Include even though
-   rare.
+ - Roughtail Skate - looks like only caught in three or four years (mean +ve sets
+   1/177). No catch in 2018. Include.
+ - Sandpaper Skate - only shows up for a few years. Mean +ve sets 5/177, 2018
+   mean 0.14 fish/skate. Include.
+ - Longnose Skate - only shows up since 1998 (presumably unidentified
+   beforehand), mean +ve sets 57/135, 2018 mean 0.96 fish/skate. Include.
+ -  Alaska Skate - only showed up in five years, 2018 mean 0.14 fish/skate. Only
+   plotted since 2003 (like Sandpaper). Include.
 
 ```{r skatedefn}
 skate_sp <- c("aleutian skate",
@@ -110,14 +113,6 @@ cache_pbs_data_iphc(skate_sp)
 cache_pbs_data_iphc(skate_ignore)
 cache_pbs_data_iphc(skate_unident)
 ```
-
-
-
-TODO: were no skate enumerated in 1995 and 1996? If so then just use Series E -
-check if the code does that automatically. And add an extra variable in the list
-output to easily say which species it is (determined from p-value, but do in the
-calculation function just the once).
-chunk and just using what I saved for him.
 
 Now want to lump the skates in `skate_sp` together. Merge two together manually
 then write a function for that
@@ -160,9 +155,9 @@ each individual species. The figures show us that:
 Next steps:
  D functionalise next bit, saving results (like in other vignette?)
 
- - show unident skate also
+ D show unident skate also
 
- - search all years for anything with skate
+ D search all years for anything with skate, there are some rare ones not in GFbio
 
  - add unident and anything else to skate_sp, ensure consistent defns through time
 
@@ -180,7 +175,7 @@ Next steps:
 
 ## Unidentified skate
 
-For at least 1995 and 1996 there are 'Unident. skate', and can see from figures
+For at least 1995 and 1996 there are 'Unident. skate', and can see from species figures
 below that no skate species were indeed identified for those years. And it looks
 like maybe later years also have undentified skate yet big and longnose were
 identified.
@@ -240,7 +235,7 @@ dplyr::filter(uni$set_counts, year == 2013) %>% dplyr::select(C_it20) %>% max()
 ```
 
 This works now:
-```{r unident, warning = FALSE}
+```{r unident, warning = FALSE, results = FALSE}
 for(sp in skate_unident){
   assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
          iphc_get_calc_plot_area(sp))
@@ -255,12 +250,27 @@ vector.
 Calculate series for each skate species in turn (saved as `species_name_area`)
 and plot figures of Series E and F and longest from those:
 
-```{r repeat, warning = FALSE}
+```{r repeat, warning = FALSE, results = FALSE}
 for(sp in skate_sp){
   assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
          iphc_get_calc_plot_area(sp))
 }
 ```
+
+## Details of data for some species, as necessary
+
+### Unidentified skates
+
+```{r unidentsummary}
+unidentified_skate_area$sp_set_counts_with_area %>%
+  select(year) %>%
+  table()
+
+# But no positive counts after 2000
+dplyr::select(unidentified_skate_area$ser_E_and_F$ser_E, year, num_pos20)
+dplyr::select(unidentified_skate_area$ser_E_and_F$ser_F, year, num_pos)
+```
+
 
 ## Individual non-skate species
 
