@@ -227,16 +227,31 @@ for(sp in skate_unident){
 
 ## Merge together skate species
 
-Now want to lump the skates in `skate_sp` together. Merge two together manually
-then write a function for that
+Now want to lump the skates in `skate_sp` together:
 
-```{r testing}
+```{r combine, warning = FALSE}
 res <- get_combined_species(sp_vec = skate_sp)
 
 summary(res$set_counts)
 
-# Need to check how NA's pass through. Want them to stay NA's if true, but do we
-# ever get N_it_sum = NA  when E_it != NA but usable = "Y"?
+# How many NA's in certain columns:
+res$set_counts %>% dplyr::select(-c("station", "lat", "lon", "usable", "standard")) %>%
+  dplyr::summarise_all( ~ sum(is.na(.x))) %>%
+    t()
+```
+
+Note that species counts get combined at `N_it.1` etc. While each one has NA's,
+none of the summed `N_it_sum` or `N_it20_sum` do, because
+`get_combined_species()` ignores NA's when making the sums.
+
+TODO: HERE - move these into get_combined_species().
+Then adapt series E/F calculation to use the above output - just need to remove
+extra columns and rename `N_it_sum` and `N_it20_sum` to `N_it` and `N_it20`.
+
+```{r testcombine, warning = FALSE}
+# `get_combined_species()` properly deals with how NA's pass through. Want them
+#  to stay NA's if true, but do we ever get N_it_sum = NA  when E_it != NA but
+#  usable = "Y"? This will break if we do (TODO could move into function).
 
 testthat::expect_equal(res$set_counts %>% dplyr::filter(is.na(N_it_sum) &
                                                         !is.na(E_it) & usable ==
@@ -250,11 +265,9 @@ testthat::expect_equal(res$set_counts %>% dplyr::filter(is.na(N_it20_sum) &
                                                         == "Y") %>%
                        nrow(),
                        0)
-
-res$set_counts %>% dplyr::select(-c("station", "lat", "lon", "usable", "standard")) %>%
-  dplyr::summarise_all( ~ sum(is.na(.x))) %>%
-    t()
 ```
+
+
 
 ### Unidentified skates
 

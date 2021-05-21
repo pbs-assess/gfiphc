@@ -675,30 +675,52 @@ read_sql <- function(x) {
 ##' # And see `analysis_for_HG_predators` vignette.
 ##' @}
 get_combined_species <- function(sp_vec){
+
   for(i in 1:length(sp_vec)){
     this_sp <- readRDS(sp_hyphenate(sp_vec[i]))
                              # this will become part of the above function
 
     if(i == 1){
+      # TODO: put error check here - if no 2003-2012 years then need another, more common, species first
       all_sp_set_counts <- this_sp$set_counts %>%
         select(-c(C_it,
                   C_it20))
     } else {
-      expect_equal(all_sp_set_counts$station,
-                   this_sp$set_counts$station)
+      # This gives error for unidentified, because there are none for GFbio (2003-2012 etc):
+      # expect_equal(all_sp_set_counts$station,
+      #             this_sp$set_counts$station)
 
-      # Creates columns N_it...<number>
-      all_sp_set_counts <- dplyr::bind_cols(all_sp_set_counts,
+      # This original attempt created columns N_it...<number>, but doesn't work for unidentified
+      #  skates (for above reason)
+      # all_sp_set_counts <- dplyr::bind_cols(all_sp_set_counts,
+      #                                      select(this_sp$set_counts,
+      #                                             N_it,
+      #                                             N_it20))
+
+      all_sp_set_counts <- dplyr::left_join(all_sp_set_counts,
                                             select(this_sp$set_counts,
+                                                   year,
+                                                   station,
                                                    N_it,
-                                                   N_it20))
+                                                   N_it20),
+                                            by = c("year",
+                                                   "station"),
+                                            suffix = c("",
+                                                       paste0(".", i)))
+      # So original one is always N_it and N_it20, rest are N_it.i (i = 2, 3, ...).
+      #  Originals become N_it.1 and N_it20.1 in next line
     }
   }
 
+  # Need these for c_across below to work.
+  all_sp_set_counts <- dplyr::rename(all_sp_set_counts,
+                                     N_it.1 = N_it) %>%
+    dplyr::rename(N_it20.1 = N_it20)
+
   combined_species <- list()
   combined_species$set_counts <- dplyr::rowwise(all_sp_set_counts) %>%
-    mutate(N_it_sum = sum(dplyr::c_across(contains("N_it...")), na.rm = TRUE),
-           N_it20_sum = sum(dplyr::c_across(contains("N_it20...")), na.rm = TRUE),
+    mutate(N_it_sum = sum(dplyr::c_across(contains("N_it.")), na.rm = TRUE),
+           N_it20_sum = sum(dplyr::c_across(contains("N_it20.")), na.rm = TRUE),
            C_it_sum = N_it_sum / E_it,
            C_it20_sum = N_it20_sum / E_it20) %>%
     ungroup()
