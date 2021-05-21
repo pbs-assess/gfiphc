@@ -75,7 +75,9 @@ data to look useful.
 Unidentified (species of) skates were enumerated in the early years, but then
 declined dramatically and had zero counts in 2001, 2002 and 2013, and presumably
 for 2003 onwards (but those data are in GFbio which would have to be checked --
-seems clear that the identification protocol improved through time).
+seems clear that the identification protocol improved through time). So after
+investigating this (in earlier versions of this vignette), am now including
+unidentified skate in the species list.
 
 Looking through 2019 synopsis report and the plots below (and a look at the
 data), here are the decisions on including each skate species:
@@ -101,7 +103,9 @@ skate_sp <- c("aleutian skate",
               "roughtail skate",
               "sandpaper skate",
               "longnose skate",
-              "alaska skate")
+              "alaska skate",
+              "unidentified skate")
+
 skate_ignore <- c("abyssal skate",
                   "broad skate")
 skate_unident <- "unidentified skate"
@@ -111,46 +115,8 @@ Cache the data once (this is not evaluated each time):
 ```{r get_skates, eval=FALSE}
 cache_pbs_data_iphc(skate_sp)
 cache_pbs_data_iphc(skate_ignore)
-cache_pbs_data_iphc(skate_unident)
+# cache_pbs_data_iphc(skate_unident)
 ```
-
-Now want to lump the skates in `skate_sp` together. Merge two together manually
-then write a function for that
-
-```{r testing}
-res <- get_combined_species(sp_vec = skate_sp)
-
-summary(res$set_counts)
-
-# Need to check how NA's pass through. Want them to stay NA's if true, but do we
-# ever get N_it_sum = NA  when E_it != NA but usable = "Y"?
-
-testthat::expect_equal(res$set_counts %>% dplyr::filter(is.na(N_it_sum) &
-                                                        !is.na(E_it) & usable ==
-                                                        "Y") %>%
-                       nrow(),
-                       0)
-
-# And check the same for the 20-hook counts:
-testthat::expect_equal(res$set_counts %>% dplyr::filter(is.na(N_it20_sum) &
-                                                        !is.na(E_it20) & usable
-                                                        == "Y") %>%
-                       nrow(),
-                       0)
-
-res$set_counts %>% dplyr::select(-c("station", "lat", "lon", "usable", "standard")) %>%
-  dplyr::summarise_all( ~ sum(is.na(.x))) %>%
-    t()
-```
-Can see that the number of NA's is not the same for all species. See below for
-each individual species. The figures show us that:
-
-1. Skates were not identified to the species level in 1995 and 1996; however the
-   data for then show "unident. Skate" so we can still maybe go back that far
-   and need to include those when adding in. Need to check all years for
-   mentions of skate.
-
-1.
 
 Next steps:
  D functionalise next bit, saving results (like in other vignette?)
@@ -172,6 +138,22 @@ Next steps:
  - create wrapper for format for Jennifer
 
  - go and get 2020 data.
+
+
+HERE - go through this from top, and finally can add unidentified to the species
+vector.
+
+## Individual skate species
+
+Calculate series for each skate species in turn (saved as `species_name_area`)
+and plot figures of Series E and F and longest from those:
+
+```{r repeat, warning = FALSE, results = FALSE}
+for(sp in skate_sp){
+  assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
+         iphc_get_calc_plot_area(sp))
+}
+```
 
 ## Unidentified skate
 
@@ -242,22 +224,37 @@ for(sp in skate_unident){
 }
 ```
 
-HERE - go through this from top, and finally can add unidentified to the species
-vector.
 
-## Individual skate species
+## Merge together skate species
 
-Calculate series for each skate species in turn (saved as `species_name_area`)
-and plot figures of Series E and F and longest from those:
+Now want to lump the skates in `skate_sp` together. Merge two together manually
+then write a function for that
 
-```{r repeat, warning = FALSE, results = FALSE}
-for(sp in skate_sp){
-  assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
-         iphc_get_calc_plot_area(sp))
-}
+```{r testing}
+res <- get_combined_species(sp_vec = skate_sp)
+
+summary(res$set_counts)
+
+# Need to check how NA's pass through. Want them to stay NA's if true, but do we
+# ever get N_it_sum = NA  when E_it != NA but usable = "Y"?
+
+testthat::expect_equal(res$set_counts %>% dplyr::filter(is.na(N_it_sum) &
+                                                        !is.na(E_it) & usable ==
+                                                        "Y") %>%
+                       nrow(),
+                       0)
+
+# And check the same for the 20-hook counts:
+testthat::expect_equal(res$set_counts %>% dplyr::filter(is.na(N_it20_sum) &
+                                                        !is.na(E_it20) & usable
+                                                        == "Y") %>%
+                       nrow(),
+                       0)
+
+res$set_counts %>% dplyr::select(-c("station", "lat", "lon", "usable", "standard")) %>%
+  dplyr::summarise_all( ~ sum(is.na(.x))) %>%
+    t()
 ```
-
-## Details of data for some species, as necessary
 
 ### Unidentified skates
 
