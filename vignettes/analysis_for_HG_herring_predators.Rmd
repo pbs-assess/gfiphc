@@ -35,10 +35,6 @@ library(gfiphc)
 
 First, just running for multiple individual species.
 
-
-TODO Then re-run again with 2020 data added and 2018
-expanded areas accounted for (may be done already for Series EF).
-
 <!-- From Jen: -->
 <!-- What would work best for me is a csv file with 3 columns: “Year”, “Indicator”, “Value”  -->
 <!-- Non-standardized values are best. -->
@@ -119,29 +115,31 @@ cache_pbs_data_iphc(skate_ignore)
 ```
 
 Next steps:
+
  D functionalise next bit, saving results (like in other vignette?)
 
  D show unident skate also
 
  D search all years for anything with skate, there are some rare ones not in GFbio
 
- - add unident and anything else to skate_sp, ensure consistent defns through time
+ D add unident and anything else to skate_sp, ensure consistent defns through time
 
- - create time series for combined skate_sp
+ - create time series for combined skate_sp - see TODO below
 
  - create time series for the other predators
 
  - doing a combined rockfish one?
 
+ - Then re-run again with 2020 data added and 2018
+    expanded areas accounted for (may be done already for Series EF).
+
  - plot normalised values
 
  - create wrapper for format for Jennifer
 
- - go and get 2020 data.
+ - fix Travis
 
-
-HERE - go through this from top, and finally can add unidentified to the species
-vector.
+ - merge into master
 
 ## Individual skate species
 
@@ -244,7 +242,7 @@ Note that species counts get combined at `N_it.1` etc. While each one has NA's,
 none of the summed `N_it_sum` or `N_it20_sum` do, because
 `get_combined_species()` ignores NA's when making the sums.
 
-TODO: HERE - move these into get_combined_species().
+TODO:
 Then adapt series E/F calculation to use the above output - just need to remove
 extra columns and rename `N_it_sum` and `N_it20_sum` to `N_it` and `N_it20`.
 
