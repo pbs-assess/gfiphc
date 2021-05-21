@@ -691,7 +691,7 @@ get_combined_species <- function(sp_vec){
       #             this_sp$set_counts$station)
 
       # This original attempt created columns N_it...<number>, but doesn't work for unidentified
-      #  skates (for above reason)
+      #  skates (for above reason):
       # all_sp_set_counts <- dplyr::bind_cols(all_sp_set_counts,
       #                                      select(this_sp$set_counts,
       #                                             N_it,
@@ -724,6 +724,23 @@ get_combined_species <- function(sp_vec){
            C_it_sum = N_it_sum / E_it,
            C_it20_sum = N_it20_sum / E_it20) %>%
     ungroup()
+
+  # Check that we have properly dealt with how NA's pass through. Want them
+  #  to stay NA's if true, but check if we ever get N_it_sum = NA  when E_it != NA but
+  #  usable = "Y"? This will break if we do.
+
+  testthat::expect_equal(combined_species$set_counts %>% dplyr::filter(is.na(N_it_sum) &
+                                                                       !is.na(E_it) &
+                                                                       usable == "Y") %>%
+                         nrow(),
+                         0)
+
+  # And check the same for the 20-hook counts:
+  testthat::expect_equal(combined_species$set_counts %>% dplyr::filter(is.na(N_it20_sum) &
+                                                                       !is.na(E_it20) &
+                                                                       usable == "Y") %>%
+                         nrow(),
+                         0)
 
   return(combined_species)
 }

@@ -248,27 +248,6 @@ TODO: HERE - move these into get_combined_species().
 Then adapt series E/F calculation to use the above output - just need to remove
 extra columns and rename `N_it_sum` and `N_it20_sum` to `N_it` and `N_it20`.
 
-```{r testcombine, warning = FALSE}
-# `get_combined_species()` properly deals with how NA's pass through. Want them
-#  to stay NA's if true, but do we ever get N_it_sum = NA  when E_it != NA but
-#  usable = "Y"? This will break if we do (TODO could move into function).
-
-testthat::expect_equal(res$set_counts %>% dplyr::filter(is.na(N_it_sum) &
-                                                        !is.na(E_it) & usable ==
-                                                        "Y") %>%
-                       nrow(),
-                       0)
-
-# And check the same for the 20-hook counts:
-testthat::expect_equal(res$set_counts %>% dplyr::filter(is.na(N_it20_sum) &
-                                                        !is.na(E_it20) & usable
-                                                        == "Y") %>%
-                       nrow(),
-                       0)
-```
-
-
-
 ### Unidentified skates
 
 ```{r unidentsummary}
