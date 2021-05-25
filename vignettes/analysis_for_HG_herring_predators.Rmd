@@ -47,7 +47,8 @@ First, just running for multiple individual species.
 <!-- ... -->
 
 
-These are the original species (herring predators) extracted for Joe.
+These are the original species (herring predators) extracted for Joe, though
+taking out longnose skate since it will get saved as part of `skate_sp` below.
 ```{r definesp}
 sp_vec <- c("yelloweye rockfish",
             "arrowtooth flounder",
@@ -57,7 +58,6 @@ sp_vec <- c("yelloweye rockfish",
             "pacific halibut",
             "redbanded rockfish",
             "sablefish",
-            "longnose skate",
             "walleye pollock")
 ```
 
@@ -245,26 +245,22 @@ assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
 
 ## Individual non-skate species
 
-Not evaluating for now (since copied from above):
-```{r showmult, warning = FALSE, eval=FALSE}
+Similarly for the other species:
+```{r showmult, warning = FALSE, results = FALSE}
 for(sp in sp_vec){
   assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
          iphc_get_calc_plot_area(sp))
 }
 ```
 
+## Format for Jennifer's EAFM summary
+
+
+
+
+
+
 
 Note that the code may not yet fully account for all possibilities (for all
 areas and species), particularly for rarer species. So do check that the output
 is sensible.
-
-do analysis, with wrapper function for:
-   - sp with area
-   - series E and F
-   - series EF
-
-  plot results
-  save results
-
-
-show movie (link from other vignette)
