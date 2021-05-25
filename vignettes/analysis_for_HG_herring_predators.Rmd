@@ -105,6 +105,7 @@ skate_sp <- c("aleutian skate",
 skate_ignore <- c("abyssal skate",
                   "broad skate")
 skate_unident <- "unidentified skate"
+# skates_combined <- "skates combined"
 ```
 
 Cache the data once (this is not evaluated each time):
@@ -218,22 +219,24 @@ dplyr::select(unidentified_skate_area$ser_E_and_F$ser_F,
 
 ## Merge together skate species
 
-Now want to lump the skates in `skate_sp` together:
+Now want to lump the skates in `skate_sp` together. Note that species counts get
+named at `N_it.1` etc. While each one has NA's, none of the summed `N_it_sum` or
+`N_it20_sum` do, because `get_combined_species()` ignores NA's when making the
+sums.
 
 ```{r combine, warning = FALSE}
-res <- get_combined_species(sp_vec = skate_sp)
+skates_combined <- get_combined_species(sp_vec = skate_sp,
+                                        save_RDS_name = "skates_combined")
+summary(skates_combined$set_counts)
 
-summary(res$set_counts)
-
-# How many NA's in certain columns:
-res$set_counts %>% dplyr::select(-c("station", "lat", "lon", "usable", "standard")) %>%
+# How many NA's in certain columns (none for N_it_sum or N_it20_sum
+skates_combined$set_counts %>%
+  dplyr::select(-c("station", "lat", "lon", "usable", "standard")) %>%
   dplyr::summarise_all( ~ sum(is.na(.x))) %>%
-    t()
+  t()
 ```
 
-Note that species counts get combined at `N_it.1` etc. While each one has NA's,
-none of the summed `N_it_sum` or `N_it20_sum` do, because
-`get_combined_species()` ignores NA's when making the sums.
+
 
 TODO:
 Then adapt series E/F calculation to use the above output - just need to remove

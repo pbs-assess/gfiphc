@@ -627,7 +627,12 @@ read_sql <- function(x) {
 ##' skates combined, rather than individual species.
 ##'
 ##' @param sp_vec vector of IPHC species names
-##'
+##' @param save_RDS_name name (without suffix) to save the .rds file of the
+##'   output (there is no natural obvious default based on `sp_vec`), if NULL
+##'   then do not save
+##' @param path The folder where the cached data will be saved.
+##' @param compress Compress the `.rds` file? Defaults to `FALSE` for faster
+##'   reading and writing at the expense of disk space.
 ##' @return list with  tibble `set_counts` (same format as for individual
 ##'   species) that contains year, station name, lat, lon, and
 ##'  *  E_it - effective skate number for that station, based on all hooks (so
@@ -635,17 +640,17 @@ read_sql <- function(x) {
 ##'  * N_it...<num> - number of 'species' caught on all hooks, so NA for
 ##'   1997-2002, 2013, 2020, where <num> is the column number appended by dplyr within this
 ##'   function,
-##'  * N_it_all - sum of `N_it...<num>`, with NA's removed (treated as zeros)
+##'  * N_it_sum - sum of `N_it...<num>`, with NA's removed (treated as zeros)
 ##'   TODO: say what happens if some have NA
-##'  * C_it_all - catch rate of all 'species' as number per effective skate,
+##'  * C_it_sum - catch rate of all 'species' as number per effective skate,
 ##'   based on all hooks, so NA for 1997-2002, 2013, 2020,
 ##'  *  E_it20 - effective skate number for that station, based on first 20
 ##'   hooks, so NA for 1995 and 1996,
 ##'  * N_it20...<num number of 'species' caught in first 20 hooks, so NA for
 ##'   1995 and 1996, where <num> is the column number appended by dplyr within this
-##'  * N_it20_all - sum of `N_it20...<num>`, with NA's removed (treated as zeros)
+##'  * N_it20_sum - sum of `N_it20...<num>`, with NA's removed (treated as zeros)
 ##'   TODO: say what happens if some have NA
-##'  * C_it20_all - catch rate all 'species' as number per effective skate,
+##'  * C_it20_sum - catch rate all 'species' as number per effective skate,
 ##'   based on the first 20 hooks, so NA for 1995 and 1996,
 ##'  * usable  - whether or not that station is usable, as deemed by IPHC,
 ##'  * standard - whether or not station is a standard one or in the
@@ -674,8 +679,10 @@ read_sql <- function(x) {
 ##' res <- get_combined_species(sp_vec = skate_sp)
 ##' # And see `analysis_for_HG_predators` vignette.
 ##' @}
-get_combined_species <- function(sp_vec){
-
+get_combined_species <- function(sp_vec,
+                                 save_RDS_name = NULL,
+                                 path = ".",
+                                 compress = FALSE){
   for(i in 1:length(sp_vec)){
     this_sp <- readRDS(sp_hyphenate(sp_vec[i]))
                              # this will become part of the above function
@@ -741,6 +748,14 @@ get_combined_species <- function(sp_vec){
                                                                        usable == "Y") %>%
                          nrow(),
                          0)
+  if(!is.null(save_RDS_name)){
+    dir.create(path, showWarnings = FALSE)
+    saveRDS(combined_species,
+            file = paste0(file.path(path,
+                                    paste0(save_RDS_name,
+                                           ".rds"))), #not quite as cache_pbs_data_iphc
+            compress = compress)
+  }
 
   return(combined_species)
 }
