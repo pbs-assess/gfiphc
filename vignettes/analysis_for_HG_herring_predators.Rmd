@@ -125,7 +125,7 @@ Next steps:
 
  D add unident and anything else to skate_sp, ensure consistent defns through time
 
- - create time series for combined skate_sp - see TODO below
+ D create time series for combined skate_sp
 
  - create time series for the other predators
 
@@ -220,13 +220,14 @@ dplyr::select(unidentified_skate_area$ser_E_and_F$ser_F,
 ## Merge together skate species
 
 Now want to lump the skates in `skate_sp` together. Note that species counts get
-named at `N_it.1` etc. While each one has NA's, none of the summed `N_it_sum` or
+named as `N_it.1` etc. While each one has NA's, none of the summed `N_it_sum` or
 `N_it20_sum` do, because `get_combined_species()` ignores NA's when making the
 sums.
 
 ```{r combine, warning = FALSE}
+sp <- "skates combined"
 skates_combined <- get_combined_species(sp_vec = skate_sp,
-                                        save_RDS_name = "skates_combined")
+                                        save_RDS_name = sp_hyphenate(sp))
 summary(skates_combined$set_counts)
 
 # How many NA's in certain columns (none for N_it_sum or N_it20_sum
@@ -236,12 +237,11 @@ skates_combined$set_counts %>%
   t()
 ```
 
-
-
-TODO:
-Then adapt series E/F calculation to use the above output - just need to remove
-extra columns and rename `N_it_sum` and `N_it20_sum` to `N_it` and `N_it20`.
-
+Now use to calculate Series E, F and EF calculations:
+```{r combineEF, warning = FALSE, results = FALSE}
+assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
+       iphc_get_calc_plot_area(sp))
+```
 
 ## Individual non-skate species
 

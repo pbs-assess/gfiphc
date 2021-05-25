@@ -627,7 +627,7 @@ read_sql <- function(x) {
 ##' skates combined, rather than individual species.
 ##'
 ##' @param sp_vec vector of IPHC species names
-##' @param save_RDS_name name (without suffix) to save the .rds file of the
+##' @param save_RDS_name name (with .rds suffix) to save the .rds file of the
 ##'   output (there is no natural obvious default based on `sp_vec`), if NULL
 ##'   then do not save
 ##' @param path The folder where the cached data will be saved.
@@ -752,8 +752,7 @@ get_combined_species <- function(sp_vec,
     dir.create(path, showWarnings = FALSE)
     saveRDS(combined_species,
             file = paste0(file.path(path,
-                                    paste0(save_RDS_name,
-                                           ".rds"))), #not quite as cache_pbs_data_iphc
+                                    save_RDS_name)), #not quite as cache_pbs_data_iphc
             compress = compress)
   }
 

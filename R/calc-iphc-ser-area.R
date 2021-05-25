@@ -378,8 +378,11 @@ add_in_area <- function(set_counts_of_sp,
 ##' Get data, do calculations and plot longest series for the IPHC survey for
 ##'  a given species restricted to a given area. Will take a while if queries
 ##'  GFbio (for which need to be on DFO network), else can use cached data.
+##'  If data are for combined species, as cached with `get_combined_species()`,
+##'  then the column `N_it_sum` etc. column names are used for `N_it` etc.
 ##'
-##' @param sp Species names (as used in gfdata and gfplot).
+##' @param sp Species name (as used in gfdata and gfplot). Or something like
+##'   "skates combined" -- see vignette.
 ##' @param area `data.frame` of (PBSmapping) class `PolySet` with column names
 ##'   `PID`, `SID`, `POS`, `X`, `Y`,
 ##' @param cached if TRUE then used cached data (sp-name.rds)
@@ -422,6 +425,15 @@ iphc_get_calc_plot_area <- function(sp,
 
   sp_set_counts_with_area <- add_in_area(sp_set_counts$set_counts,
                                          area = area)
+
+  if(!("N_it" %in% names(sp_set_counts_with_area)) &
+     "N_it_sum" %in% names(sp_set_counts_with_area)){
+    sp_set_counts_with_area <- sp_set_counts_with_area %>%
+      dplyr::rename(N_it = N_it_sum,
+                    N_it20 = N_it20_sum,
+                    C_it = C_it_sum,
+                    C_it20 = C_it20_sum)
+  }
 
   ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
 
