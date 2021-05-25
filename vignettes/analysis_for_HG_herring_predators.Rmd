@@ -35,18 +35,6 @@ library(gfiphc)
 
 First, just running for multiple individual species.
 
-<!-- From Jen: -->
-<!-- What would work best for me is a csv file with 3 columns: “Year”, “Indicator”, “Value”  -->
-<!-- Non-standardized values are best. -->
-<!-- The “Indicator” column could include:   -->
-<!-- 1. ArrowtoothFlounder_IPHC_SurveyCatchRate  -->
-<!-- 2. ArrowtoothFlounder_IPHC_UpperCI -->
-<!-- 3. ArrowtoothFlounder_IPHC_LowerCI -->
-<!-- 4. Rockfish_IPHC_SurveyCatchRate -->
-<!-- 5. ... -->
-<!-- ... -->
-
-
 These are the original species (herring predators) extracted for Joe, though
 taking out longnose skate since it will get saved as part of `skate_sp` below.
 ```{r definesp}
@@ -237,7 +225,7 @@ skates_combined$set_counts %>%
   t()
 ```
 
-Now use to calculate Series E, F and EF calculations:
+Now use to calculate Series E, F and EF calculations for the restricted area:
 ```{r combineEF, warning = FALSE, results = FALSE}
 assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
        iphc_get_calc_plot_area(sp))
@@ -255,8 +243,22 @@ for(sp in sp_vec){
 
 ## Format for Jennifer's EAFM summary
 
+Save annual indices (with uncertainty) for all species of interest, in the
+format for the HG herring predators' EAFM summary.
 
+```{r allsp}
+all_sp_longest <- list()
+# Do this to easily create arguments for iphc_format_for_EAFM()
+for(sp in sp_vec){
+  all_sp_longest[[sp]] <- get(paste0(sp_hyphenate(sp,
+                                                  underscore = TRUE,
+                                                  area = TRUE)))$series_longest$ser_longest
+}
 
+iphc_format_for_EAFM(sp_vec,
+                     all_sp_longest)
+
+```
 
 
 

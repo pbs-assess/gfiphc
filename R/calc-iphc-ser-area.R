@@ -460,3 +460,71 @@ iphc_get_calc_plot_area <- function(sp,
     series_longest = series_longest
   )
 }
+
+##' Format results from multiple species for Jennifer's EAFM HG Herring Case
+##' Study
+##'
+##' Create and save a .csv file in the format requested by Jennifer Bolt:
+##'   What would work best for me is a csv file with 3 columns: `Year`,
+##'   `Indicator`, `Value`
+##' Non-standardized values are best (i.e. not normalised).
+##' The `Indicator` column could include:
+##' 1. ArrowtoothFlounder_IPHC_SurveyCatchRate
+##' 2. ArrowtoothFlounder_IPHC_UpperCI
+##' 3. ArrowtoothFlounder_IPHC_LowerCI
+##' 4. Rockfish_IPHC_SurveyCatchRate
+##' 5. ...
+##'
+##' @param sp_vec A vector of species names. Each one *must* have a corresponding
+##'   list `species_name_area` in the workspace which is an output from
+##'   `iphc_get_calc_plot_area()` -- see vignette.
+##' @param sp_vec_list list of output, with each element corresponding to each
+##'   species, and being a tibble of the longest time series. See vignette,
+##'   since needs to be created outside of a function.
+##' @param filename filename to save .csv file
+##' @return saves a .csv file and returns the resulting tibble. Columns are:
+##'  - Year
+##'  - Indicator (e.g. ArrowtoothFlounder_IPHC_SurveyCatchRate,
+##'   ArrowtoothFlounder_IPHC_UpperCI)
+##'  - Value
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' # See vignette.
+##' @}
+iphc_format_for_EAFM <- function(sp_vec,
+                                 sp_vec_list,
+                                 filename = "herring-HG-predators.csv"){
+
+  for(sp in sp_vec[1]){  # TODO just first for now
+    sp_name_one_word <- gsub(" ", "", simple_cap(sp))
+    new_names <- c(paste0(sp_name_one_word,
+                          "_IPHC_SurveyCatchRate"),
+                   paste0(sp_name_one_word,
+                          "_IPHC_LowerCI"),
+                   paste0(sp_name_one_word,
+                          "_IPHC_UpperCI"))
+
+    this_sp_res <- sp_vec_list[[sp]] %>%
+      dplyr::select(Year = year,
+                    I_t20BootMean,
+                    I_t20BootLow,
+                    I_t20BootHigh) %>%
+      dplyr::rename_with(.cols = I_t20BootMean,
+                         .fn = function(x){new_names[1]}) %>%
+      dplyr::rename_with(.cols = I_t20BootLow,
+                         .fn = function(x){new_names[2]}) %>%
+      dplyr::rename_with(.cols = I_t20BootHigh,
+                         .fn = function(x){new_names[3]}) %>%
+      tidyr::pivot_longer(!Year,
+                          names_to = "Indicator",
+                          values_to = "Value")
+  }
+
+# TODO create a function to save as a wide table also, with all species and four
+  # columns
+
+  return(this_sp_res)   # TODO then append to list and reshape
+
+}
