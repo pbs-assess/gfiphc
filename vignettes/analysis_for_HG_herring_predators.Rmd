@@ -155,10 +155,11 @@ for(sp in skate_sp){
 
 ## Unidentified skate
 
-For at least 1995 and 1996 there are 'Unident. skate', and can see from species figures
-below that no skate species were indeed identified for those years. And it looks
-like maybe later years also have undentified skate yet big and longnose were
-identified.
+Above figure shows that for 1995 and 1996 there are 'Unident. skate', and then
+for a few years after that (but at lower numbers). Can see from species figures
+above that indeed no skate species were identified for those years. And it looks
+like then big and longnose were identified but not others for a few years. Look
+at data:
 
 ```{r unidentcheck}
 # 1995
@@ -205,24 +206,10 @@ dplyr::select(uni$set_counts,
               year) %>%
   table()
 ```
-
-This commit changes the empty data to not have 2003 with a row of NA's, so that
-the above now has no 2003 data.
-
 And check 2013 has no unidentified skate:
 ```{r details}
 dplyr::filter(uni$set_counts, year == 2013) %>% dplyr::select(C_it20) %>% max()
 ```
-
-This works now:
-```{r unident, warning = FALSE, results = FALSE}
-for(sp in skate_unident){
-  assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
-         iphc_get_calc_plot_area(sp))
-}
-```
-
-
 ## Merge together skate species
 
 Now want to lump the skates in `skate_sp` together:
