@@ -158,8 +158,9 @@ for(sp in skate_sp){
 Above figure shows that for 1995 and 1996 there are 'Unident. skate', and then
 for a few years after that (but at lower numbers). Can see from species figures
 above that indeed no skate species were identified for those years. And it looks
-like then big and longnose were identified but not others for a few years. Look
-at data:
+like then big and longnose were identified but not others for a few years.
+
+First looking into the raw data:
 
 ```{r unidentcheck}
 # 1995
@@ -186,30 +187,35 @@ dplyr::filter(data1996to2002,
 unique(countData2013$spNameIPHC)[grep("Skate", unique(countData2013$spNameIPHC))]
 grep("skate", unique(countData2013$spNameIPHC)) # none
 
-# 2020 (not in GFbio) TODO
-
 # 2003-2019 (except 2013) - in GFbio
 # See Issue #16 - not sure what the species code would be, but there may not be
 # one if they were all identified after 2000.
 
+# 2020 (not in GFbio). Not looked at yet. Presumably identified. TODO
 ```
+
 So, given none in 2001 or 2002 and numbers of unidentified declined from 1996 to
 2000, it's probably the case that there were all identified from 2001
 onwards. See Issue #16.
 
 So, we can use `unidentified skate` as a species name (done above). Load in and
 examine that data:
-```{r uni}
-uni <- readRDS(sp_hyphenate(skate_unident))
-summary(uni$set_counts)
-dplyr::select(uni$set_counts,
-              year) %>%
+```{r unidentsummary}
+unidentified_skate_area$sp_set_counts_with_area %>%
+  select(year) %>%
   table()
 ```
-And check 2013 has no unidentified skate:
-```{r details}
-dplyr::filter(uni$set_counts, year == 2013) %>% dplyr::select(C_it20) %>% max()
+But there no positive counts after 2000, looking at first 20 hooks (Series E)
+and then all hooks (Series F).
+```{r unidentsummary2}
+dplyr::select(unidentified_skate_area$ser_E_and_F$ser_E,
+              year,
+              num_pos20)
+dplyr::select(unidentified_skate_area$ser_E_and_F$ser_F,
+              year,
+              num_pos)
 ```
+
 ## Merge together skate species
 
 Now want to lump the skates in `skate_sp` together:
@@ -232,18 +238,6 @@ none of the summed `N_it_sum` or `N_it20_sum` do, because
 TODO:
 Then adapt series E/F calculation to use the above output - just need to remove
 extra columns and rename `N_it_sum` and `N_it20_sum` to `N_it` and `N_it20`.
-
-### Unidentified skates
-
-```{r unidentsummary}
-unidentified_skate_area$sp_set_counts_with_area %>%
-  select(year) %>%
-  table()
-
-# But no positive counts after 2000
-dplyr::select(unidentified_skate_area$ser_E_and_F$ser_E, year, num_pos20)
-dplyr::select(unidentified_skate_area$ser_E_and_F$ser_F, year, num_pos)
-```
 
 
 ## Individual non-skate species
