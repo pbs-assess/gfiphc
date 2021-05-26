@@ -56,38 +56,85 @@ format but it didn't save with commas!?). Save in this
 folder as `set-and-halibut-data-2020.xlsx`. Open in Excel and Export as .csv,
 and when trying to quit Excel say no to save changes (not sure if that matters).
 
+Also do the same but with all non-halibut data, and save as
+`non-halibut-data-2020.xlsx` and export as .csv in Excel. Importantly, this file
+(but not the first one) contains the numbers of observed hooks, needed in our calculations.
+
 ```{r loadsetdata}
 sets_raw <- readr::read_csv("set-and-halibut-data-2020.csv") %>%
   dplyr::mutate_if(is.character, factor)
 sets_raw
 summary(sets_raw)
 testthat::expect_equal(unique(sets_raw$"IPHC Reg Area"), "2B") # Check just BC data
+testthat::expect_equal(unique(sets_raw$Year), 2020)
 ```
 
 Now simplify down to what's needed and rename, based on `iphc2013data.Rnw` (need
 to include the 'purpose' column, unlike 2013):
 ```{r simplify}
-sets_simp <- select(sets_raw,
-                    year = Year,
-                    station = Station,
-                    lat = "MidLat fished",
-                    lon = "MidLon fished",
-                    avgDepthFathoms = "AvgDepth (fm)",
-                    hooksRetr = HooksRetrieved,
-                    hooksObs = HooksObserved,
-                    skatesHauled = SkatesHauled,
-                    effSkateIPHC = EffectiveSkates,
-                    usable = Effective,
-                    purpose = Purpose) %>%
-             mutate(E_it20 = effSkateIPHC * hooksObs / hooksRetr,
-                    station = as.character(station),
-                    usable = as.character(usable))
+
+sets_simp <- dplyr::select(sets_raw,
+                           year = Year,
+                           station = Station,
+                           lat = "MidLat fished",
+                           lon = "MidLon fished",
+                           avgDepthFathoms = "AvgDepth (fm)",
+                         # Need these from the other data set
+                         #                    hooksRetr = HooksRetrieved,
+                         #                    hooksObs = HooksObserved,
+                           skatesHauled = "No. skates hauled",
+                           effSkateIPHC = "Effective skates hauled",
+                           soakTimeMinutes = "Soak time (min.)",  # Joe might want
+                           usable = Eff,
+                           purpose = Purpose) %>%
+#             mutate(E_it20 = effSkateIPHC * hooksObs / hooksRetr,
+#                    station = as.character(station),
+#                    usable = as.character(usable))
 ```
 
 then change purpose to match 2019/2018.
 
-
 ## Species counts
+
+This data also contains the numbers of hooks observed and retrieved, which we
+need to merge into the above data.
+```{r simplify}
+counts_raw <- readr::read_csv("non-halibut-data-2020.csv") %>%
+  dplyr::mutate_if(is.character, factor)
+counts_raw
+summary(counts_raw)
+testthat::expect_equal(unique(counts_raw$Year), 2020)
+testthat::expect_equal(unique(counts_raw$SampleType), as.factor("20Hook"))
+counts <- dplyr::select(counts_raw,
+                        year = Year,
+                        station = Station,
+                        spNameIPHC = "Species Name",
+                        specCount = "Number Observed")
+
+hook_details <- dplyr::select(counts_raw,
+                        year = Year,
+                        station = Station,
+                        hooksRetr = HooksRetrieved,
+                        hooksObs = HooksObserved)
+
+
+
+
+
+            arrange(station) %>%
+            mutate(station = as.character(station),
+                   spNameIPHC = as.character(spNameIPHC))
+
+# Need these from the other data set
+#                    hooksRetr = HooksRetrieved,
+#                    hooksObs = HooksObserved,
+
+
+
+#             mutate(E_it20 = effSkateIPHC * hooksObs / hooksRetr,
+#                    station = as.character(station),
+#                    usable = as.character(usable))
+```
 
 
 
