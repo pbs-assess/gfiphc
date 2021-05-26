@@ -1,0 +1,342 @@
+---
+title: "Check the 2020 data and incorporate it into gfiphc"
+author: "Andrew Edwards"
+output: rmarkdown::pdf
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 10,
+  fig.height = 8
+)
+```
+
+In 2020 only the first 20 hooks were evaluated, so those data are not going into
+GFbio. Going to incorporate into gfiphc here. Likely need this as a template for
+future years. This includes some manual checks to make sure the data look okay.
+
+<!-- Using vignette as a template, and iphc2013data.Rnw -->
+
+```{r setup}
+load_all()
+setData2013
+countData2013
+```
+
+We want to get the new data into the same format as those. Two data sets are
+needed for gfiphc code that to summarises catches of a particular species at the
+station level to get counts of zero included.
+
+## Set-level information
+
+Maria was sent the file `2020 IPHCtoDFO_dataExtraction-Maria.xls` for set
+details, but this is multiple sheets and more complex than needed. Will try
+extracting directly from IPHC website (which they want us to do in the future
+anyway), using the following instructions:
+
+Go to https://www.iphc.int/data/fiss-data-query and select the following options:
+
+1. Year Range - 2020 to 2020.
+
+2. Area 2B
+
+3. Purpose Codes - All
+
+4. IPHC Charter Regions - All
+
+5. Maps - Nothing
+
+6. Select non-Pacific halibut species - deselect All.
+
+Download tab on bottom right (see instructions above question 4), and select
+CrossTab. Select "Set and Pacific Halibut data" and .xlsx format (I tried .csv
+format but it didn't save with commas!?). Save in this
+folder as `set-and-halibut-data-2020.xlsx`. Open in Excel and Export as .csv,
+and when trying to quit Excel say no to save changes (not sure if that matters).
+
+```{r loadsetdata}
+sets_raw <- readr::read_csv("set-and-halibut-data-2020.csv") %>%
+  dplyr::mutate_if(is.character, factor)
+sets_raw
+summary(sets_raw)
+testthat::expect_equal(unique(sets_raw$"IPHC Reg Area"), "2B") # Check just BC data
+```
+
+Now simplify down to what's needed and rename, based on `iphc2013data.Rnw` (need
+to include the 'purpose' column, unlike 2013):
+```{r simplify}
+sets_simp <- select(sets_raw,
+                    year = Year,
+                    station = Station,
+                    lat = "MidLat fished",
+                    lon = "MidLon fished",
+                    avgDepthFathoms = "AvgDepth (fm)",
+                    hooksRetr = HooksRetrieved,
+                    hooksObs = HooksObserved,
+                    skatesHauled = SkatesHauled,
+                    effSkateIPHC = EffectiveSkates,
+                    usable = Effective,
+                    purpose = Purpose) %>%
+             mutate(E_it20 = effSkateIPHC * hooksObs / hooksRetr,
+                    station = as.character(station),
+                    usable = as.character(usable))
+```
+
+then change purpose to match 2019/2018.
+
+
+## Species counts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Data for species of interest
+
+First, just running for multiple individual species.
+
+These are the original species (herring predators) extracted for Joe, though
+taking out longnose skate since it will get saved as part of `skate_sp` below.
+```{r definesp}
+sp_vec <- c("yelloweye rockfish",
+            "arrowtooth flounder",
+            "lingcod",
+            "north pacific spiny dogfish",
+            "pacific cod",
+            "pacific halibut",
+            "redbanded rockfish",
+            "sablefish",
+            "walleye pollock")
+```
+
+We want a general rockfish category and general skates one, I just picked
+yelloweye, redbanded, and longnose as examples above. Going through groundfish
+synopsis report and picking skate species, then rockfish, that have sufficient
+data to look useful.
+
+## Skate species
+
+Unidentified (species of) skates were enumerated in the early years, but then
+declined dramatically and had zero counts in 2001, 2002 and 2013, and presumably
+for 2003 onwards (but those data are in GFbio which would have to be checked --
+seems clear that the identification protocol improved through time). So after
+investigating this (in earlier versions of this vignette), am now including
+unidentified skate in the species list.
+
+Looking through 2019 synopsis report and the plots below (and a look at the
+data), here are the decisions on including each skate species:
+
+ - Aleutian Skate: Looks like only enumerated explicitly since 2007, 2018 map
+   shows mean 0.31 fish/skate. Include.
+ - Abyssal Skate - no catch, ignore.
+ - Broad Skate - no catch, ignore.
+ - Big Skate - looks like enumerated explicitly since 1998, and 2018 map shows
+   mean 0.69 fish/skate. Include.
+ - Roughtail Skate - looks like only caught in three or four years (mean +ve sets
+   1/177). No catch in 2018. Include.
+ - Sandpaper Skate - only shows up for a few years. Mean +ve sets 5/177, 2018
+   mean 0.14 fish/skate. Include.
+ - Longnose Skate - only shows up since 1998 (presumably unidentified
+   beforehand), mean +ve sets 57/135, 2018 mean 0.96 fish/skate. Include.
+ -  Alaska Skate - only showed up in five years, 2018 mean 0.14 fish/skate. Only
+   plotted since 2003 (like Sandpaper). Include.
+
+```{r skatedefn}
+skate_sp <- c("aleutian skate",
+              "big skate",
+              "roughtail skate",
+              "sandpaper skate",
+              "longnose skate",
+              "alaska skate",
+              "unidentified skate")
+
+skate_ignore <- c("abyssal skate",
+                  "broad skate")
+skate_unident <- "unidentified skate"
+# skates_combined <- "skates combined"
+```
+
+Cache the data once (this is not evaluated each time):
+```{r get_skates, eval=FALSE}
+cache_pbs_data_iphc(skate_sp)
+cache_pbs_data_iphc(skate_ignore)
+# cache_pbs_data_iphc(skate_unident)
+```
+
+Next steps:
+
+ D functionalise next bit, saving results (like in other vignette?)
+
+ D show unident skate also
+
+ D search all years for anything with skate, there are some rare ones not in GFbio
+
+ D add unident and anything else to skate_sp, ensure consistent defns through time
+
+ D create time series for combined skate_sp
+
+ D create time series for the other predators
+
+ - doing a combined rockfish one?
+
+ - Then re-run again with 2020 data added and 2018
+    expanded areas accounted for (may be done already for Series EF).
+
+ D create wrapper for format for Jennifer
+
+ - fix Travis
+
+ - merge into master
+
+## Individual skate species
+
+Calculate series for each skate species in turn (saved as `species_name_area`)
+and plot figures of Series E and F and longest from those. The fourth panel has
+Series EF which is the longest time series possible; if it is blank then Series
+E or F are the longest (and automatically identified). But this only happens for
+the rare species, and so not when the skate species are combined.
+
+```{r repeat, warning = FALSE, results = FALSE}
+for(sp in skate_sp){
+  assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
+         iphc_get_calc_plot_area(sp))
+}
+```
+
+## Unidentified skate
+
+Above figure shows that for 1995 and 1996 there are 'Unident. skate', and then
+for a few years after that (but at lower numbers). Can see from species figures
+above that indeed no skate species were identified for those years. And it looks
+like then big and longnose were identified but not others for a few years.
+
+First looking into the raw data:
+
+```{r unidentcheck}
+# 1995
+unique(countData1995$spNameIPHC)[grep("Skate", unique(countData1995$spNameIPHC))]
+grep("skate", unique(countData1995$spNameIPHC)) # none
+# And a manual check through confirms, that all we need is "unident. Skate"
+
+#1996 to 2002 has "unident. Skate", but only up to 2000:
+unique(data1996to2002$spNameIPHC)[grep("Skate",
+                                       unique(data1996to2002$spNameIPHC))]
+grep("skate", unique(data1996to2002$spNameIPHC)) # none
+dplyr::filter(data1996to2002,
+              spNameIPHC == "unident. Skate") %>%
+  tail()
+
+# And there were less unidentified through time:
+dplyr::filter(data1996to2002,
+              spNameIPHC == "unident. Skate") %>%
+  select(year) %>%
+  table()
+
+
+# 2013 (not in GFbio), no unident. Skate:
+unique(countData2013$spNameIPHC)[grep("Skate", unique(countData2013$spNameIPHC))]
+grep("skate", unique(countData2013$spNameIPHC)) # none
+
+# 2003-2019 (except 2013) - in GFbio
+# See Issue #16 - not sure what the species code would be, but there may not be
+# one if they were all identified after 2000.
+
+# 2020 (not in GFbio). Not looked at yet. Presumably identified. TODO
+```
+
+So, given none in 2001 or 2002 and numbers of unidentified declined from 1996 to
+2000, it's probably the case that there were all identified from 2001
+onwards. See Issue #16.
+
+So, we can use `unidentified skate` as a species name (done above). Load in and
+examine that data:
+```{r unidentsummary}
+unidentified_skate_area$sp_set_counts_with_area %>%
+  select(year) %>%
+  table()
+```
+But there no positive counts after 2000, looking at first 20 hooks (Series E)
+and then all hooks (Series F).
+```{r unidentsummary2}
+dplyr::select(unidentified_skate_area$ser_E_and_F$ser_E,
+              year,
+              num_pos20)
+dplyr::select(unidentified_skate_area$ser_E_and_F$ser_F,
+              year,
+              num_pos)
+```
+
+## Merge together skate species
+
+Now want to lump the skates in `skate_sp` together. Note that species counts get
+named as `N_it.1` etc. While each one has NA's, none of the summed `N_it_sum` or
+`N_it20_sum` do, because `get_combined_species()` ignores NA's when making the
+sums.
+
+```{r combine, warning = FALSE}
+sp <- "skates combined"
+skates_combined <- get_combined_species(sp_vec = skate_sp,
+                                        save_RDS_name = sp_hyphenate(sp))
+summary(skates_combined$set_counts)
+
+# How many NA's in certain columns (none for N_it_sum or N_it20_sum
+skates_combined$set_counts %>%
+  dplyr::select(-c("station", "lat", "lon", "usable", "standard")) %>%
+  dplyr::summarise_all( ~ sum(is.na(.x))) %>%
+  t()
+```
+
+Now use to calculate Series E, F and EF calculations for the restricted area:
+```{r combineEF, warning = FALSE, results = FALSE}
+assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
+       iphc_get_calc_plot_area(sp))
+```
+
+## Individual non-skate species
+
+Similarly for the other species:
+```{r showmult, warning = FALSE, results = FALSE}
+for(sp in sp_vec){
+  assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
+         iphc_get_calc_plot_area(sp))
+}
+```
+
+## Format for Jennifer's EAFM summary
+
+Save annual indices (with uncertainty) for all species of interest, in the
+format for the HG herring predators' EAFM summary.
+
+```{r allsp}
+all_sp_longest <- list()
+sp_vec_and_combined_skates <- c(sp_vec, "skates combined")
+# Do this to easily create arguments for iphc_format_for_EAFM(); can't easily
+#  functionalise. Each element is names for the species, and is a tibble of
+#  longest time series.
+for(sp in sp_vec_and_combined_skates){
+  all_sp_longest[[sp]] <- get(paste0(sp_hyphenate(sp,
+                                                  underscore = TRUE,
+                                                  area = TRUE)))$series_longest$ser_longest
+}
+
+eafm_res <- iphc_format_for_EAFM(sp_vec_and_combined_skates,
+                                 all_sp_longest) # also saves .csv, and .rds of
+                                        # all_sp_longest list
+
+eafm_res
+```
+
+Note that the code may not yet fully account for all possibilities (for all
+areas and species), particularly for rarer species. So do check that the output
+is sensible.
