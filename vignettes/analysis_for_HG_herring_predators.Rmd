@@ -248,7 +248,7 @@ format for the HG herring predators' EAFM summary.
 
 ```{r allsp}
 all_sp_longest <- list()
-# Do this to easily create arguments for iphc_format_for_EAFM()
+# Do this to easily create arguments for iphc_format_for_EAFM(); can't easily functionalise
 for(sp in sp_vec){
   all_sp_longest[[sp]] <- get(paste0(sp_hyphenate(sp,
                                                   underscore = TRUE,

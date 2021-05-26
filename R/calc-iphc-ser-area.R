@@ -479,8 +479,8 @@ iphc_get_calc_plot_area <- function(sp,
 ##'   list `species_name_area` in the workspace which is an output from
 ##'   `iphc_get_calc_plot_area()` -- see vignette.
 ##' @param sp_vec_list list of output, with each element corresponding to each
-##'   species, and being a tibble of the longest time series. See vignette,
-##'   since needs to be created outside of a function.
+##'   species (and named for that species), and being a tibble of the longest
+##'   time series. See vignette, since needs to be created outside of a function.
 ##' @param filename filename to save .csv file
 ##' @return saves a .csv file and returns the resulting tibble. Columns are:
 ##'  - Year
@@ -495,9 +495,11 @@ iphc_get_calc_plot_area <- function(sp,
 ##' @}
 iphc_format_for_EAFM <- function(sp_vec,
                                  sp_vec_list,
-                                 filename = "herring-HG-predators.csv"){
+                                 filename = "herring-HG-predators-IPHC.csv"){
 
-  for(sp in sp_vec[1]){  # TODO just first for now
+  eafm_res <- tibble()
+
+  for(sp in sp_vec){
     sp_name_one_word <- gsub(" ", "", simple_cap(sp))
     new_names <- c(paste0(sp_name_one_word,
                           "_IPHC_SurveyCatchRate"),
@@ -520,11 +522,22 @@ iphc_format_for_EAFM <- function(sp_vec,
       tidyr::pivot_longer(!Year,
                           names_to = "Indicator",
                           values_to = "Value")
+
+    eafm_res <- rbind(eafm_res,
+                      this_sp_res)
   }
 
 # TODO create a function to save as a wide table also, with all species and four
   # columns
 
-  return(this_sp_res)   # TODO then append to list and reshape
+  write.csv(eafm_res,
+            filename,
+            row.names = FALSE,
+            quote = FALSE)
+
+
+  return(eafm_res)
+  # Actually, return a tibble of all values, but within the function save it and
+  # save EAFM version.
 
 }
