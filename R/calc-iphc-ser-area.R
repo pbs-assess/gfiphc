@@ -462,7 +462,7 @@ iphc_get_calc_plot_area <- function(sp,
 }
 
 ##' Format results from multiple species for Jennifer's EAFM HG Herring Case
-##' Study
+##' Study and save them.
 ##'
 ##' Create and save a .csv file in the format requested by Jennifer Bolt:
 ##'   What would work best for me is a csv file with 3 columns: `Year`,
@@ -475,13 +475,16 @@ iphc_get_calc_plot_area <- function(sp,
 ##' 4. Rockfish_IPHC_SurveyCatchRate
 ##' 5. ...
 ##'
+##' Also saves `sp_vec_list` as an .rds file.
+##'
 ##' @param sp_vec A vector of species names. Each one *must* have a corresponding
 ##'   list `species_name_area` in the workspace which is an output from
 ##'   `iphc_get_calc_plot_area()` -- see vignette.
 ##' @param sp_vec_list list of output, with each element corresponding to each
 ##'   species (and named for that species), and being a tibble of the longest
 ##'   time series. See vignette, since needs to be created outside of a function.
-##' @param filename filename to save .csv file
+##' @param filename filename (including .csv) to save .csv file; also saves .rds
+##'   of sp_vec_list.
 ##' @return saves a .csv file and returns the resulting tibble. Columns are:
 ##'  - Year
 ##'  - Indicator (e.g. ArrowtoothFlounder_IPHC_SurveyCatchRate,
@@ -497,7 +500,10 @@ iphc_format_for_EAFM <- function(sp_vec,
                                  sp_vec_list,
                                  filename = "herring-HG-predators-IPHC.csv"){
 
-  eafm_res <- tibble()
+  saveRDS(sp_vec_list,
+          gsub(".csv", ".rds", filename))
+
+  eafm_res <- tibble()        # Long format for EAFM Case Study
 
   for(sp in sp_vec){
     sp_name_one_word <- gsub(" ", "", simple_cap(sp))
@@ -527,17 +533,10 @@ iphc_format_for_EAFM <- function(sp_vec,
                       this_sp_res)
   }
 
-# TODO create a function to save as a wide table also, with all species and four
-  # columns
-
   write.csv(eafm_res,
             filename,
             row.names = FALSE,
             quote = FALSE)
 
-
   return(eafm_res)
-  # Actually, return a tibble of all values, but within the function save it and
-  # save EAFM version.
-
 }

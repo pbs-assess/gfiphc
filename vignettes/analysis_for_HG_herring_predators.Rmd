@@ -115,16 +115,14 @@ Next steps:
 
  D create time series for combined skate_sp
 
- - create time series for the other predators
+ D create time series for the other predators
 
  - doing a combined rockfish one?
 
  - Then re-run again with 2020 data added and 2018
     expanded areas accounted for (may be done already for Series EF).
 
- - plot normalised values
-
- - create wrapper for format for Jennifer
+ D create wrapper for format for Jennifer
 
  - fix Travis
 
@@ -133,7 +131,10 @@ Next steps:
 ## Individual skate species
 
 Calculate series for each skate species in turn (saved as `species_name_area`)
-and plot figures of Series E and F and longest from those:
+and plot figures of Series E and F and longest from those. The fourth panel has
+Series EF which is the longest time series possible; if it is blank then Series
+E or F are the longest (and automatically identified). But this only happens for
+the rare species, and so not when the skate species are combined.
 
 ```{r repeat, warning = FALSE, results = FALSE}
 for(sp in skate_sp){
@@ -248,20 +249,22 @@ format for the HG herring predators' EAFM summary.
 
 ```{r allsp}
 all_sp_longest <- list()
-# Do this to easily create arguments for iphc_format_for_EAFM(); can't easily functionalise
-for(sp in sp_vec){
+sp_vec_and_combined_skates <- c(sp_vec, "skates combined")
+# Do this to easily create arguments for iphc_format_for_EAFM(); can't easily
+#  functionalise. Each element is names for the species, and is a tibble of
+#  longest time series.
+for(sp in sp_vec_and_combined_skates){
   all_sp_longest[[sp]] <- get(paste0(sp_hyphenate(sp,
                                                   underscore = TRUE,
                                                   area = TRUE)))$series_longest$ser_longest
 }
 
-iphc_format_for_EAFM(sp_vec,
-                     all_sp_longest)
+eafm_res <- iphc_format_for_EAFM(sp_vec_and_combined_skates,
+                                 all_sp_longest) # also saves .csv, and .rds of
+                                        # all_sp_longest list
 
+eafm_res
 ```
-
-
-
 
 Note that the code may not yet fully account for all possibilities (for all
 areas and species), particularly for rarer species. So do check that the output
