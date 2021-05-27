@@ -71,9 +71,13 @@ with numbers in parentheses indicating the number of years for which data for ea
 
 For 2020, only the first 20 hooks were evaluated from each skate. So, like for 2013, the data have been included in this package. For future years, copy the code `data-raw/iphc-2020-data.Rmd` (and rename for a new year) and follow the instructions for downloading the data from the IPHC website, checking the data, and saving it formatted for this package. The pdf `data-raw/iphc-2020-data.pdf` is also available for easier reading (only commit a final version of future .pdf's, not as you are working on it).
 
-Then have to create/adapt new functions to include the data in the calculations. For data in GFbio this should be automatic, else see what was done just after commit a5ecd2a for 2020 (may make notes here). Basically go through the vignettes and re-run them (adapting any called functions as necessary to include latest year of data), making sure the latest year is included and the maps make sense. Also re-run `data-raw/sets-skates-hooks-yelloweye.R`. 
+Then have to create/adapt new functions to include the data in the calculations. For data in GFbio this should be automatic, else see what was done just after commit a5ecd2a for 2020 (may make notes here). Basically go through the vignettes and re-run them (adapting any called functions as necessary to include latest year of data), making sure the latest year is included and the maps make sense. 
 
-First change `get_all_iphc_set_counts()` to include new year, introducing, e.g. new `get_iphc_2020()`.
+1. Change `get_all_iphc_set_counts()` to include new year, checking that `get_iphc_from_gfiphc()` works.
+
+2. Re-run (line by line to check) `data-raw/sets-skates-hooks-yelloweye.R`. 
+ 
+3. Update documentation of data sets in `R/data.R` if necessary.
 
 ## Installation
 
