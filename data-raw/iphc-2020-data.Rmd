@@ -14,18 +14,26 @@ knitr::opts_chunk$set(
 )
 ```
 
-In 2020 only the first 20 hooks were evaluated, so those data are not going into
+In 2020 only the first 20 hooks were evaluated, so those data are not easily imported into
 GFbio. Going to incorporate into gfiphc here. Likely need this as a template for
-future years. This includes some manual checks to make sure the data look
-okay. For comparison first look at 2013 data included in gfiphc:
-<!-- Using vignette as a template, and iphc2013data.Rnw -->
+future years (resave this file with new year, and change all 2020's to the
+subsequent year -- and go through the code somewhat manually to check the output
+as you go along). This code includes some
+manual checks to make sure the data look
+okay.
+
+For comparison first look at 2013 data included in gfiphc:
+<!-- Based on iphc2013data.Rnw -->
 ```{r setup}
 load_all()
 setData2013
 countData2013
 ```
 
-We want to get the new data into the same format as those. Two data sets are
+We want to get the new data into the same format as those (columns with same
+names and classes, even though in retrospect some classes aren't ideally
+chosen, but also retaining retrieved and observed hooks for the set data). Two
+data sets are
 needed because later gfiphc code summarises catches of a particular species at the
 station level, and needs to create counts of zeros for the species of interest
 (and such zeros are not included in IPHC output).
@@ -90,7 +98,11 @@ sets_simp <- dplyr::select(sets_raw,
                            soakTimeMinutes = "Soak time (min.)",  # Joe might want
                            usable = Eff,
                            purpose = Purpose) %>%
-  arrange(station)
+  arrange(station) %>%
+  dplyr::mutate(year = as.integer(year),
+                station = as.character(station),
+                avgDepth = as.integer(avgDepth),
+                usable = as.character(usable))
 
 sets_simp
 ```
@@ -121,18 +133,29 @@ First, get the species counts into the desired format (to match `countData2013` 
 ```{r counts}
 counts_raw <- readr::read_csv("non-halibut-data-2020.csv") %>%
   dplyr::mutate_if(is.character, factor)
+
 counts_raw
 summary(counts_raw)
 testthat::expect_equal(unique(counts_raw$Year), 2020)
 testthat::expect_equal(unique(counts_raw$SampleType), as.factor("20Hook"))
-counts <- dplyr::select(counts_raw,
-                        year = Year,
-                        station = Station,
-                        spNameIPHC = "Species Name",
-                        specCount = "Number Observed") %>%
-  arrange(station)
+countData2020 <- dplyr::select(counts_raw,
+                               year = Year,
+                               station = Station,
+                               spNameIPHC = "Species Name",
+                               specCount = "Number Observed") %>%
+  arrange(station) %>%
+  dplyr::mutate(year = as.integer(year),
+                station = as.character(station),
+                spNameIPHC = as.character(spNameIPHC),
+                specCount = as.integer(specCount))
 
-counts
+testthat::expect_equal(names(countData2013), names(countData2020))
+countData2020
+summary(countData2020)
+
+usethis::use_data(countData2020,
+                  overwrite = TRUE)
+
 ```
 
 ## Hooks observed and retrieved
@@ -147,7 +170,9 @@ hook_details <- dplyr::group_by(counts_raw,
                    hooksObs = unique(HooksObserved)) %>%
   dplyr::rename(station = Station) %>%
   dplyr::ungroup() %>%
-  arrange(station)
+  arrange(station) %>%
+  dplyr::mutate(year = as.integer(year),
+                station = as.character(station))
 
 hook_details
 
@@ -155,11 +180,12 @@ expect_equal(sets_simp_std$station, hook_details$station)
 ```
 
 So now need to get the hook details into the set details, and keep columns as
-for `setData2013` but also with `standard`:
+for `setData2013` but also with `standard`, and may as weel keep `hooksRetr` and
+`hooksObs`:
 ```{r merge}
-sets <- dplyr::left_join(sets_simp_std,
-                         hook_details,
-                         by = c("year", "station")) %>%
+setData2020 <- dplyr::left_join(sets_simp_std,
+                                hook_details,
+                                by = c("year", "station")) %>%
   dplyr::mutate(E_it20 = effSkateIPHC * hooksObs / hooksRetr) %>%
   dplyr::select(year,
                 station,
@@ -169,10 +195,16 @@ sets <- dplyr::left_join(sets_simp_std,
                 effSkateIPHC,
                 E_it20,
                 usable,
-                standard) %>%
+                standard,
+                hooksRetr,
+                hooksObs) %>%
   dplyr::mutate(year = as.integer(year),
                 station = as.character(station),
                 avgDepth = as.integer(avgDepth),
                 usable = as.character(usable))
-sets
+setData2020
+testthat::expect_equal(names(setData2013), names(setData2020)[1:ncol(setData2013)])
+summary(setData2020)
+usethis::use_data(setData2020,
+                  overwrite = TRUE)
 ```
