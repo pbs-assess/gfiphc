@@ -2,16 +2,17 @@
 #'
 #' @details
 #' * `get_iphc_sets()` extracts IPHC survey data at the set level for given
-#'    species, from 2003 to present (excluding 2013 which is not in database)
+#'    species, from 2003 to present (excluding 2013 and any later years that are
+#'    not in database)
 #' * `get_iphc_sets_info()` extracts IPHC survey data regarding each set, with no
 #'    species information, to give one unique row (with lat, lon etc.) for each
-#'    set, from 2003 to present (excluding 2013 which is not in database)
+#'    set, from 2003 to present (excluding 2013 and others not in database)
 #' * `get_iphc_skates_info()` extracts IPHC survey data regarding each skate,
 #'    with no species information, to give one unique row (with lat, lon etc.)
-#'    for each set, from 2003 to present (excluding 2013 which is not in database);
+#'    for each set, from 2003 to present (excluding 2013 and otheres not in database);
 #'    needed for the hooks per skate
 #' * `get_iphc_hooks()` extracts IPHC survey data at the hook level for given
-#'    species, from 2003 to present (excluding 2013 which is not in database).
+#'    species, from 2003 to present (excluding 2013 and others not in database).
 #'    If species is 'hook with bait' then it returns the hooks that were returned
 #'    with bait.
 #' * `cache_pbs_data_iphc()` runs `get_all_iphc_set_counts()` for a given species
@@ -570,6 +571,99 @@ get_iphc_2013 <- function(species) {
   )
   setVals2013
 }
+
+
+##' Get the data for IPHC 2013 or 2020 survey for a given species, or later
+##'  years for which only first 20 hooks were evaluated.
+##'
+##' When only first 20 hooks were evaluated, the data are in here (not
+##' GFbio). See `data-raw/iphc-2020-data.Rmd` for details to extract the data
+##' from the IPHC website and include in this pacakge. This function should then
+##' work for all such years, since the data will be saved in the correct format.
+##' Was `get_iphc_2013()` but generalising for future years.
+##'
+##' Details
+##' @return Tibble contains year, station name, lat, lon,
+##'           E_it (effective skate number for that station, based on all
+##'                   hooks, so all NA),
+##'           N_it (number of 'species' caught on all hooks, so all NA),
+##'           C_it (catch rate of 'species' as number per effective skate,
+##'                   based on all hooks, so all NA),
+##'           E_it20 (effective skate number for that station, based on first
+##'                   20 hooks),
+##'           N_it20 (number of 'species' caught in first 20 hooks),
+##'           C_it20 (catch rate of 'species' as number per effective skate,
+##'                   based on the first 20 hooks),
+##'           usable (whether or not that station is usable, as deemed by IPHC),
+##'           standard (whether or not station is a standard one or in the
+##'                   expansion set after 2018)
+##'
+##' If no data at all on that species then C_it and N_it are NA's.
+##' @examples
+##' \dontrun{
+##' yyr2013 <- get_iphc_from_gfiphc("yelloweye rockfish", year = 2013)
+##' summary(yyr2013)
+##' expect_equal(get_iphc_2013("yelloweye rockfish"), yyr2013)  # until I retire get_iphc_2013()
+##' }
+##'
+##' @rdname get_early_iphc
+get_iphc_from_gfiphc <- function(species,
+                                 year){
+  stopifnot(year %in% c(2013, 2020))  # update this each year
+  iphc_spp_name <- get_iphc_spp_name(species)
+
+  countData <- get(paste0("countData", year))
+  setData <-  get(paste0("setData", year))
+
+  setValsprelim <- summarise(group_by(countData, year, station),
+    N_it20 = sum((spNameIPHC == iphc_spp_name) *
+      specCount)
+  ) %>%
+    arrange(station)
+
+  # Need the station-specific information (though all stations do appear in the
+  #  setVals2013prelim, they didn't for 1995; 2020 has a column so use that if
+  #  it's there).
+  setVals <- left_join(setData,
+                       setValsprelim,
+                       by = "station") %>%
+    mutate(C_it20 = N_it20 / E_it20) %>%
+    mutate(
+      E_it = NA,
+      N_it = NA,
+      C_it = NA
+    )
+
+  # For 2013 there is no standard column.
+  if(!("standard" %in% names(setData))){
+    setVals <- dplyr::left_join(setVals,
+                                select(setDataExpansion,
+                                       station,
+                                       standard),
+                                by = "station")
+  }
+
+  setVals$year <- year   # some are NA's from the left_join
+  # Re-order:
+  setVals <- select(
+    setVals,
+    year,
+    station,
+    lat,
+    lon,
+    E_it,
+    N_it,
+    C_it,
+    E_it20,
+    N_it20,
+    C_it20,
+    usable,
+    standard
+  )
+  setVals
+}
+
+
 
 ##' Get and combine all the IPHC survey data for a given species
 ##'
