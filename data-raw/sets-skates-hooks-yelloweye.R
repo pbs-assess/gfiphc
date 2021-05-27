@@ -4,6 +4,13 @@
 # Needs to be run each year once GFBio (or local spreadsheets, which may occur
 # if counts are only for the first 20 hooks) are updated.
 
+# Before running this code (but after updating get_all_iphc_set_counts() to
+#  include new year), run these two
+yyr_test <- get_all_iphc_set_counts("yelloweye rockfish")
+expect_equal(dplyr::filter(yyr_test, year < 2020),
+             yelloweye_rockfish$set_counts)
+
+
 # Set-level information from GFBio
 sets_other_years <- get_iphc_sets_info()
                                        # extracts the set level data from
@@ -22,7 +29,7 @@ usethis::use_data(skates_other_years,
                   overwrite = TRUE)
 
 
-# Number of hooks with bait returned, from GFBio
+# Number of hooks with bait returned, from GFBio and gfiphc saved data
 cache_pbs_data_iphc("hook with bait")
                                        # extracts counts for the 'species' "hook
                                        #  with bait"; needed if looking into hook
@@ -36,7 +43,7 @@ usethis::use_data(hooks_with_bait,
                   overwrite = TRUE)
 
 
-# Extract data on Yelloweye Rockfish from GFBio
+# Extract data on Yelloweye Rockfish from GFBio and gfiphc daved data
 cache_pbs_data_iphc("yelloweye rockfish")
                                        # That creates yelloweye-rockfish.rds. [This is
                                        #  what gfsynopsis::get_data_iphc() calls,

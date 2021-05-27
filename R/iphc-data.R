@@ -693,7 +693,10 @@ get_all_iphc_set_counts <- function(species) {
   bind_rows(
     get_iphc_1995(species),
     get_iphc_1996to2002(species),
-    get_iphc_2013(species),
+    get_iphc_from_gfiphc(species,
+                         year = 2013),
+    get_iphc_from_gfiphc(species,
+                         year = 2020),
     tidy_iphc_survey(
       get_iphc_hooks(species),
       get_iphc_skates_info(),
@@ -703,6 +706,7 @@ get_all_iphc_set_counts <- function(species) {
     dplyr::filter(!is.na(year)) %>%
     arrange(year)
 }
+
 
 read_sql <- function(x) {
   if (file.exists(system.file("sql", x, package = "gfiphc"))) {
