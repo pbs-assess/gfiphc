@@ -2,20 +2,28 @@
 % Please edit documentation in R/plot-iphc.R
 \name{plot_IPHC_ser_four_panels}
 \alias{plot_IPHC_ser_four_panels}
-\title{Wrapper to plot all four versions of Series E and F plots in one figure
-##'}
+\title{Wrapper to plot all four versions of Series E and F plots in one figure,
+with species name as main title}
 \usage{
-plot_IPHC_ser_four_panels(ser_E_and_F, series_longest, ...)
+plot_IPHC_ser_four_panels(
+  ser_E_and_F,
+  series_longest,
+  sp = NULL,
+  line_title = -2,
+  ...
+)
 }
 \arguments{
+\item{sp}{species common name}
+
 \item{...}{further arguments to \code{plot.IPHC_ser_E_and_F()}}
 }
 \value{
 simple panel plot of four figures
 }
 \description{
-Wrapper to plot all four versions of Series E and F plots in one figure
-##'
+Wrapper to plot all four versions of Series E and F plots in one figure,
+with species name as main title
 }
 \author{
 Andrew Edwards

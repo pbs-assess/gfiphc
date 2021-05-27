@@ -14,7 +14,8 @@ iphc_get_calc_plot_area(
 )
 }
 \arguments{
-\item{sp}{Species names (as used in gfdata and gfplot).}
+\item{sp}{Species name (as used in gfdata and gfplot). Or something like
+"skates combined" -- see vignette.}
 
 \item{area}{\code{data.frame} of (PBSmapping) class \code{PolySet} with column names
 \code{PID}, \code{SID}, \code{POS}, \code{X}, \code{Y},}
@@ -43,6 +44,8 @@ series from Series E and F, and other objects, as output form \code{\link[=calc_
 Get data, do calculations and plot longest series for the IPHC survey for
 a given species restricted to a given area. Will take a while if queries
 GFbio (for which need to be on DFO network), else can use cached data.
+If data are for combined species, as cached with \code{get_combined_species()},
+then the column \code{N_it_sum} etc. column names are used for \code{N_it} etc.
 }
 \author{
 Andrew Edwards

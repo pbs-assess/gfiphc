@@ -35,6 +35,7 @@ each series.}
 \item \code{E} to plot just Series E
 \item \code{F} to plot just Series F
 \item \code{E_F_scaled} to plot Series E and F each scaled by their geometric mean
+of the overlapping years (no scaling if no overlapping years)
 \item \code{EF} to plot Series EF \link{with E rescaled in red}, empty plot if longest
 series is just E or F
 }}

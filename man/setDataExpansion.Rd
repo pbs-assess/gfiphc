@@ -37,6 +37,7 @@ stations) was used this year, and the expansion stations need to be kept
 track of when comparing spatially-averaged catch rates to previous
 years. 2019 onwards may also use the expanded grids.
 Effective skate number, avgDepth and usability will come from the GFbio query (unlike, say,
-setData2013, for which the set details could not go into GFbio).
+setData2013, for which the set details could not go into GFbio). For 2020 the
+IPHC provided an expansion column, which presumably matches these.
 }
 \keyword{datasets}

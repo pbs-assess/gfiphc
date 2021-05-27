@@ -4,10 +4,24 @@
 \alias{get_combined_species}
 \title{Get combined catch counts for a set of species}
 \usage{
-get_combined_species(sp_vec)
+get_combined_species(
+  sp_vec,
+  save_RDS_name = NULL,
+  path = ".",
+  compress = FALSE
+)
 }
 \arguments{
 \item{sp_vec}{vector of IPHC species names}
+
+\item{save_RDS_name}{name (with .rds suffix) to save the .rds file of the
+output (there is no natural obvious default based on \code{sp_vec}), if NULL
+then do not save}
+
+\item{path}{The folder where the cached data will be saved.}
+
+\item{compress}{Compress the \code{.rds} file? Defaults to \code{FALSE} for faster
+reading and writing at the expense of disk space.}
 }
 \value{
 list with  tibble \code{set_counts} (same format as for individual
@@ -18,17 +32,17 @@ NA for 1997-2002, 2013, 2020),
 \item N_it...<num> - number of 'species' caught on all hooks, so NA for
 1997-2002, 2013, 2020, where <num> is the column number appended by dplyr within this
 function,
-\item N_it_all - sum of \verb{N_it...<num>}, with NA's removed (treated as zeros)
+\item N_it_sum - sum of \verb{N_it...<num>}, with NA's removed (treated as zeros)
 TODO: say what happens if some have NA
-\item C_it_all - catch rate of all 'species' as number per effective skate,
+\item C_it_sum - catch rate of all 'species' as number per effective skate,
 based on all hooks, so NA for 1997-2002, 2013, 2020,
 \item E_it20 - effective skate number for that station, based on first 20
 hooks, so NA for 1995 and 1996,
 \item N_it20...<num number of 'species' caught in first 20 hooks, so NA for
 1995 and 1996, where <num> is the column number appended by dplyr within this
-\item N_it20_all - sum of \verb{N_it20...<num>}, with NA's removed (treated as zeros)
+\item N_it20_sum - sum of \verb{N_it20...<num>}, with NA's removed (treated as zeros)
 TODO: say what happens if some have NA
-\item C_it20_all - catch rate all 'species' as number per effective skate,
+\item C_it20_sum - catch rate all 'species' as number per effective skate,
 based on the first 20 hooks, so NA for 1995 and 1996,
 \item usable  - whether or not that station is usable, as deemed by IPHC,
 \item standard - whether or not station is a standard one or in the

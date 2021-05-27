@@ -153,7 +153,8 @@
 #' track of when comparing spatially-averaged catch rates to previous
 #' years. 2019 onwards may also use the expanded grids.
 #' Effective skate number, avgDepth and usability will come from the GFbio query (unlike, say,
-#' setData2013, for which the set details could not go into GFbio).
+#' setData2013, for which the set details could not go into GFbio). For 2020 the
+#' IPHC provided an expansion column, which presumably matches these.
 #'
 #' @format A tibble:
 #' \describe{
@@ -175,6 +176,52 @@
 #'   originally missing but that were in GFbio), with
 #'   details and further tidying done here in `data-raw/IPHC-stations-expanded.R`.
 "setDataExpansion"
+
+
+#' Count data for 20202 IPHC survey
+#'
+#' A dataset containing counts of each species for each
+#' station for the 2020 IPHC survey.
+#'
+#' @format A tibble:
+#' \describe{
+#'
+#'   \item{year}{2020 for this data set}
+#'   \item{station}{station name}
+#'   \item{spNameIPHC}{species name for the counts for that set}
+#'   \item{specCount}{count of that species for that set}
+#' }
+#' @source See `data-raw/iphc-2020-data.Rmd` for full details and how data were
+#'   extracted from IPHC website.
+"countData2020"
+
+#' Station data for 2020 IPHC survey
+#'
+#' A dataset containing details of the stations for the 2020
+#' IPHC survey; one set was deployed at each station.
+#'
+#' @format A tibble:
+#' \describe{
+#'   \item{year}{2020 for this data set}
+#'   \item{station}{station name}
+#'   \item{lat}{latitude of station}
+#'   \item{lon}{longitude of station}
+#'   \item{avgDepth}{average depth of set (in fathoms, haven't checked units for
+#'   earlier years)}
+#'   \item{effSkateIPHC}{effective skate number of the set, as calculated by IPHC}
+#'   \item{E_it20}{effective skate number of the set based on the first 20 hooks
+#'     only, calculated as the (number of hooks observed)/
+#'     (number of hooks retrieved) * effSkateIPHC}
+#'   \item{usable}{whether or not the set is usable, as determined by IPHC}
+#'   \item{standard}{whether or not the station is a standard station or in the
+#'   expanded grid}
+#'   \item{hooksRetr}{number of hooks retrieved for that set}
+#'   \item{hooksObs}{number of hooks observed for that set (already used to
+#'   calculate `E_it20`, but saving anyway)}
+#' }
+#' @source See `data-raw/iphc-2020-data.Rmd` for full details and how data were
+#'   extracted from IPHC website.
+"setData2020"
 
 
 
