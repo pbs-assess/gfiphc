@@ -39,21 +39,21 @@ anyway), using the following instructions:
 
 Go to https://www.iphc.int/data/fiss-data-query and select the following options:
 
-1. Year Range - 2020 to 2020.
+1. Year Range -- 2020 to 2020.
 
 2. Area 2B
 
-3. Purpose Codes - All
+3. Purpose Codes -- All
 
-4. IPHC Charter Regions - All
+4. IPHC Charter Regions -- All
 
-5. Maps - Nothing
+5. Maps -- Nothing
 
-6. Select non-Pacific halibut species - deselect All.
+6. Select non-Pacific halibut species -- deselect All.
 
 Download tab on bottom right (see instructions above question 4), and select
 CrossTab. Select "Set and Pacific Halibut data" and .xlsx format (I tried .csv
-format but it didn't save with commas!?). Save in this
+format but it didn't save with commas, strangely). Save in this
 folder as `set-and-halibut-data-2020.xlsx`. Open in Excel and Export as .csv, `set-and-halibut-data-2020.csv`,
 and when trying to quit Excel say no to save changes (not sure if that matters).
 
@@ -81,7 +81,7 @@ sets_simp <- dplyr::select(sets_raw,
                            station = Station,
                            lat = "MidLat fished",
                            lon = "MidLon fished",
-                           avgDepthFathoms = "AvgDepth (fm)",
+                           avgDepth = "AvgDepth (fm)",
                          # Need these from the other data set
                          #                    hooksRetr = HooksRetrieved,
                          #                    hooksObs = HooksObserved,
@@ -95,12 +95,29 @@ sets_simp <- dplyr::select(sets_raw,
 sets_simp
 ```
 
-then change purpose to match 2019/2018.
+Then change purpose to `standard` (`Y/N`) to match 2018 data (`Y` for the
+standard grid). Here `purpose` takes three values, and we need to convert to
+`standard`:
+```{r purpose}
+summary(sets_simp$purpose)
+
+sets_simp_std <- dplyr::mutate(sets_simp,
+                               standard_tmp = (purpose == "Standard grid"))
+
+standard <- as.character(sets_simp_std$standard_tmp)  # to get the right length
+standard[sets_simp_std$standard_tmp] = "Y"
+standard[!sets_simp_std$standard_tmp] = "N"
+
+sets_simp_std <- cbind(sets_simp_std,
+                   standard) %>%
+  as_tibble() %>%
+  dplyr::select(-c("standard_tmp"))
+summary(sets_simp_std)
+```
 
 ## Species counts
 
-This data also contains the numbers of hooks observed and retrieved, which we
-need to merge into the above data.
+First, get the species counts into the desired format (to match `countData2013` shown earlier):
 ```{r counts}
 counts_raw <- readr::read_csv("non-halibut-data-2020.csv") %>%
   dplyr::mutate_if(is.character, factor)
@@ -116,7 +133,13 @@ counts <- dplyr::select(counts_raw,
   arrange(station)
 
 counts
+```
 
+## Hooks observed and retrieved
+
+Now, obtain the numbers of hooks observed and retrieved from `counts_raw`, to
+then merge into the set details:
+```{r hookdetails}
 hook_details <- dplyr::group_by(counts_raw,
                                 Station) %>%
   dplyr::summarise(year = unique(Year),
@@ -128,18 +151,28 @@ hook_details <- dplyr::group_by(counts_raw,
 
 hook_details
 
-expect_equal(sets_simp$station, hook_details$station)
+expect_equal(sets_simp_std$station, hook_details$station)
 ```
 
-So now need to get the hook details into the set details:
+So now need to get the hook details into the set details, and keep columns as
+for `setData2013` but also with `standard`:
 ```{r merge}
-sets <- dplyr::left_join(sets_simp,
+sets <- dplyr::left_join(sets_simp_std,
                          hook_details,
                          by = c("year", "station")) %>%
-  dplyr::mutate(E_it20 = effSkateIPHC * hooksObs / hooksRetr)
-# may need if breaks later code:
+  dplyr::mutate(E_it20 = effSkateIPHC * hooksObs / hooksRetr) %>%
+  dplyr::select(year,
+                station,
+                lat,
+                lon,
+                avgDepth,
+                effSkateIPHC,
+                E_it20,
+                usable,
+                standard)
+
+# may need if breaks other code in the package:
 #                station = as.character(station),
 #                usable = as.character(usable))
-
-
+sets
 ```
