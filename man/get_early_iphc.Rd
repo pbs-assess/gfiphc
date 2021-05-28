@@ -6,7 +6,7 @@
 \alias{check_iphc_spp_name}
 \alias{get_iphc_1995}
 \alias{get_iphc_1996to2002}
-\alias{get_iphc_2013}
+\alias{get_iphc_from_gfiphc}
 \title{Get early IPHC data from already-saved .rds files (can likely integrate into get-dat.R)}
 \usage{
 get_iphc_spp_name(species = NULL)
@@ -17,7 +17,7 @@ get_iphc_1995(species)
 
 get_iphc_1996to2002(species)
 
-get_iphc_2013(species)
+get_iphc_from_gfiphc(species, year)
 }
 \arguments{
 \item{species}{Species common name (as used by gfdata). If NULL then
@@ -82,12 +82,12 @@ years so we put Y here)
 
 If no data on that species then C_it and N_it are NA's.
 
-Tibble contains year (2013), station name, lat, lon,
+Tibble contains year, station name, lat, lon,
 E_it (effective skate number for that station, based on all
-hooks, so NA for 2013),
-N_it (number of 'species' caught on all hooks, so NA for 2013),
+hooks, so all NA),
+N_it (number of 'species' caught on all hooks, so all NA),
 C_it (catch rate of 'species' as number per effective skate,
-based on all hooks, so NA for 2013),
+based on all hooks, so all NA),
 E_it20 (effective skate number for that station, based on first
 20 hooks),
 N_it20 (number of 'species' caught in first 20 hooks),
@@ -95,7 +95,7 @@ C_it20 (catch rate of 'species' as number per effective skate,
 based on the first 20 hooks),
 usable (whether or not that station is usable, as deemed by IPHC),
 standard (whether or not station is a standard one or in the
-expansion set after 2018; all Y here since 2013)
+expansion set after 2018)
 
 If no data at all on that species then C_it and N_it are NA's.
 }
@@ -118,7 +118,11 @@ Details
 Note that 1996 is based on all hooks being enumerated while
 1997-2002 is for first 20 only.
 
-Details
+When only first 20 hooks were evaluated, the data are in here (not
+GFbio). See \code{data-raw/iphc-2020-data.Rmd} for details to extract the data
+from the IPHC website and include in this pacakge. This function should then
+work for all such years, since the data will be saved in the correct format.
+Was \code{get_iphc_2013()} but generalising for future years.
 }
 \details{
 The output datasets feed into IPHC-specific functions to create a time-series.
@@ -126,6 +130,8 @@ The output datasets feed into IPHC-specific functions to create a time-series.
 \code{plot_}, or \code{fit_} functions) for data visualization, which can be used as
 products themselves or can be fed into automated DFO Pacific groundfish data
 synopsis report production.
+
+Details
 }
 \examples{
 \dontrun{
@@ -152,8 +158,9 @@ dplyr::summarise(group_by(yyr1996to2002, year, num.stations = n()))
 }
 
 \dontrun{
-yyr2013 <- get_iphc_2013("yelloweye rockfish")
-summary(yyr2013[["setVals2013"]])
+yyr2013 <- get_iphc_from_gfiphc("yelloweye rockfish", year = 2013)
+summary(yyr2013)
+expect_equal(get_iphc_2013("yelloweye rockfish"), yyr2013)  # until I retire get_iphc_2013()
 }
 
 }
