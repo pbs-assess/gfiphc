@@ -314,10 +314,12 @@ check_iphc_spp_name <- function(countData = NULL, ignore_obvious = TRUE) {
     data_names_1995 <- unique(as.character(countData1995$spNameIPHC))
     data_names_1996to2002 <- unique(as.character(data1996to2002$spNameIPHC))
     data_names_2013 <- unique(as.character(countData2013$spNameIPHC))
+    data_names_2020 <- unique(as.character(countData2020$spNameIPHC))
     data_names_all <- c(
       data_names_1995,
       data_names_1996to2002,
-      data_names_2013
+      data_names_2013,
+      data_names_2020
     ) %>%
       unique()
     old_missing_names <- data_names_all[!(data_names_all %in%

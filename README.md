@@ -73,11 +73,16 @@ For 2020, only the first 20 hooks were evaluated from each skate. So, like for 2
 
 Then have to create/adapt new functions to include the data in the calculations. For data in GFbio this should be automatic, else see what was done just after commit a5ecd2a for 2020 (may make notes here). Basically go through the vignettes and re-run them (adapting any called functions as necessary to include latest year of data), making sure the latest year is included and the maps make sense. 
 
+Also need to:
+
 1. Change `get_all_iphc_set_counts()` to include new year, checking that `get_iphc_from_gfiphc()` works.
 
-2. Re-run (line by line to check) `data-raw/sets-skates-hooks-yelloweye.R`. 
+1. Re-run (line by line to check) `data-raw/sets-skates-hooks-yelloweye.R` to save some more new data into package.
+
+1. Add lines for new year, `data_names_XXXX` in `check_iphc_spp_name()`.
  
-3. Update documentation of data sets in `R/data.R` if necessary.
+
+1. Update documentation of data sets in `R/data.R` if necessary.
 
 ## Installation
 

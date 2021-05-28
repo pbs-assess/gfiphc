@@ -209,3 +209,22 @@ summary(setData2020)
 usethis::use_data(setData2020,
                   overwrite = TRUE)
 ```
+
+## Check species names
+
+The file `inst/extdata/iphc-spp-names.csv` contains species common names (as
+used for gfsynopsis, and a few extra like `unidentified skate`) and the IPHC
+common name.
+
+These are IPHC names that are not given in `iphc-spp-names.csv`.
+```{r notconverted}
+check_iphc_spp_name()
+```
+
+These are the ones just for the new 2020 data:
+```{r justnew}
+check_iphc_spp_name(countData2020)
+```
+
+Of these, only the Thornyhead and Blackspotted Rockfish are likely of interest
+(Issues #17 and #18). And maybe the sharks.
