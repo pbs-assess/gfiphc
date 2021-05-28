@@ -3,14 +3,17 @@
 
 # Needs to be run each year once GFBio (or local spreadsheets, which may occur
 #  if counts are only for the first 20 hooks) are updated. Some of these won't
-#  change if GFbio data not changed.
+#  change if GFbio data not changed. use_data() can be re-run and Git won't
+#  detect changes if data not changed.
+
+load_all()
 
 # Before running this code (but after updating get_all_iphc_set_counts() to
 #  include new year), run these two lines (with 2020 replaced by current year)
 yyr_test <- get_all_iphc_set_counts("yelloweye rockfish")
 expect_equal(dplyr::filter(yyr_test, year < 2020),
              yelloweye_rockfish$set_counts)   # this will fail once
-                                        # yelloweye_rockfish is updated
+                                        # yelloweye_rockfish is updated below
 
 
 # Set-level information from GFBio
