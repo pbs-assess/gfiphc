@@ -21,7 +21,7 @@ The functions in this package were originally part of gfplot and have now been s
 
 ## Vignettes (under development - rendered .html versions will be saved at some point)
 
-- [Single species](vignettes/data_for_one_species.Rmd) - for extracting and generating the longest index possible for a single species for the whole BC coast.
+- [Single species](vignettes/data_for_one_species.Rmd) - shows example data that are saved in the package, and for extracting and generating the longest index possible for a single species for the whole BC coast.
 - [Restricted area](vignettes/analysis_for_restricted_area.Rmd) - for extracting and generating the longest index possible for a restricted area of interest.
 - [Herring predators](vignettes/analysis_for_HG_herring_predators.Rmd) - extraction of multiple species, and groups of species, for a restricted area. Then saved to be inputs for the Haida Gwaii Pacific Herring Case Study. 
 
@@ -83,7 +83,7 @@ Also need to:
  
 1. Update documentation of data sets in `R/data.R` if necessary.
 
-1. Go through and rerun the vignettes, adapting any called functions as necessary to include latest year of data, making sure the latest year is included and the maps make sense. 
+1. Go through and rerun the vignettes, adapting any called functions or printed results as necessary to include latest year of data, making sure the latest year is included and the maps make sense. 
 
 ## Installation
 

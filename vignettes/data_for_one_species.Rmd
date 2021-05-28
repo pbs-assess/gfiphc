@@ -77,6 +77,8 @@ data1996to2002   # Catches at each station from 1996 to 2002
 
 setData2013      # Station details for 2013 survey
 
+setData2020      # Station details for 2020 survey
+
 setDataExpansion # Station details regarding expansion stations from 2018 (and
                  # possibly onwards)
 ```
@@ -134,6 +136,13 @@ plot_iphc_map(sp_set_counts$set_counts,
               years = 2008)
 ```
 
+For the most recent year of data:
+```{r latestyear, fig.height = 6}
+plot_iphc_map(sp_set_counts$set_counts,
+              sp_short_name = sp_short_name,
+              years = max(sp_set_counts$set_counts$year))
+```
+
 Unusable stations are determined by the IPHC and any data are excluded from our
 calculations. The horizontal line is the cut-off for calculations for different
 Series (see the synopsis Research Document). Note that the `sp_short_name`
@@ -142,7 +151,7 @@ for the species of interest.
 
 To see a movie of the station locations through time:
 
-![IPHC-stations-movie-1995-2019.gif](IPHC-stations-movie-1995-2019.gif).
+![IPHC-stations-movie-1995-2020.gif](IPHC-stations-movie-1995-2020.gif).
 
 Here is the code to build the movie, but it is commented out since it causes Travis
 to fail (Travis is the continuous integration service that automatically
@@ -179,11 +188,10 @@ plot_iphc_map(hooks_with_bait$set_counts,
               years = 2008)
 ```
 
-## Expanded survey grid in 2018
+## Expanded survey grid in 2018 and 2020
 
-In the above movie you see that the number of sets jumped in 2018 due to the expanded
-survey grid that year that involved extra stations (there should only ever be
-one set at a station):
+In the above movie you see that the number of sets jumped in 2018 and 2020 due to the expanded
+survey grid that year that involved sets at extra stations:
 ```{r plotsets, fig.height = 4}
 sets_each_year <- sp_set_counts$set_counts %>%
   group_by(year) %>%
@@ -195,7 +203,7 @@ plot(sets_each_year$year, sets_each_year$total, type = "o",
 
 The extra stations are identified as `standard` being `N`, with `Y` being the
 standard stations. Removing the non-standard stations brings the number of sets
-in 2018 into line with other years, and so this should be done for (most)
+in 2018 nad 2020 into line with other years, and so this should be done for (most)
 analyses:
 ```{r plotsetsstd, fig.height = 4}
 sets_each_year_standard <- sp_set_counts$set_counts %>%
