@@ -136,7 +136,7 @@ plot_iphc_map(sp_set_counts$set_counts,
               years = 2008)
 ```
 
-For the most recent year of data:
+For the most recent year of data (see below for discussion):
 ```{r latestyear, fig.height = 6}
 plot_iphc_map(sp_set_counts$set_counts,
               sp_short_name = sp_short_name,

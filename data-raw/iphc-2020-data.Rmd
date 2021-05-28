@@ -202,7 +202,7 @@ setData2020 <- dplyr::left_join(sets_simp_std,
                 station = as.character(station),
                 avgDepth = as.integer(avgDepth),
                 usable = as.character(usable),
-                standard = as.factor(usable))
+                standard = as.factor(standard))
 setData2020
 testthat::expect_equal(names(setData2013), names(setData2020)[1:ncol(setData2013)])
 summary(setData2020)
