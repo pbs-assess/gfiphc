@@ -71,7 +71,7 @@ with numbers in parentheses indicating the number of years for which data for ea
 
 For 2020, only the first 20 hooks were evaluated from each skate. So, like for 2013, the data have been included in this package. For future years, copy the code `data-raw/iphc-2020-data.Rmd` (and rename for a new year) and follow the instructions for downloading the data from the IPHC website, checking the data, and saving it formatted for this package. The pdf `data-raw/iphc-2020-data.pdf` is also available for easier reading (only commit a final version of future .pdf's, not as you are working on it).
 
-Then have to create/adapt new functions to include the data in the calculations. For data in GFbio this should be automatic, else see what was done just after commit a5ecd2a for 2020 (may make notes here). Basically go through the vignettes and re-run them (adapting any called functions as necessary to include latest year of data), making sure the latest year is included and the maps make sense. 
+Then have to create/adapt new functions to include the data in the calculations. For data in GFbio this should be automatic, else see what was done just after commit a5ecd2a for 2020 (may make notes here). 
 
 Also need to:
 
@@ -81,8 +81,9 @@ Also need to:
 
 1. Add lines for new year, `data_names_XXXX` in `check_iphc_spp_name()`.
  
-
 1. Update documentation of data sets in `R/data.R` if necessary.
+
+1. Go through and rerun the vignettes, adapting any called functions as necessary to include latest year of data, making sure the latest year is included and the maps make sense. 
 
 ## Installation
 

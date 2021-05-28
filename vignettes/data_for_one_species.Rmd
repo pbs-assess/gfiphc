@@ -1,5 +1,5 @@
 ---
-title: "Extract and analyse the IPHC data for one species"
+title: "Data for one species"
 author: "Andrew Edwards"
 output: rmarkdown::html_vignette
 vignette: >
