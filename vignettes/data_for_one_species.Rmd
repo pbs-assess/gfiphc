@@ -203,7 +203,7 @@ plot(sets_each_year$year, sets_each_year$total, type = "o",
 
 The extra stations are identified as `standard` being `N`, with `Y` being the
 standard stations. Removing the non-standard stations brings the number of sets
-in 2018 nad 2020 into line with other years, and so this should be done for (most)
+in 2018 and 2020 into line with other years, and so this should be done for (most)
 analyses:
 ```{r plotsetsstd, fig.height = 4}
 sets_each_year_standard <- sp_set_counts$set_counts %>%
@@ -215,8 +215,8 @@ plot(sets_each_year_standard$year, sets_each_year_standard$total, type = "o",
      xlab = "Year", ylab = "Sets each year", ylim = c(0, max(sets_each_year$total)))
 ```
 
-Note that (as of 2019 data at least) the expansion (non-standard) stations only
-appear in 2018:
+Note that the expansion (non-standard) stations only
+appear in recent years:
 ```{r checkexpansion}
 filter(sp_set_counts$set_counts, standard == "N") %>%
   select(year) %>%
