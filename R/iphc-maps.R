@@ -37,6 +37,9 @@
 ##'   create new map using `plot_BC()`
 ##' @param indicate_in_area indicate whether or not station is within a
 ##'   specficied area, as indicated by TRUE/FALSE in `set_counts_of_sp$in_area`
+##' @param indicate_standard indicate whether or not station is part of the
+##'   standard stations or an expansion (in 2018, 2020, and maybe later), as
+##'   indicated by Y/N in `set_counts_of_sp$standard`
 ##' @param ... extra arguments to `par()`
 ##' @return A map of the IPHC survey stations for that year and species, with a
 ##'   legend describing the points.
@@ -79,6 +82,7 @@ plot_iphc_map <- function(set_counts_of_sp,
                           cex_val = 1,
                           add_to_existing = FALSE,
                           indicate_in_area = FALSE,
+                          indicate_standard = FALSE,
                           ...
                           ){
   par(mar = mar_val,
@@ -246,7 +250,7 @@ plot_BC <- function(xlim = c(-134,-124),
 ##'
 ##' Add individual stations to map of BC, with options for all stations (no
 ##' species catch information), or positive and zero catches for a given
-##' species. Called from within `plot_iphc_map()`.
+##' species, and more. Called from within `plot_iphc_map()`.
 ##'
 ##' @param set_counts_of_sp_one_year tibble for just one year, from
 ##'   `set_counts_of_sp`.

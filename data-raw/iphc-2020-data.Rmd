@@ -78,34 +78,69 @@ sets_raw
 summary(sets_raw)
 testthat::expect_equal(unique(sets_raw$"IPHC Reg Area"), as.factor("2B")) # Check just BC
 testthat::expect_equal(unique(sets_raw$Year), 2020)
+#testthat::expect_equal(length(unique(sets_raw$Station)),
+#                       length(sets_raw$Station))
 ```
 
-Now simplify down to what's needed and rename, based on `iphc2013data.Rnw` (need
+### Understand any issues raised above
+
+Uncomment those three `testthat` commands when looking at new data each year. If
+any of fail then have to comment it out and figure out what it means here.
+
+This is for 2020 (keep but comment out for future years):
+```{r understand}
+length(unique(sets_raw$Station))
+length(sets_raw$Station)
+dplyr::count(sets_raw, Station) %>% dplyr::filter(n > 1)
+twice_fished <- dplyr::count(sets_raw, Station) %>%
+  dplyr::filter(n > 1) %>%
+  select(Station) %>%
+  as.numeric()
+# If there's more than a single station then adapt later code
+as.data.frame(dplyr::filter(sets_raw,
+                            Station == twice_fished))
+
+```
+So Station `r twice_fished` had two vessels fishing the same station (which the code below
+originally caused a total of four rows for that station, explaining the 200 rows
+I had in original `setData2020` before fixing the issue). Interestingly the
+halibut catches were almost double for one vessel than the other (but were 6
+days apart):
+
+Note that one of those entries has 'Vessel code' HAN, but HAN only appears once
+in the whole data set (as seen in `summary(sets_raw)` above:
+```{r duplicate}
+summary(sets_raw$"Vessel code")
+```
+
+So given we want to exclude one of the duplicates, makes sense to exclude
+HAN. Do this and simplify down to what's needed and rename, based on `iphc2013data.Rnw` (need
 to include the 'purpose' column, unlike 2013):
 ```{r simplify}
 
-sets_simp <- dplyr::select(sets_raw,
-                           year = Year,
-                           station = Station,
-                           lat = "MidLat fished",
-                           lon = "MidLon fished",
-                           avgDepth = "AvgDepth (fm)",
-                         # Need these from the other data set
-                         #                    hooksRetr = HooksRetrieved,
-                         #                    hooksObs = HooksObserved,
-                           skatesHauled = "No. skates hauled",
-                           effSkateIPHC = "Effective skates hauled",
-                           soakTimeMinutes = "Soak time (min.)",  # Joe might want
-                           usable = Eff,
-                           purpose = Purpose) %>%
+sets_simp <- dplyr::filter(sets_raw, `Vessel code` != "HAN") %>%
+  dplyr::select(year = Year,
+                station = Station,
+                lat = "MidLat fished",
+                lon = "MidLon fished",
+                avgDepth = "AvgDepth (fm)",
+                skatesHauled = "No. skates hauled",
+                effSkateIPHC = "Effective skates hauled",
+                soakTimeMinutes = "Soak time (min.)",  # Joe might want
+                usable = Eff,
+                purpose = Purpose) %>%
   arrange(station) %>%
   dplyr::mutate(year = as.integer(year),
                 station = as.character(station),
                 avgDepth = as.integer(avgDepth),
-                usable = as.character(usable))
+                usable = as.character(usable)) %>%
+
 
 sets_simp
 ```
+
+For future years check the HAN issue and remove that first line if necessary
+(especially if HAN is used in the survey).
 
 Then change purpose to `standard` (`Y/N`) to match 2018 data (`Y` for the
 standard grid). Here `purpose` takes three values, and we need to convert to
@@ -119,6 +154,7 @@ sets_simp_std <- dplyr::mutate(sets_simp,
 standard <- as.character(sets_simp_std$standard_tmp)  # to get the right length
 standard[sets_simp_std$standard_tmp] = "Y"
 standard[!sets_simp_std$standard_tmp] = "N"
+length(standard)
 
 sets_simp_std <- cbind(sets_simp_std,
                    standard) %>%
@@ -138,11 +174,44 @@ counts_raw
 summary(counts_raw)
 testthat::expect_equal(unique(counts_raw$Year), 2020)
 testthat::expect_equal(unique(counts_raw$SampleType), as.factor("20Hook"))
-countData2020 <- dplyr::select(counts_raw,
-                               year = Year,
-                               station = Station,
-                               spNameIPHC = "Species Name",
-                               specCount = "Number Observed") %>%
+
+# This mismatches for 2020:
+# testthat::expect_equal(length(unique(counts_raw$Station)),
+#                        length(sets_raw$Station))
+
+unique(counts_raw$"Species Name")
+```
+
+Note that halibut are not included in these counts, which I presume explains why
+total number of counts for a station does not add up to `HooksObserved`.
+
+Need to remove the HAN records for the twice-fished station, which turns out to
+be set number 4 for station 2104:
+```{r twicefished}
+dplyr::filter(counts_raw, Station == twice_fished) %>%
+  dplyr::select(c("Station", "Setno", "Species Name",
+                  "Number Observed")) %>%
+    as.data.frame()
+
+dplyr::filter(sets_raw, Station == twice_fished)
+```
+
+So use that here to remove the species counts for that vessel (note that vessel
+code is not in `counts_raw`)
+```{r countcalcs}
+dplyr::filter(counts_raw,
+              Station == twice_fished & Setno == 4)
+
+# So just keep these:
+dplyr::filter(counts_raw,
+              !(Station == twice_fished & Setno == 4))
+
+countData2020 <- dplyr::filter(counts_raw,
+                               !(Station == twice_fished & Setno == 4)) %>%
+  dplyr::select(year = Year,
+                station = Station,
+                spNameIPHC = "Species Name",
+                specCount = "Number Observed") %>%
   arrange(station) %>%
   dplyr::mutate(year = as.integer(year),
                 station = as.character(station),
@@ -157,7 +226,7 @@ usethis::use_data(countData2020,
                   overwrite = TRUE)
 
 ```
-
+HERE
 ## Hooks observed and retrieved
 
 Now, obtain the numbers of hooks observed and retrieved from `counts_raw`, to
