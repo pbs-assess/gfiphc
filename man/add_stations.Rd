@@ -39,7 +39,7 @@ adds points to existing plot
 \description{
 Add individual stations to map of BC, with options for all stations (no
 species catch information), or positive and zero catches for a given
-species. Called from within \code{plot_iphc_map()}.
+species, and more. Called from within \code{plot_iphc_map()}.
 }
 \author{
 Andrew Edwards

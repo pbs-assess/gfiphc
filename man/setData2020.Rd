@@ -34,6 +34,8 @@ setData2020
 }
 \description{
 A dataset containing details of the stations for the 2020
-IPHC survey; one set was deployed at each station.
+IPHC survey; one set was deployed at each station except for station 2104,
+but one vessel was \code{HAN} for which that was the only set in the survey, so it
+has been removed.
 }
 \keyword{datasets}

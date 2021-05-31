@@ -20,6 +20,7 @@ plot_iphc_map(
   cex_val = 1,
   add_to_existing = FALSE,
   indicate_in_area = FALSE,
+  indicate_standard = FALSE,
   ...
 )
 }
@@ -68,6 +69,10 @@ create new map using \code{plot_BC()}}
 
 \item{indicate_in_area}{indicate whether or not station is within a
 specficied area, as indicated by TRUE/FALSE in \code{set_counts_of_sp$in_area}}
+
+\item{indicate_standard}{indicate whether or not station is part of the
+standard stations or an expansion (in 2018, 2020, and maybe later), as
+indicated by Y/N in \code{set_counts_of_sp$standard}}
 
 \item{...}{extra arguments to \code{par()}}
 }
