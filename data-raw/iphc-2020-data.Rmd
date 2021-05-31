@@ -117,7 +117,6 @@ So given we want to exclude one of the duplicates, makes sense to exclude
 HAN. Do this and simplify down to what's needed and rename, based on `iphc2013data.Rnw` (need
 to include the 'purpose' column, unlike 2013):
 ```{r simplify}
-
 sets_simp <- dplyr::filter(sets_raw, `Vessel code` != "HAN") %>%
   dplyr::select(year = Year,
                 station = Station,
@@ -133,9 +132,7 @@ sets_simp <- dplyr::filter(sets_raw, `Vessel code` != "HAN") %>%
   dplyr::mutate(year = as.integer(year),
                 station = as.character(station),
                 avgDepth = as.integer(avgDepth),
-                usable = as.character(usable)) %>%
-
-
+                usable = as.character(usable))
 sets_simp
 ```
 
@@ -226,14 +223,15 @@ usethis::use_data(countData2020,
                   overwrite = TRUE)
 
 ```
-HERE
+
 ## Hooks observed and retrieved
 
 Now, obtain the numbers of hooks observed and retrieved from `counts_raw`, to
 then merge into the set details:
 ```{r hookdetails}
-hook_details <- dplyr::group_by(counts_raw,
-                                Station) %>%
+hook_details <- dplyr::filter(counts_raw,
+                              !(Station == twice_fished & Setno == 4)) %>%
+  dplyr::group_by(Station) %>%
   dplyr::summarise(year = unique(Year),
                    hooksRetr = unique(HooksRetrieved),
                    hooksObs = unique(HooksObserved)) %>%
@@ -249,7 +247,7 @@ expect_equal(sets_simp_std$station, hook_details$station)
 ```
 
 So now need to get the hook details into the set details, and keep columns as
-for `setData2013` but also with `standard`, and may as weel keep `hooksRetr` and
+for `setData2013` but also with `standard`, and may as well keep `hooksRetr` and
 `hooksObs`:
 ```{r merge}
 setData2020 <- dplyr::left_join(sets_simp_std,
