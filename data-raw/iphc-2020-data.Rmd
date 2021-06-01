@@ -160,7 +160,7 @@ sets_simp_std <- cbind(sets_simp_std,
 summary(sets_simp_std)
 ```
 
-## Check the maps for standard definition
+## Look at data and show map to understand changing definition of standard station from 2018 to 2020.
 
 It seems that the definition of 'standard grid' has changed from 2018 (when
 first needed due to the expanded grid) to 2020. Simply equating them as above is
@@ -217,11 +217,10 @@ not_std_in_2018_but_std_in_2020
 # setdiff(not_std_2018, not_std_2020) - but 2020 fewer coverage so misleading
 ```
 
-text here
-
-
-Plot stations not standard in 2018 but standard in 2020, with a check that the
-station locations in 2018 (red filled circles) agree with those in 2020 (blue plusses):
+Plot stations not standard in 2018 but standard in 2020, and vice versa, using
+each years' lats and lons (to verify that they all still agree -- station
+numbers have consistent lats and lons), and show 2019 data to check no 'usual'
+stations are non-standard in 2018 or 2020:
 
 ```{r mapstandard}
 plot_BC()
@@ -268,6 +267,19 @@ legend("bottomleft",
              pt.cex = c(1, 1, 1, 2, 1),
              col = c("red", "blue", "red", "blue", "darkgreen"))
 ```
+
+Check if the one standard in 2018 but not in 2020 (and doesn't appear in 2019)
+appears in any earlier years:
+```{r checkearly}
+filter(hooks_with_bait$set_counts,
+       station == std_in_2018_but_not_std_in_2020) %>%
+  as.data.frame()
+```
+
+Great. Was only those two years, so we should define it as non-standard.
+
+TODO - try and do the above so it still works with the .rda files updated -
+i.e. use the raw data that's imported here.
 
 
 ## Species counts
