@@ -87,7 +87,8 @@ testthat::expect_equal(unique(sets_raw$Year), 2020)
 Uncomment those three `testthat` commands when looking at new data each year. If
 any of fail then have to comment it out and figure out what it means here.
 
-This is for 2020 (keep but comment out for future years):
+This is for 2020 (check for future years), to look for station(s) that was
+fished twice:
 ```{r understand}
 length(unique(sets_raw$Station))
 length(sets_raw$Station)
@@ -114,7 +115,8 @@ summary(sets_raw$"Vessel code")
 ```
 
 So given we want to exclude one of the duplicates, makes sense to exclude
-HAN. Do this and simplify down to what's needed and rename, based on `iphc2013data.Rnw` (need
+HAN. (Also, Dana mentioned some gear comparison studies for 2020).
+Do this and simplify down to what's needed and rename, based on `iphc2013data.Rnw` (need
 to include the 'purpose' column, unlike 2013):
 ```{r simplify}
 sets_simp <- dplyr::filter(sets_raw, `Vessel code` != "HAN") %>%
@@ -224,7 +226,7 @@ not_std_in_2018_but_std_in_2020
 ```
 
 Plot stations not standard in 2018 but standard in 2020, and vice versa, using
-each years' lats and lons (to verify that they all still agree -- station
+each years' lats and lons (to verify that they all still agree -- i.e., that station
 numbers have consistent lats and lons), and show 2019 data to check no 'usual'
 stations are non-standard in 2018 or 2020:
 
@@ -274,19 +276,32 @@ legend("bottomleft",
              col = c("red", "blue", "red", "blue", "darkgreen"))
 ```
 
-Check if the one standard in 2018 but not in 2020 (and doesn't appear in 2019)
+Check if the one standard station in 2018 but not in 2020 (not fished at all in 2019)
 appears in any earlier years:
 ```{r checkearly}
 filter(hooks_with_bait$set_counts,
        station == std_in_2018_but_not_std_in_2020) %>%
   as.data.frame()
 ```
+Was only fished in 2018 and 2020, so we should define it as non-standard.
 
-Great. Was only those two years, so we should define it as non-standard.
+So, the conclusions from this section are that we should:
 
-TODO - try and do the above so it still works with the .rda files updated -
-i.e. use the raw data that's imported here.
+1. Retain the 2018 definitions of standard stations, not the new ones defined in 2020:
+```{r corrected}
+sets_simp_std_corrected <- sets_simp_std
 
+sets_simp_std_corrected$standard[sets_simp_std_corrected$station %in%
+                                 not_std_in_2018_but_std_in_2020] <- "N"
+# cbind(sets_simp_std$standard, sets_simp_std_corrected$standard) # to check
+```
+
+2. Define station 2343 as non-standard (over-riding original 2018 designation).
+
+TODO - 2018 stations are in GFbio. So needs over-riding when downloading, but
+then also figure out how this code can still work. May have to save
+`sets_2018_uncorrected` as being the values before correcting. Since correcting
+it will mess up this explanatory code.
 
 ## Species counts
 
@@ -371,14 +386,14 @@ hook_details <- dplyr::filter(counts_raw,
 
 hook_details
 
-expect_equal(sets_simp_std$station, hook_details$station)
+expect_equal(sets_simp_std_corrected$station, hook_details$station)
 ```
 
 So now need to get the hook details into the set details, and keep columns as
 for `setData2013` but also with `standard`, and may as well keep `hooksRetr` and
 `hooksObs`:
 ```{r merge}
-setData2020 <- dplyr::left_join(sets_simp_std,
+setData2020 <- dplyr::left_join(sets_simp_std_corrected,
                                 hook_details,
                                 by = c("year", "station")) %>%
   dplyr::mutate(E_it20 = effSkateIPHC * hooksObs / hooksRetr) %>%
