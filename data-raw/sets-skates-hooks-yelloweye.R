@@ -6,6 +6,9 @@
 #  change if GFbio data not changed. use_data() can be re-run and Git won't
 #  detect changes if data not changed.
 
+# See README for details of order to update files; for example,
+#  iphc-2020-data.Rmd needs to be done before this one.
+
 load_all()
 
 # Before running this code (but after updating get_all_iphc_set_counts() to

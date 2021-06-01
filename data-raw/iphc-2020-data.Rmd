@@ -166,12 +166,20 @@ It seems that the definition of 'standard grid' has changed from 2018 (when
 first needed due to the expanded grid) to 2020. Simply equating them as above is
 not sufficient.
 
-Doing this having already saved .rda files for 2020, crosses show 'non-standard'
+Plotting four years, with crosses showing 'non-standard'. (2020 is coloured
+different since no hooks with bait data yet, but the important bit is the crosses).
 ```{r maps}
+sets_2020 <- sets_simp_std  # not the same structure as sets_2018, below
+
 plot_iphc_map_panel(hooks_with_bait$set_counts,
                sp = "Hooks with bait",
-               years = 2017:2020,
+               years = 2017:2019,
                indicate_standard = TRUE)
+
+plot_iphc_map(sets_2020,
+              sp = NULL,
+              years = 2020,
+              indicate_standard = TRUE)
 ```
 
 Clearly 2020 has a few less stations just north of Vancouver Island, but not
@@ -186,8 +194,6 @@ not_std_2018 <- filter(sets_2018,
                        standard == "N")$station
 
 
-sets_2020 <- filter(hooks_with_bait$set_counts,
-                    year == 2020)
 not_std_2020 <- filter(sets_2020,
                        standard == "N")$station
 
