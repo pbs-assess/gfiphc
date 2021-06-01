@@ -31,6 +31,7 @@
 ##'   `indicate_in_area` is TRUE)
 ##' @param pch_zero_count pch for zero counts (or sets outside area if
 ##'   `indicate_in_area` is FALSE)
+##' @param pch_non_standard pch for showing non-standard stations for that year
 ##' @param cex_val cex size of plotted circles (or whatever is chosen using
 ##'   above `pch` options
 ##' @param add_to_existing if TRUE then add to an existing plot, if FALSE then
@@ -62,7 +63,13 @@
 ##'   invisible(readline(prompt="Press [enter] to continue"))
 ##' }
 ##'
-##' # Just the stations with no species information:
+##' # Hooks with no bait, showing non-standard as crosses :
+##' plot_iphc_map(hooks_with_bait$set_counts,
+##'               sp = "Hooks with bait",
+##'               years = 2019,
+##'               indicate_standard = TRUE)
+##'
+##' # Just the stations, with no species information:
 ##' plot_iphc_map(sp_set_counts$set_counts,
 ##'               sp_short_name = NULL,
 ##'               years = 2008)
@@ -79,6 +86,7 @@ plot_iphc_map <- function(set_counts_of_sp,
                           lon_cut_off_2 = -128.25,
                           pch_pos_count = 19,
                           pch_zero_count = 1,
+                          pch_non_standard = 4,
                           cex_val = 1,
                           add_to_existing = FALSE,
                           indicate_in_area = FALSE,
@@ -182,6 +190,19 @@ plot_iphc_map <- function(set_counts_of_sp,
          pch = pch_pos_count,
          cex = cex_val)
 
+  # Add crosses for those not considered 'standard' stations in 2018 and 2020,
+  #  to help figure out the differing definitions of standard in those two years.
+  if(indicate_standard){
+    points(lat~lon,
+           data = filter(set_counts_of_sp_one_year,
+                         year == years,
+                         standard == "N"),
+           pch = pch_non_standard,
+           cex = cex_val*1.5)
+  }
+
+
+
   # This is keeping in Series A or not - could just draw the horizontal line every time
   #points(lat~lon,
   #      data=filter(set_counts_of_sp,
@@ -261,7 +282,6 @@ plot_BC <- function(xlim = c(-134,-124),
 ##' @param pch_pos_count pch for positive counts
 ##' @param cex_val cex size of plotted circles (or whatever is chosen using
 ##'   above `pch` options
-##' @param usable TRUE if plotting the usable stations, FALSE for unusable.
 ##' @param pos_catch_rates TRUE if plotting the positive (>0) catch rates for
 ##'   the given species, FALSE if plotting the 0 catch rates (showing as open
 ##'   circles).
@@ -318,4 +338,34 @@ add_stations <- function(set_counts_of_sp_one_year,
            cex = cex_val)
     }
   invisible()
+}
+
+##' Plot a panel of maps
+##'
+##'
+##' @param set_counts_of_sp see `plot_iphc_map()`
+##' @param sp_short_name see `plot_iphc_map()`
+##' @param years_to_show see vector of years to show one map for each year
+##' @param par_mfrow two-value vector (rows by columns) for `par(mfrow = par_mfrow)`
+##' @param ... further arguments to `plot_iphc_map()`
+##' @return
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' @
+##' @}
+plot_iphc_map_panel <- function(set_counts_of_sp,
+                                sp_short_name,
+                                years_to_show,
+                                par_mfrow = c(2,2),
+                                ...){
+
+  par(mfrow = par_mfrow)
+  for(years in years_to_show){
+    plot_iphc_map(set_counts_of_sp,
+                  sp_short_name,
+                  years = years,
+                  ...)
+  }
 }

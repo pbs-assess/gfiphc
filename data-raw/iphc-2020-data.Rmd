@@ -160,6 +160,116 @@ sets_simp_std <- cbind(sets_simp_std,
 summary(sets_simp_std)
 ```
 
+## Check the maps for standard definition
+
+It seems that the definition of 'standard grid' has changed from 2018 (when
+first needed due to the expanded grid) to 2020. Simply equating them as above is
+not sufficient.
+
+Doing this having already saved .rda files for 2020, crosses show 'non-standard'
+```{r maps}
+plot_iphc_map_panel(hooks_with_bait$set_counts,
+               sp = "Hooks with bait",
+               years = 2017:2020,
+               indicate_standard = TRUE)
+```
+
+Clearly 2020 has a few less stations just north of Vancouver Island, but not
+enough to worry about greatly. The curious ones are the ones way in in the
+inlets that are no longer flagged as non-standard.
+
+Need to look and plot values:
+```{r standardornot}
+sets_2018 <- filter(hooks_with_bait$set_counts,
+                    year == 2018)
+not_std_2018 <- filter(sets_2018,
+                       standard == "N")$station
+
+
+sets_2020 <- filter(hooks_with_bait$set_counts,
+                    year == 2020)
+not_std_2020 <- filter(sets_2020,
+                       standard == "N")$station
+
+# Not standard in both:
+not_std_2018_and_2020 <- intersect(not_std_2018, not_std_2020)
+not_std_2018_and_2020
+
+length(not_std_2018)
+length(not_std_2020)
+length(not_std_2018_and_2020)
+
+# 2018 has some east of the map, all non-standard:
+filter(hooks_with_bait$set_counts, year == 2018, lon > -124)$standard
+nrow(filter(hooks_with_bait$set_counts, year == 2018, lon > -124))
+
+std_in_2018_but_not_std_in_2020 <- intersect(filter(sets_2018,
+                                                    standard == "Y")$station,
+                                             not_std_2020)
+std_in_2018_but_not_std_in_2020
+
+not_std_in_2018_but_std_in_2020 <- intersect(not_std_2018,
+                                             filter(sets_2020,
+                                                    standard == "Y")$station)
+not_std_in_2018_but_std_in_2020
+
+# setdiff(x, y) - elements in x but not in y
+# setdiff(not_std_2018, not_std_2020) - but 2020 fewer coverage so misleading
+```
+
+text here
+
+
+Plot stations not standard in 2018 but standard in 2020, with a check that the
+station locations in 2018 (red filled circles) agree with those in 2020 (blue plusses):
+
+```{r mapstandard}
+plot_BC()
+points(lat~lon,
+       data = filter(sets_2018,
+                     station %in% not_std_in_2018_but_std_in_2020),
+       col="red",
+       pch = 19)
+
+# Do the same but using 2020 station co-ordinates - should overlap:
+points(lat~lon,
+       data = filter(sets_2020,
+                     station %in% not_std_in_2018_but_std_in_2020),
+       col="blue",
+       pch = 3)
+
+# And show the single station std in 2018 but not 2020:
+points(lat~lon,
+       data = filter(sets_2018,
+                     station %in% std_in_2018_but_not_std_in_2020),
+       col="red",
+       pch = 17)
+points(lat~lon,
+       data = filter(sets_2020,
+                     station %in% std_in_2018_but_not_std_in_2020),
+       col="blue",
+       pch = 1,
+       cex = 2)
+
+# Now show all 2019 stations:
+points(lat~lon,
+       data = filter(hooks_with_bait$set_counts,
+                     year == 2019),
+       col="darkgreen",
+       pch = 0)
+
+legend("bottomleft",
+       legend = c("Not std 2018 but std 2020 (2018 co-ords)",
+                  "Not std 2018 but std 2020 (2020 co-ords)",
+                  "Std 2018 but not std 2020 (2018 co-ords)",
+                  "Std 2018 but not std 2020 (2020 co-ords)",
+                  "All 2019 stations"),
+             pch = c(19, 3, 17, 1, 0),
+             pt.cex = c(1, 1, 1, 2, 1),
+             col = c("red", "blue", "red", "blue", "darkgreen"))
+```
+
+
 ## Species counts
 
 First, get the species counts into the desired format (to match `countData2013` shown earlier):
