@@ -159,7 +159,7 @@ checks the packages builds every time a change is committed to GitHub, giving th
 little green symbol `passing` icon on the main page). To make the movie, run the
 run this vignette code with commented line uncommented (you need to install the
 `gifski` package), right-click on the animation in the
-html viewer and save it.
+html viewer and save it with the above filename.
 ```{r, eval=FALSE}
 # ```{r, animation.hook = 'gifski', interval = 1.5, fig.height = 6}
 for(i in unique(sp_set_counts$set_counts$year)){
@@ -202,9 +202,10 @@ plot(sets_each_year$year, sets_each_year$total, type = "o",
 ```
 
 The extra stations are identified as `standard` being `N`, with `Y` being the
-standard stations. Removing the non-standard stations brings the number of sets
-in 2018 and 2020 into line with other years, and so this should be done for (most)
-analyses:
+standard stations (see `data-raw/iphc-2020-data.R` for explanation of why we
+changed the values for some stations from the IPHC raw data). Removing the
+non-standard stations brings the number of sets in 2018 and 2020 into line with
+other years, and so this should be done for (most) analyses:
 ```{r plotsetsstd, fig.height = 4}
 sets_each_year_standard <- sp_set_counts$set_counts %>%
   filter(standard == "Y") %>%
