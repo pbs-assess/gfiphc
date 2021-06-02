@@ -168,12 +168,29 @@ It seems that the definition of 'standard grid' has changed from 2018 (when
 first needed due to the expanded grid) to 2020. Simply equating them as above is
 not sufficient.
 
+This section figures out the problem and corrects it. However, to replicate the original
+analysis we need to revert the correction. So doing that here and using that for
+the original analysis, so make station 2343 standard again:
+```{r revert}
+hooks_with_bait_revert <- hooks_with_bait
+
+filter(hooks_with_bait_revert$set_counts, year == 2018, station == 2343)
+# This should be commented out for 2021 survey analysis in iphc-2021-data.Rmd,
+#  since the problem is fixed:
+hooks_with_bait_revert$set_counts[hooks_with_bait_revert$set_counts$year == 2018 &
+                           hooks_with_bait_revert$set_counts$station == 2343,
+                           ]$standard = "Y"
+```
+
+TODO - that filter line currently says Y for standard. Should be N when other
+ code is re-run and `hooks_with_bait` .rda file (and others) updated.
+
 Plotting four years, with crosses showing 'non-standard'. (2020 is coloured
 different since no hooks with bait data yet, but the important bit is the crosses).
 ```{r maps}
 sets_2020 <- sets_simp_std  # not the same structure as sets_2018, below
 
-plot_iphc_map_panel(hooks_with_bait$set_counts,
+plot_iphc_map_panel(hooks_with_bait_revert$set_counts,
                sp = "Hooks with bait",
                years = 2017:2019,
                indicate_standard = TRUE)
@@ -190,7 +207,7 @@ inlets that are no longer flagged as non-standard.
 
 Need to look and plot values:
 ```{r standardornot}
-sets_2018 <- filter(hooks_with_bait$set_counts,
+sets_2018 <- filter(hooks_with_bait_revert$set_counts,
                     year == 2018)
 not_std_2018 <- filter(sets_2018,
                        standard == "N")$station
@@ -208,8 +225,8 @@ length(not_std_2020)
 length(not_std_2018_and_2020)
 
 # 2018 has some east of the map, all non-standard:
-filter(hooks_with_bait$set_counts, year == 2018, lon > -124)$standard
-nrow(filter(hooks_with_bait$set_counts, year == 2018, lon > -124))
+filter(hooks_with_bait_revert$set_counts, year == 2018, lon > -124)$standard
+nrow(filter(hooks_with_bait_revert$set_counts, year == 2018, lon > -124))
 
 std_in_2018_but_not_std_in_2020 <- intersect(filter(sets_2018,
                                                     standard == "Y")$station,
@@ -260,7 +277,7 @@ points(lat~lon,
 
 # Now show all 2019 stations:
 points(lat~lon,
-       data = filter(hooks_with_bait$set_counts,
+       data = filter(hooks_with_bait_revert$set_counts,
                      year == 2019),
        col="darkgreen",
        pch = 0)
@@ -279,7 +296,7 @@ legend("bottomleft",
 Check if the one standard station in 2018 but not in 2020 (not fished at all in 2019)
 appears in any earlier years:
 ```{r checkearly}
-filter(hooks_with_bait$set_counts,
+filter(hooks_with_bait_revert$set_counts,
        station == std_in_2018_but_not_std_in_2020) %>%
   as.data.frame()
 ```
