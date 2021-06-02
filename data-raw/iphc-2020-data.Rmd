@@ -298,10 +298,25 @@ sets_simp_std_corrected$standard[sets_simp_std_corrected$station %in%
 
 2. Define station 2343 as non-standard (over-riding original 2018 designation).
 
+So check which functions that need changing, since they create a 'standard'
+column. These do not need changing:
+
+`get_iphc_hooks()`
+
+`get_iphc_skates_info`
+
+Then `get_iphc_sets_info()` does retrun `standard`, but it's not saved in GFbio
+it is saved in `setDataExpansion`. So just need to add a line in
+`IPHC-stations-expanded.R` and then re-save all .rda files.
+
+
+
 TODO - 2018 stations are in GFbio. So needs over-riding when downloading, but
 then also figure out how this code can still work. May have to save
 `sets_2018_uncorrected` as being the values before correcting. Since correcting
-it will mess up this explanatory code.
+it will mess up this explanatory code. - No, just uncorrect it after
+downloading. So find the function that downloads and change station 2343 to
+non-standard in 2018, so that these match now.
 
 ## Species counts
 

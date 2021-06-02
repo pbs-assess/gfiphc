@@ -55,4 +55,6 @@ setDataExpansion <- dplyr::select(raw_data,
                 mpa_name = as.factor(ifelse(mpa_name == " ", NA, mpa_name))) %>%
   dplyr::select(-c("type"))
 
+setDataExpansion$standard[setDataExpansion$station == 2343] <- "N"  # see iphc-2020-data.Rmd
+
 usethis::use_data(setDataExpansion, overwrite = TRUE)
