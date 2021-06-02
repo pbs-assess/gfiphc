@@ -168,9 +168,10 @@ It seems that the definition of 'standard grid' has changed from 2018 (when
 first needed due to the expanded grid) to 2020. Simply equating them as above is
 not sufficient.
 
-This section figures out the problem and corrects it. However, to replicate the original
-analysis we need to revert the correction. So doing that here and using that for
-the original analysis, so make station 2343 standard again:
+This section figures out the two problems and corrects them. However, to replicate the original
+analysis we need to revert the second correction (the correction changes station
+`2343` to be non-standard, even though it originally was classed as standard --
+see later):
 ```{r revert}
 hooks_with_bait_revert <- hooks_with_bait
 
@@ -186,9 +187,6 @@ filter(hooks_with_bait_revert$set_counts, year == 2018, station == 2343) %>%
   as.data.frame()      # reverted version
 
 ```
-
-TODO - that first filter line currently says Y for standard. Should be N when other
- code is re-run and `hooks_with_bait` .rda file (and others) updated.
 
 Plotting four years, with crosses showing 'non-standard'. (2020 is coloured
 different since no hooks with bait data yet, but the important bit is the crosses).
@@ -323,7 +321,7 @@ sets_simp_std_corrected$standard[sets_simp_std_corrected$station %in%
 So check which functions that need changing, since they create a 'standard'
 column. These do not need changing: `get_iphc_hooks()` and `get_iphc_skates_info`.
 
-Then `get_iphc_sets_info()` does retuun `standard`, but the `standard`
+Then `get_iphc_sets_info()` does return `standard`, but the `standard`
 designation is not saved in GFbio it is saved in `setDataExpansion` in `gfiphc`.
 So just need to add a line in `IPHC-stations-expanded.R` and then re-save all
 .rda files. Fixed that, now recreating all .rda files, as per the README.
