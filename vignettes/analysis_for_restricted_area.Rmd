@@ -106,10 +106,8 @@ plot_iphc_map(sp_set_counts_with_area,
               add_to_existing = TRUE,
               indicate_in_area = TRUE)
 ```
-TODO - do as crosses like elsewhere? Now an option in the plotting function
-actually.
 
-2018 had expanded (non-standard) stations, which are shown as open circles:
+2018 had expanded (non-standard) stations, which are shown as crosses:
 ```{r area2018, results = FALSE}
 plot_BC(main = "All 2018 stations")
 

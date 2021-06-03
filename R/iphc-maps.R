@@ -1,8 +1,9 @@
 ##' Plot the locations of the IPHC stations for a given year, and whether or not
-##'  a given species was caught in that year.
+##'  a given species was caught in that year, or show stations within a given
+##'  area. Also show non-standard stations as crosses (not in legend yet).
 ##'
 ##' If possible, also show whether the species was caught in the first 20 hooks
-##' and only caught after the first 20 hooks. MAY ADD other options. Uses
+##' and only caught after the first 20 hooks. Uses
 ##' `PBSmapping` style of plot, as used in the Redbanded and Yelloweye Rockfish
 ##' stock assessments.
 ##'
@@ -16,8 +17,7 @@
 ##'   usable and unusable, but with no catch rates. Still needs
 ##'   `set_counts_of_sp` input tibble (can be any species, as they all have all
 ##'   stations documented).
-##' @param years years of interest ****currently just for one year, multiple will
-##'   get tricky
+##' @param years year of interest. See vignettes for movie code.
 ##' @param main_title title for map, if NULL then is "All <year> stations"
 ##' @param mar_val mar values to reduce whitespace around maps
 ##' @param mgp_val mgp values to reduce whitespace around maps
@@ -66,7 +66,7 @@
 ##' # Hooks with no bait, showing non-standard as crosses :
 ##' plot_iphc_map(hooks_with_bait$set_counts,
 ##'               sp = "Hooks with bait",
-##'               years = 2019,
+##'               years = 2018,
 ##'               indicate_standard = TRUE)
 ##'
 ##' # Just the stations, with no species information:
@@ -145,20 +145,9 @@ plot_iphc_map <- function(set_counts_of_sp,
              data = filter(set_counts_of_sp_one_year,
                            year == years,
                            usable == "Y",
-                           standard == "Y",
                            in_area == TRUE),
              col = "blue",
              pch = pch_pos_count,
-             cex = cex_val)
-
-      points(lat~lon,
-             data = filter(set_counts_of_sp_one_year,
-                           year == years,
-                           usable == "Y",
-                           standard == "N",
-                           in_area == TRUE),
-             col = "blue",
-             pch = pch_zero_count,
              cex = cex_val)
 
       points(lat~lon,
@@ -172,7 +161,7 @@ plot_iphc_map <- function(set_counts_of_sp,
 
       legend("bottomleft",
              legend = c("In area of interest",
-                        "Outside area (or expansion)",
+                        "Outside area",
                         "Unusable station"),
              pch = c(pch_pos_count, pch_zero_count, pch_pos_count),
              pt.cex = rep(cex_val, 3),
@@ -191,7 +180,7 @@ plot_iphc_map <- function(set_counts_of_sp,
          cex = cex_val)
 
   # Add crosses for those not considered 'standard' stations in 2018 and 2020,
-  #  to help figure out the differing definitions of standard in those two years.
+  #  originally to help figure out the differing definitions of standard in those two years.
   if(indicate_standard){
     points(lat~lon,
            data = filter(set_counts_of_sp_one_year,
