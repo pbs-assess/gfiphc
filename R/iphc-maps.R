@@ -139,7 +139,7 @@ plot_iphc_map <- function(set_counts_of_sp,
 
       legend_text <- c("Usable station",
                       "Unusable station")
-      legened_pch <- rep(pch_pos_count, 2)
+      legend_pch <- rep(pch_pos_count, 2)
       legend_cex <- rep(cex_val, 2)
       legend_col <- c("blue",
                       "grey")
