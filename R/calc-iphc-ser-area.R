@@ -412,9 +412,9 @@ iphc_get_calc_plot_area <- function(sp,
                                     cached = TRUE,
                                     verbose = FALSE,
                                     print_sp_name = TRUE
-                                    ) {
+                                    ){
   if(!cached){
-    cache_pbs_data_iphc(skate_sp)
+    cache_pbs_data_iphc(sp)
   }
 
   if(print_sp_name){

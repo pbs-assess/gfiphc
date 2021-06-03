@@ -22,9 +22,19 @@ This vignette shows how to extract and analyse the data for a restricted area
 Herring, and we'll stick with Yelloweye Rockfish as the example species (since
 those data are saved in the package).
 
+Quick version -- there is a wrapper function, `iphc_get_calc_plot_area(sp)` that
+does all the extraction, calculations, and plotting just from the species name
+(see examples in `analysis_for_HG_herring_predators.Rmd`). This vignette shows
+the details to aid understanding. So for a quick look to see if the data look
+potentially useful, just do, for example,
+`iphc_get_calc_plot_area("bocaccio")`. If the resulting series looks useful then
+repeat this vignette for your species of interest.
+
 ```{r setup, results = FALSE}
 library(gfiphc)
 ```
+TODO - go through this and not do movie each time, check code, use some stuff
+from HG vignette?
 
 ## Data for species of interest
 
@@ -96,6 +106,8 @@ plot_iphc_map(sp_set_counts_with_area,
               add_to_existing = TRUE,
               indicate_in_area = TRUE)
 ```
+TODO - do as crosses like elsewhere? Now an option in the plotting function
+actually.
 
 2018 had expanded (non-standard) stations, which are shown as open circles:
 ```{r area2018, results = FALSE}
@@ -161,8 +173,13 @@ Then to calculate the longest possible time series:
 series_longest <- calc_iphc_ser_EF(ser_E_and_F)
 series_longest
 
-plot_IPHC_ser_four_panels(ser_E_and_F, series_longest)
+plot_IPHC_ser_four_panels(ser_E_and_F,
+                          series_longest,
+                          sp = sp)
 ```
+
+Recall there is a wrapper function, `iphc_get_calc_plot_area(sp)`, mentioned at
+the start of this vignette.
 
 Note that the code may not yet fully account for all possibilities (for all
 areas and species), particularly for rarer species. So do check that the output
