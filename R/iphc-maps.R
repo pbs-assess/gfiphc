@@ -1,11 +1,13 @@
-##' Plot the locations of the IPHC stations for a given year, and whether or not
-##'  a given species was caught in that year, or show stations within a given
-##'  area. Also show non-standard stations as crosses (not in legend yet).
+##' Plot the locations of the IPHC stations for a given year, with various
+##options.
+##'
+##' Options include whether or not a given species was caught in that year, or
+##'  indicating showing stations within a given area, or not referencing a
+##'  particular species (just showing stations), or showing non-standard stations.
 ##'
 ##' If possible, also show whether the species was caught in the first 20 hooks
-##' and only caught after the first 20 hooks. Uses
-##' `PBSmapping` style of plot, as used in the Redbanded and Yelloweye Rockfish
-##' stock assessments.
+##' and only caught after the first 20 hooks. Uses `PBSmapping` style of plot,
+##' as used in the Redbanded and Yelloweye Rockfish stock assessments.
 ##'
 ##' @param set_counts_of_sp input tibble of the species of interest, likely generated from
 ##'   `cache_pbs_data_iphc` (which seems to save a list with the first element
@@ -90,7 +92,7 @@ plot_iphc_map <- function(set_counts_of_sp,
                           cex_val = 1,
                           add_to_existing = FALSE,
                           indicate_in_area = FALSE,
-                          indicate_standard = FALSE,
+                          indicate_standard = TRUE,
                           ...
                           ){
   par(mar = mar_val,
@@ -113,12 +115,16 @@ plot_iphc_map <- function(set_counts_of_sp,
                  pch_zero_count = pch_zero_count,
                  pch_pos_count = pch_pos_count,
                  cex_val = cex_val)
-    legend("bottomleft", legend=c(paste("Did not catch", sp_short_name),
-                                  paste("Did catch", sp_short_name),
-                                  "Unusable station"),
-           pch = c(pch_zero_count, pch_pos_count, pch_pos_count),
-           pt.cex = rep(cex_val, 3),
-           col=c("red", "red", "grey"))
+    legend_text <- c(paste("Did not catch", sp_short_name),
+                     paste("Did catch", sp_short_name),
+                     "Unusable station")
+    legend_pch <- c(pch_zero_count,
+                    pch_pos_count,
+                    pch_pos_count)
+    legend_cex <- rep(cex_val, 3)
+    legend_col <- c("red",
+                    "red",
+                    "grey")
   } else {
     # Just show stations for whole coast
     if(!indicate_in_area){
@@ -131,12 +137,13 @@ plot_iphc_map <- function(set_counts_of_sp,
              pch = pch_pos_count,
              cex = cex_val)
 
-      legend("bottomleft",
-             legend = c("Usable station",
-                        "Unusable station"),
-             pch = rep(pch_pos_count, 2),
-             pt.cex = rep(cex_val, 2),
-             col=c("blue", "grey"))
+      legend_text <- c("Usable station",
+                      "Unusable station")
+      legened_pch <- rep(pch_pos_count, 2)
+      legend_cex <- rep(cex_val, 2)
+      legend_col <- c("blue",
+                      "grey")
+
     } else {
       # Indicate whether stations are in or outside of a region (region to be
       #  plotted outside of this function, see vignette)
@@ -159,13 +166,16 @@ plot_iphc_map <- function(set_counts_of_sp,
              pch = pch_zero_count,
              cex = cex_val)
 
-      legend("bottomleft",
-             legend = c("In area of interest",
-                        "Outside area",
-                        "Unusable station"),
-             pch = c(pch_pos_count, pch_zero_count, pch_pos_count),
-             pt.cex = rep(cex_val, 3),
-             col = c("blue", "blue", "grey"))
+      legend_text <- c("In area of interest",
+                       "Outside area",
+                       "Unusable station")
+      legend_pch <- c(pch_pos_count,
+                      pch_zero_count,
+                      pch_pos_count)
+      legend_cex <- rep(cex_val, 3)
+      legend_col = c("blue",
+                     "blue",
+                     "grey")
     }
   }
 
@@ -188,9 +198,18 @@ plot_iphc_map <- function(set_counts_of_sp,
                          standard == "N"),
            pch = pch_non_standard,
            cex = cex_val*1.5)
+
+    legend_text <- c(legend_text, "Non-standard station")
+    legend_pch <- c(legend_pch, pch_non_standard)
+    legend_cex <- c(legend_cex, cex_val*1.5)
+    legend_col <- c(legend_col, "black")
   }
 
-
+  legend("bottomleft",
+         legend = legend_text,
+         pch = legend_pch,
+         pt.cex = legend_cex,
+         col = legend_col)
 
   # This is keeping in Series A or not - could just draw the horizontal line every time
   #points(lat~lon,
