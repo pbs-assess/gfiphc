@@ -276,7 +276,7 @@ boot_iphc <- function(ser_year_rates,
 ##'
 ##'    (iv) But can also have Series C being the longest if A is all 0's and
 ##'    B and C cover the same years. Looks like this happens for Darkblotched.
-##'    Not implemented yet - see Issue 49.
+##'    Not implemented yet - see Issue 10.
 calc_iphc_ser_AB <- function(series_all) {
   years_AB <- intersect(series_all$ser_A$year, series_all$ser_B$year)
   # Series B for English Sole catches none, and only returns 1995 and 1996.
