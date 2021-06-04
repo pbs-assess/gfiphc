@@ -254,8 +254,8 @@ representative of the full coast. Series A, B, C, and D are also given, along
 with geometric means and the test results comparing scaled series.
 
 ```{r serABCD}
-series_all <- calc_iphc_full_res(sp_set_counts$set_counts)
-series_all
+series_ABCD_full <- calc_iphc_full_res(sp_set_counts$set_counts)
+series_ABCD_full
 ```
 To plot Series A and B and show their scaled versions and Series AB:
 

@@ -679,6 +679,7 @@ calc_iphc_full_res <- function(set_counts) {
 
   list(
     ser_longest = iphc_ser_longest$ser_longest,
+    type = iphc_ser_longest$type,
     full_coast = full_coast,
     ser_all = series_all,
     test_AB = iphc_ser_longest$test_AB,
