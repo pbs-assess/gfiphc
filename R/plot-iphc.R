@@ -515,65 +515,63 @@ plot_IPHC_ser_ABCD <- function(series_ABCD_full,
 ##' Wrapper to plot four versions of Series A-D plots in one figure,
 ##' with species name as main title.
 ##'
-##' @param ser_E_and_F
-##' @param series_longest
+##' Defaults to Series A, B, A and B scaled, and AB. Haven't generalised
+##'   `plot_IPHC_ser_ABCD()` to combinations with C and D yet (though does them
+##'   individually).
+##' @param series_ABCD_full list containing tibbles for `ser_longest` etc.,
+##'   an output from `calc_iphc_full_res`
 ##' @param sp species common name
-##' @param line_title
-##' @param ... further arguments to `plot_IPHC_ser_E_and_F()`
+##' @param line_title for tweaking species title
+##' @param y_lim y limits, if NULL (default) then automatically calculated
+##' @param ... further arguments to `plot_IPHC_ser_ABCD()`
 ##' @return simple panel plot of four figures
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
 ##' @donttest{
-##' @ # see vignette
+##' series_ABCD_full <- calc_iphc_full_res(yelloweye_rockfish$set_counts)
+##' plot_IPHC_ser_four_panels_ABCD(series_ABCD_full, "yelloweye rockfish")
+##' # and see vignette
 ##' @}
-plot_IPHC_ser_four_panels_ABCD <- function(
-                                           ser_E_and_F,
-                                      series_longest,
-                                      sp = NULL,
-                                      line_title = -2,
-                                      ...){
+plot_IPHC_ser_four_panels_ABCD <- function(series_ABCD_full,
+                                           sp = NULL,
+                                           line_title = -2,
+                                           y_lim = NULL,
+                                           ...){
   par(mfcol = c(2,2))
 
-  # HERE - not started yet
-#   Do axes here
+  #   Do axes here
   if(is.null(y_lim)){
-    if(series_longest$test_EF$type == "F"){
-      y_max_series_longest <- series_longest$ser_longest$I_tBootHigh} else {
-      y_max_series_longest <- series_longest$ser_longest$I_t20BootHigh}
-
-    y_max <- max(c(ser_E_and_F$ser_E$I_t20BootHigh,
-                   ser_E_and_F$ser_F$I_tBootHigh,
+    if(series_ABCD_full$type == "B"){
+      y_max_series_longest <- series_ABCD_full$ser_longest$I_tBootHigh} else {
+      y_max_series_longest <- series_ABCD_full$ser_longest$I_t20BootHigh} # may not cover
+                                        # all types yet
+    # Just base on A, B for now; may need adapting for C and D.
+    y_max <- max(c(series_ABCD_full$ser_all$ser_A$I_t20BootHigh,
+                   series_ABCD_full$ser_all$ser_B$I_tBootHigh,
                    y_max_series_longest))
     y_lim <- c(0, y_max)
   }
 
-  if(is.null(x_lim)){
-    x_lim <- range(c(ser_E_and_F$serE$year,
-                     ser_E_and_F$serF$year,
-                     series_longest$ser_longest$year))
-  }
+  plot_IPHC_ser_ABCD(series_ABCD_full,
+                     plot_type = "A",
+                     y_lim = y_lim,
+                     ...)
 
+  plot_IPHC_ser_ABCD(series_ABCD_full,
+                     plot_type = "B",
+                     y_lim = y_lim,
+                     ...)
 
-  plot_IPHC_ser_E_and_F(ser_E_and_F,
-                        series_longest,
-                        plot_type = "E",
-                        ...)
+  plot_IPHC_ser_ABCD(series_ABCD_full,
+                     plot_type = "A_B_scaled",
+                     ...)
 
-  plot_IPHC_ser_E_and_F(ser_E_and_F,
-                        series_longest,
-                        plot_type = "F",
-                        ...)
+  plot_IPHC_ser_ABCD(series_ABCD_full,
+                     plot_type = "AB",
+                     y_lim = y_lim,
+                     ...)
 
-  plot_IPHC_ser_E_and_F(ser_E_and_F,
-                        series_longest,
-                        plot_type = "E_F_scaled",
-                        ...)
-
-  plot_IPHC_ser_E_and_F(ser_E_and_F,
-                        series_longest,
-                        plot_type = "EF",
-                        ...)
   title(simple_cap(sp),
         line = line_title,
         outer = TRUE)
