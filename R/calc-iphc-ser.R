@@ -247,15 +247,18 @@ boot_iphc <- function(ser_year_rates,
 ##'   resulting from [calc_iphc_ser_all()]
 ##' @return List containing
 ##'
-##'   ser_longest: the longest time series possible from
+##'   - ser_longest: the longest time series possible from
 ##'   Series A and B,
 ##'
-##'   test_AB: the results from the paired t-test, NULL if Series B is longest.
+##'   - test_AB: the results from the paired t-test, NULL if Series B is longest.
 ##'
-##'   G_A, G_B: geometric means of nonzero values in Series A and Series D
+##'   - G_A, G_B: geometric means of nonzero values in Series A and Series D
 ##'   (based on bootstrapped means).
 ##'
-##'   Longest series is either
+##'   - type: which type the longest series is, either `AB`, `A`, `B`, or
+##'   possibly `C` based on the descriptions below.
+##'
+##' Longest series is either
 ##'
 ##'   (i) Series AB (Series A with 1995 and 1996 appropriately scaled from
 ##'   Series B) if `test_AB$p.value >= 0.05`, because the p-value means that we
@@ -276,7 +279,8 @@ boot_iphc <- function(ser_year_rates,
 ##'
 ##'    (iv) But can also have Series C being the longest if A is all 0's and
 ##'    B and C cover the same years. Looks like this happens for Darkblotched.
-##'    Not implemented yet - see Issue 10.
+##'    Had said this was not implemented yet - see Issue 10, but there is an
+##'    instance below.
 calc_iphc_ser_AB <- function(series_all) {
   years_AB <- intersect(series_all$ser_A$year, series_all$ser_B$year)
   # Series B for English Sole catches none, and only returns 1995 and 1996.
@@ -291,7 +295,8 @@ calc_iphc_ser_AB <- function(series_all) {
         test_AB = list(
           t_AB = NULL,
           G_A = NA,
-          G_B = NA
+          G_B = NA,
+          type = "A"
         )
       ))
     } else {
@@ -300,7 +305,8 @@ calc_iphc_ser_AB <- function(series_all) {
         test_AB = list(
           t_AB = NULL,
           G_A = NA,
-          G_B = NA
+          G_B = NA,
+          type = "B"
         )
       ))
     }
@@ -313,7 +319,8 @@ calc_iphc_ser_AB <- function(series_all) {
       test_AB = list(
         t_AB = NULL,
         G_A = NA,
-        G_B = NA
+        G_B = NA,
+        type = "B"
       )
     ))
   }
@@ -344,7 +351,8 @@ calc_iphc_ser_AB <- function(series_all) {
           test_AB = list(
             t_AB = NULL,
             G_A = NA,
-            G_B = NA
+            G_B = NA,
+            type = "C"
           )
         ))
       } else {
@@ -353,7 +361,8 @@ calc_iphc_ser_AB <- function(series_all) {
           test_AB = list(
             t_AB = NULL,
             G_A = G_A,
-            G_B = G_B
+            G_B = G_B,
+            type = "B"
           )
         ))
       }
@@ -420,7 +429,8 @@ calc_iphc_ser_AB <- function(series_all) {
       test_AB = list(
         t_AB = t_AB,
         G_A = G_A,
-        G_B = G_B
+        G_B = G_B,
+        type = "AB"
       )
     ))
   } else {
@@ -429,7 +439,8 @@ calc_iphc_ser_AB <- function(series_all) {
       test_AB = list(
         t_AB = t_AB,
         G_A = G_A,
-        G_B = G_B
+        G_B = G_B,
+        type = "A"
       )
     ))
   }
