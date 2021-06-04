@@ -181,10 +181,14 @@ plot_IPHC_ser_four_panels(ser_E_and_F,
 For 2020 (but not really 2018) incorrectly including the non-standard stations
 reduces the 2020 value somewhat. Interestingly, 2019 bootstrapped values change
 very slightly also, because of less random numbers now used for 2018
-calculations (this motivates changing the default to 10,000 samples).
+calculations (this motivates changing the default to 10,000 samples -- see
+commented out text here for more info).
 <!-- Andy has saved: -->
 <!-- `analysis_for_restricted_area_before_correcting_series_calcs.html` -->
 <!-- `analysis_for_restricted_area_after_correcting_still_1000_bootstraps.html` -->
+<!-- `analysis_for_restricted_area_after_correcting_with_10000_bootstraps.html`-->
+<!-- Latter will be the same as going onwards, but has y_lim=c(0, 3.4) in final -->
+<!-- plot function to make axes the same. -->
 
 Recall there is a wrapper function, `iphc_get_calc_plot_area(sp)`, mentioned at
 the start of this vignette.
