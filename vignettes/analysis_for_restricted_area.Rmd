@@ -33,8 +33,6 @@ repeat this vignette for your species of interest.
 ```{r setup, results = FALSE}
 library(gfiphc)
 ```
-TODO - go through this and not do movie each time, check code, use some stuff
-from HG vignette?
 
 ## Data for species of interest
 
@@ -107,23 +105,28 @@ plot_iphc_map(sp_set_counts_with_area,
               indicate_in_area = TRUE)
 ```
 
-2018 had expanded (non-standard) stations, which are shown as crosses:
-```{r area2018, results = FALSE}
-plot_BC(main = "All 2018 stations")
+2020 (and 2018) had expanded (non-standard) stations, which are shown as crosses:
+```{r area2020, results = FALSE}
+plot_BC(main = "All 2020 stations")
 
 PBSmapping::addPolys(HG_herring_pred_area,
                      col = "pink")
 
 plot_iphc_map(sp_set_counts_with_area,
               sp = NULL,
-              years = 2018,
+              years = 2020,
               lat_cut_off = NULL,
               add_to_existing = TRUE,
               indicate_in_area = TRUE)
 ```
 
 Make a movie to check each year:
-```{r, animation.hook = 'gifski', interval = 1.5, fig.height = 6, results = FALSE}
+![IPHC-stations-HG-area-movie-1995-2020.gif](IPHC-stations-HG-area-movie-1995-2020.gif).
+
+As for `data_for_one_species` vignette, the movie is saved and the code is
+given here but not run:
+```{r, eval=FALSE}
+# ```{r, animation.hook = 'gifski', interval = 1.5, fig.height = 6, results = FALSE}
 for(i in unique(sp_set_counts_with_area$year)){
   plot_BC(main = paste0("All ", i, " stations"))
 
@@ -175,6 +178,13 @@ plot_IPHC_ser_four_panels(ser_E_and_F,
                           series_longest,
                           sp = sp)
 ```
+For 2020 (but not really 2018) incorrectly including the non-standard stations
+reduces the 2020 value somewhat. Interestingly, 2019 bootstrapped values change
+very slightly also, because of less random numbers now used for 2018
+calculations (this motivates changing the default to 10,000 samples).
+<!-- Andy has saved: -->
+<!-- `analysis_for_restricted_area_before_correcting_series_calcs.html` -->
+<!-- `analysis_for_restricted_area_after_correcting_still_1000_bootstraps.html` -->
 
 Recall there is a wrapper function, `iphc_get_calc_plot_area(sp)`, mentioned at
 the start of this vignette.

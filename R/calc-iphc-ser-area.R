@@ -3,7 +3,8 @@
 #' Calculate Series E and F from the IPHC data (restricted to a given area)
 #'
 #' Calculate both Series for as many years as possible, including bootstrapped
-#'  values, for the data restricted to a user-defined area.
+#'  values, for the data restricted to a user-defined area and (default is)
+#'  standard stations only.
 #' @details The two series are:
 #'
 #'  Series E: first 20 hooks from each skate (like Series A but restricted to a
@@ -14,6 +15,7 @@
 #' @param set_counts species-specific set-level counts from [tidy_iphc_survey()]
 #'  or other, but with extra column `in_area` indicating if each station is in
 #'   the area being considered or not. See vignette for example.
+#' @param only_standard only use the standard stations (default is TRUE).
 #' @return list of class `IPHC_ser_E_and_F` containing two tibbles, one for each series (ser_E and ser_F).
 #'   Each tibble has one row for each set in each year, restricted to only the
 #'   sets within the defined area, with columns
@@ -35,12 +37,16 @@
 #' calc_iphc_ser_all(yelloweye)
 #' }
 #' @export
-calc_iphc_ser_E_and_F <- function(set_counts) {
+calc_iphc_ser_E_and_F <- function(set_counts,
+                                  only_standard = TRUE) {
   stopifnot("in_area" %in% names(set_counts))
+
   set_counts_usable <- filter(set_counts,
                               usable == "Y",
-                              in_area == TRUE)
-
+                              in_area == TRUE,
+                              standard == ifelse(only_standard,
+                                                 "Y",
+                                                 "N"))
   # Series E
   ser_E_counts <- filter(
     set_counts_usable,

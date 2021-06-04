@@ -2,7 +2,9 @@
 #'
 #' Calculate all four series for as many years as possible, including bootstrapped
 #'  values. Series with no data are treated slightly different to each other
-#'  (ser_C ends up as an empty tibble, which may cause problems down the road).
+#'  (ser_C ends up as an empty tibble, which may cause problems down the
+#'  road). Default is to only use `standard` stations.
+#'
 #' @details The four series are:
 #'
 #'  Series A: first 20 hooks from each skate, only north of WCVI
@@ -17,6 +19,9 @@
 #'  or other.
 #' @param lat_cut_off cut off below which sets are excluded for Series A and B,
 #'   default is that used in YYR 2014 assessment.
+#' @param only_standard only use the standard stations (default is TRUE); for
+#'   first synopsis report all stations were indadvertently used for 2018 (see
+#'   Issue 14).
 #' @return list containing four tibbles, one for each survey (ser_A, ser_B, ser_C
 #'   and ser_D). Each tibble has one row for each set in each year, with columns
 #'   year, station, lat, lon, E_it (effective skate number), N_it (number of
@@ -36,8 +41,14 @@
 #' calc_iphc_ser_all(yelloweye)
 #' }
 #' @export
-calc_iphc_ser_all <- function(set_counts, lat_cut_off = 50.6) {
-  set_counts_usable <- filter(set_counts, usable == "Y")
+calc_iphc_ser_all <- function(set_counts,
+                              lat_cut_off = 50.6,
+                              only_standard = TRUE) {
+  set_counts_usable <- filter(set_counts,
+                              usable == "Y",
+                              standard == ifelse(only_standard,
+                                                 "Y",
+                                                 "N"))
 
   # Series A
   ser_A_counts <- filter(
