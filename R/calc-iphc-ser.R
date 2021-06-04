@@ -164,7 +164,7 @@ calc_iphc_ser_all <- function(set_counts,
 ##'   I_tBootLow, I_tBootHigh and I_tBootCV. If ser_year_rates is NULL or all
 ##'   counts are NA then return year = 2003 and all NA's (to not break later code).
 boot_iphc <- function(ser_year_rates,
-                      num.boots = 1000,
+                      num.boots = 10000,
                       seed_val = 42) {
   if (dim(ser_year_rates)[2] != 2) stop("Tibble must have only two columns.")
 
