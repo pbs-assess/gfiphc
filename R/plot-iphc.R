@@ -4,18 +4,12 @@
 ##' Could have made one global function for all options, but would have lots of
 ##'  if statements, so just use the E_and_F one to create new one.
 
-# ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
-# plot.IPHC_ser_E_and_F(ser_E_and_F)  # this works
-# plot(ser_E_and_F)  # this doesn't work, even though
-# class(ser_E_and_F)
-# [1] "IPHC_ser_E_and_F" "list"
 ##' Single plotting function for Series E, F or EF
 ##'
-##' If you have EF then you have ser_E_and_F....
-##' REDO: Plotting function for objects of class `IPHC_ser_E_and F` and also
+##' Plotting function for objects of class `IPHC_ser_E_and F` and also
 ##' `IPHC_ser_EF`, which are, respectively,
 ##'  - list containing tibbles for `ser_E` and `ser_F`
-##'  - list containing
+##'  - list containing tibble for `ser_longest` (and more)
 ##'
 ##' Since an object with class `IPHC_ser_EF` can only be calculated from an
 ##' object of class `IPHC_ser_E_and_F`, to plot the former requires the latter
@@ -51,9 +45,9 @@
 ##' @author Andrew Edwards
 ##' @examples
 ##' @donttest{
-##' @
+##' # See vignettes.
 ##' @}
-plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
+plot_IPHC_ser_E_and_F <- function(ser_E_and_F,
                                   series_longest = NULL,
                                  plot_type = "E",    # change back to default as EF
                                  x_lim = c(1995, as.integer(format(Sys.Date(),
@@ -243,7 +237,7 @@ plot.IPHC_ser_E_and_F <- function(ser_E_and_F,
 ##' @param series_longest
 ##' @param sp species common name
 ##' @param line_title
-##' @param ... further arguments to `plot.IPHC_ser_E_and_F()`
+##' @param ... further arguments to `plot_IPHC_ser_E_and_F()`
 ##' @return simple panel plot of four figures
 ##' @export
 ##' @author Andrew Edwards
@@ -258,22 +252,22 @@ plot_IPHC_ser_four_panels <- function(ser_E_and_F,
                                       ...){
   par(mfcol = c(2,2))
 
-  plot.IPHC_ser_E_and_F(ser_E_and_F,
+  plot_IPHC_ser_E_and_F(ser_E_and_F,
                         series_longest,
                         plot_type = "E",
                         ...)
 
-  plot.IPHC_ser_E_and_F(ser_E_and_F,
+  plot_IPHC_ser_E_and_F(ser_E_and_F,
                         series_longest,
                         plot_type = "F",
                         ...)
 
-  plot.IPHC_ser_E_and_F(ser_E_and_F,
+  plot_IPHC_ser_E_and_F(ser_E_and_F,
                         series_longest,
                         plot_type = "E_F_scaled",
                         ...)
 
-  plot.IPHC_ser_E_and_F(ser_E_and_F,
+  plot_IPHC_ser_E_and_F(ser_E_and_F,
                         series_longest,
                         plot_type = "EF",
                         ...)
