@@ -331,18 +331,18 @@ plot_IPHC_ser_ABCD <- function(series_ABCD_full,
   # options than for E and F. TODO
 
   stopifnot(plot_type %in% c("A", "B", "C", "D", "A_B_scaled", "AB")) # not
-                                        # implemented yet for others
+                                        # implemented yet for others, but
+                                        # somewhat general with X and Y used
 
   X <- substr(plot_type, 1, 1)
 
-  ifelse(nchar(plot_type) > 1.5,
+  ifelse(nchar(plot_type) == 2,
          Y <- substr(plot_type, 2, 2),
          Y <- FALSE)
 
-  ifelse(substr(plot_type, 4, 10) == "_scaled",
-         scaled <- TRUE,
-         scaled <- FALSE)
-
+  if(substr(plot_type, 4, 10) == "_scaled"){
+    Y <- substr(plot_type, 3, 3)
+  }
 
   x_ticks <- x_lim[1]:x_lim[2]
 
