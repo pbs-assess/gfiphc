@@ -311,7 +311,8 @@ calc_iphc_ser_EF <- function(series_all,
             G_F = G_F,
             type = "EF")),
         class = "IPHC_ser_EF"))  # TODO - add to above ones once happy with,
-                                 # though plot function didn't seem to work
+                                 # though plot function didn't seem to work so
+                                 # not really needed.
   } else {
     return(
       structure(

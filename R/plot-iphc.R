@@ -1,6 +1,8 @@
-##' Plotting functions for gfiphc
-
-
+##' Plotting functions for gfiphc. The E and F ones were actually done first
+##' (had no time to do Series A-D ones for first gfsynopsis, which is why
+##' Figures G.1 and G.2 were copied from an earlier assessment).
+##' Could have made one global function for all options, but would have lots of
+##'  if statements, so just use the E_and_F one to create new one.
 
 # ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
 # plot.IPHC_ser_E_and_F(ser_E_and_F)  # this works

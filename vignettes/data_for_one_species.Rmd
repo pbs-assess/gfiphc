@@ -231,6 +231,70 @@ only the usable stations).
 for the Series A, B, C, D etc. calculation code that was used for the synopsis report, but the latest
 Yelloweye Rockfish assessment did properly account for this.
 
+COPYING FROM RESTRICTED AREA:
+
+## Calculate longest time series possible for the full coast
+
+In Appendix G of the synopsis report we described analyses to calculate as long
+a time series as possible by combining data from years when only the first 20 hooks
+were enumerated for each skate (Series A) and from years when all hooks could be enumerated
+from each skate (Series B); there are overlapping years when all hooks were
+enumerated and the data are available at the hook-by-hook level. The resulting
+Series AB applies only to the area north of WCVI, but was tested to see if it was
+representative of the whole coast.
+
+This section does those calculations in detail to aid understanding (there is a
+also a wrapper function to automatically do all the steps).
+
+Calculate Series A, B, C, and D, and Series AB (if possible) and whether it is representative
+of the whole coast. See `?calc_iphc_full_res` for full details of the output,
+but basically `$ser_longest` is the longest time series that can be made for the
+species, with `$full_coast` indicating whether it can be considered
+representative of the full coast. Series A, B, C, and D are also given, along
+with geometric means and the test results comparing scaled series.
+
+```{r serABCD}
+series_all <- calc_iphc_full_res(sp_set_counts$set_counts)
+series_all
+```
+To plot Series A and B and show their scaled versions and Series AB:
+
+HERE
+Then to calculate the longest possible time series:
+```{r serplot, fig.width = 10, fig.height = 8}
+series_longest <- calc_iphc_ser_EF(ser_E_and_F)
+series_longest
+
+plot_IPHC_ser_four_panels(ser_E_and_F,
+                          series_longest,
+                          sp = sp)
+```
+Comparing this figure with an earlier version (before excluding non-standard
+stations), for 2020 (but not really 2018) excluding the non-standard
+stations increases the 2020 value somewhat. Interestingly, 2019 bootstrapped
+values change
+very slightly also, because of less random numbers now used for 2018
+calculations (this motivates changing the default to 10,000 samples -- see
+commented out text here for more info).
+<!-- Andy has saved: -->
+<!-- `analysis_for_restricted_area_before_correcting_series_calcs.html` -->
+<!-- `analysis_for_restricted_area_after_correcting_still_1000_bootstraps.html` -->
+<!-- `analysis_for_restricted_area_after_correcting_with_10000_bootstraps.html`-->
+<!-- Latter will be the same as going onwards, but has y_lim=c(0, 3.4) in final -->
+<!-- plot function to make axes the same. -->
+
+Recall there is a wrapper function, `iphc_get_calc_plot_area(sp)`, mentioned at
+the start of this vignette.
+
+Note that the code may not yet fully account for all possibilities (for all
+areas and species) for the different Series, particularly for rarer species
+with, by definition, low count numbers. So do check that the output is
+sensible. The code may calculate a longest series, but it may not be
+ecologically useful.
+
+
+END OF COPYING
+
 ## Analyses for full coast
 
 TODO example
