@@ -4,7 +4,7 @@
 \alias{calc_iphc_ser_all}
 \title{Calculate Series A, B, C and D from the IPHC data}
 \usage{
-calc_iphc_ser_all(set_counts, lat_cut_off = 50.6)
+calc_iphc_ser_all(set_counts, lat_cut_off = 50.6, only_standard = TRUE)
 }
 \arguments{
 \item{set_counts}{species-specific set-level counts from \code{\link[=tidy_iphc_survey]{tidy_iphc_survey()}}
@@ -12,6 +12,10 @@ or other.}
 
 \item{lat_cut_off}{cut off below which sets are excluded for Series A and B,
 default is that used in YYR 2014 assessment.}
+
+\item{only_standard}{only use the standard stations (default is TRUE); for
+first synopsis report all stations were indadvertently used for 2018 (see
+Issue 14).}
 }
 \value{
 list containing four tibbles, one for each survey (ser_A, ser_B, ser_C
@@ -26,7 +30,8 @@ geospatial analysis but are included here).
 \description{
 Calculate all four series for as many years as possible, including bootstrapped
 values. Series with no data are treated slightly different to each other
-(ser_C ends up as an empty tibble, which may cause problems down the road).
+(ser_C ends up as an empty tibble, which may cause problems down the
+road). Default is to only use \code{standard} stations.
 }
 \details{
 The four series are:

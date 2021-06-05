@@ -2,8 +2,7 @@
 % Please edit documentation in R/iphc-maps.R
 \name{plot_iphc_map}
 \alias{plot_iphc_map}
-\title{Plot the locations of the IPHC stations for a given year, and whether or not
-a given species was caught in that year.}
+\title{Plot the locations of the IPHC stations for a given year, with various}
 \usage{
 plot_iphc_map(
   set_counts_of_sp,
@@ -17,10 +16,11 @@ plot_iphc_map(
   lon_cut_off_2 = -128.25,
   pch_pos_count = 19,
   pch_zero_count = 1,
+  pch_non_standard = 4,
   cex_val = 1,
   add_to_existing = FALSE,
   indicate_in_area = FALSE,
-  indicate_standard = FALSE,
+  indicate_standard = TRUE,
   ...
 )
 }
@@ -37,8 +37,7 @@ usable and unusable, but with no catch rates. Still needs
 \code{set_counts_of_sp} input tibble (can be any species, as they all have all
 stations documented).}
 
-\item{years}{years of interest ****currently just for one year, multiple will
-get tricky}
+\item{years}{year of interest. See vignettes for movie code.}
 
 \item{main_title}{title for map, if NULL then is "All <year> stations"}
 
@@ -61,6 +60,8 @@ stations for 1995-1998. If NULL then nothing plotted}
 \item{pch_zero_count}{pch for zero counts (or sets outside area if
 \code{indicate_in_area} is FALSE)}
 
+\item{pch_non_standard}{pch for showing non-standard stations for that year}
+
 \item{cex_val}{cex size of plotted circles (or whatever is chosen using
 above \code{pch} options}
 
@@ -81,10 +82,14 @@ A map of the IPHC survey stations for that year and species, with a
 legend describing the points.
 }
 \description{
+Options include whether or not a given species was caught in that year, or
+indicating showing stations within a given area, or not referencing a
+particular species (just showing stations), or showing non-standard stations.
+}
+\details{
 If possible, also show whether the species was caught in the first 20 hooks
-and only caught after the first 20 hooks. MAY ADD other options. Uses
-\code{PBSmapping} style of plot, as used in the Redbanded and Yelloweye Rockfish
-stock assessments.
+and only caught after the first 20 hooks. Uses \code{PBSmapping} style of plot,
+as used in the Redbanded and Yelloweye Rockfish stock assessments.
 }
 \author{
 Andrew Edwards

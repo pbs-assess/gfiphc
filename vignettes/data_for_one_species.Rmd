@@ -23,9 +23,9 @@ the Pacific Biological Station network that have permission to access the
 database, an example data set for Yelloweye Rockfish is included in the
 package.
 
-```{r setup, results = FALSE}
+```{r setup, message = FALSE, results = FALSE}
 library(gfiphc)
-library(dplyr)    # Need to print tibble properly
+library(dplyr)    # To print tibble properly
 ```
 
 <!-- Adapting code written by Andrew Edwards for Beau Doherty at Landmark -->

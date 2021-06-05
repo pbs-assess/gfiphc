@@ -4,12 +4,14 @@
 \alias{calc_iphc_ser_E_and_F}
 \title{Calculations restricted to a user-defined area.}
 \usage{
-calc_iphc_ser_E_and_F(set_counts)
+calc_iphc_ser_E_and_F(set_counts, only_standard = TRUE)
 }
 \arguments{
 \item{set_counts}{species-specific set-level counts from \code{\link[=tidy_iphc_survey]{tidy_iphc_survey()}}
 or other, but with extra column \code{in_area} indicating if each station is in
 the area being considered or not. See vignette for example.}
+
+\item{only_standard}{only use the standard stations (default is TRUE).}
 }
 \value{
 list of class \code{IPHC_ser_E_and_F} containing two tibbles, one for each series (ser_E and ser_F).
@@ -27,7 +29,8 @@ Calculate Series E and F from the IPHC data (restricted to a given area)
 }
 \details{
 Calculate both Series for as many years as possible, including bootstrapped
-values, for the data restricted to a user-defined area.
+values, for the data restricted to a user-defined area and (default is)
+standard stations only.
 
 The two series are:
 

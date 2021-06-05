@@ -38,6 +38,8 @@ track of when comparing spatially-averaged catch rates to previous
 years. 2019 onwards may also use the expanded grids.
 Effective skate number, avgDepth and usability will come from the GFbio query (unlike, say,
 setData2013, for which the set details could not go into GFbio). For 2020 the
-IPHC provided an expansion column, which presumably matches these.
+IPHC provided an expansion column, which didn't quite match these -- see
+\code{data-raw/iphc-2020-data.Rmd} or \code{.pdf} for calculations. In particular, to
+explain why station 2343 is redefined here as being \code{standard}.
 }
 \keyword{datasets}

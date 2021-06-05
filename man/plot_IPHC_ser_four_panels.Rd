@@ -16,7 +16,7 @@ plot_IPHC_ser_four_panels(
 \arguments{
 \item{sp}{species common name}
 
-\item{...}{further arguments to \code{plot.IPHC_ser_E_and_F()}}
+\item{...}{further arguments to \code{plot_IPHC_ser_E_and_F()}}
 }
 \value{
 simple panel plot of four figures
