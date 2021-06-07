@@ -304,47 +304,6 @@ were counted (Series B) may be more useful than a longer one that uses only the
 first 20 hooks (Series A). In such cases maybe a Series BA could be implemented
 (use original Series B and then rescale Series A).
 
-## Not running yet, can ignore for now:
-
-Robyn did this for Pacific Cod (but will not get 2018 right since code doesn't
-yet correct for expansion stations). This was to take a quick look at the data,
-but she didn't end up using it. Will be useful as an example here.
-
-```{r pcod, eval = FALSE}
-iphc_raw <- gfiphc::tidy_iphc_survey(
-  get_iphc_hooks("pacific cod"),
-  get_iphc_skates_info(),
-  get_iphc_sets_info()
-)
-iphc_index <- gfiphc::calc_iphc_full_res(iphc_raw)
-```
-
-
-The code used in `gfsynopsis/R/make-pages.R` is the following, simplifying it
-here to then check that it matches what is done above (not finished checking yet):
-```{r gfsynopsis, eval = FALSE}
-#if (!is.null(dat_iphc)) {
-#    if (!file.exists(iphc_index_cache_spp)) {
-      iphc_set_counts_sp <-
-        gfiphc::calc_iphc_full_res(dat_iphc$set_counts)
-
-      saveRDS(iphc_set_counts_sp, file = iphc_index_cache_spp, compress = FALSE)
-    } else {
-      iphc_set_counts_sp <- readRDS(iphc_index_cache_spp)
-    }
-
-    iphc_set_counts_sp_format <- tryCatch({
-      gfiphc::format_iphc_longest(iphc_set_counts_sp)
-    }, error = function(e) NA)
-    # Remove existing (GFbio) based IPHC series with longer ones from new calcs
-    if (!is.na(iphc_set_counts_sp_format)) {
-      dat_tidy_survey_index <- dat_tidy_survey_index %>%
-        filter(survey_abbrev != "IPHC FISS") %>%
-        rbind(iphc_set_counts_sp_format)
-    }
-  }
-```
-
 ## Extracting multiple species (not run here)
 
 Did these for Joe Watson (16/12/20). May as well document here as will need to
