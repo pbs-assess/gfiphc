@@ -4,7 +4,7 @@
 \alias{plot_iphc_index}
 \title{Plot just the IPHC survey index, though works for all surveys - WON'T
 CURRENTLY WORK as commenting out reference to gfplot, need to move that
-function here but want to test first.}
+function here but want to test first. Moving to gfsynopsis or gfplot.}
 \usage{
 plot_iphc_index(iphc_set_counts_sp_format)
 }
