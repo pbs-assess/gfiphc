@@ -1,9 +1,9 @@
 ---
-title: "Data for a restricted area"
+title: "Analyses for a restricted area"
 author: "Andrew Edwards"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Data for a restricted area}
+  %\VignetteIndexEntry{Analyses for a restricted area}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

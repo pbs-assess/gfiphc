@@ -1,9 +1,9 @@
 ---
-title: "Extract and analyse the IPHC data for predators of Haida Gwaii Pacific Herring"
+title: "Analyses for predators of Haida Gwaii Pacific Herring"
 author: "Andrew Edwards"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Extract the IPHC data herring predators}
+  %\VignetteIndexEntry{Analyses for predators of Haida Gwaii Pacific Herring}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 This vignette shows how to extract and analyse the data for predators of Haida
 Gwaii Pacific Herring, including lumping species together
-(e.g. `all_skates`). This information is for a DFO Ecosystem Approach to
+(e.g. `skates_combined`). This information is for a DFO Ecosystem Approach to
 Fisheries Management Case Study on ecoystem influences of Haida Gwaii Pacific
 Herring.
 
@@ -33,10 +33,9 @@ library(gfiphc)
 
 ## Data for species of interest
 
-First, just running for multiple individual species.
-
-These are the original species (herring predators) extracted for Joe, though
-taking out longnose skate since it will get saved as part of `skate_sp` below.
+These are the species (herring predators, excluding skate species) identified by
+Jennifer Boldt and used at the end of `data_for_one_species` vignette (the final
+code in that needs to be run first to cache the data).
 ```{r definesp}
 sp_vec <- c("yelloweye rockfish",
             "arrowtooth flounder",
@@ -49,10 +48,8 @@ sp_vec <- c("yelloweye rockfish",
             "walleye pollock")
 ```
 
-We want a general rockfish category and general skates one, I just picked
-yelloweye, redbanded, and longnose as examples above. Going through groundfish
-synopsis report and picking skate species, then rockfish, that have sufficient
-data to look useful.
+We want a general rockfish category and general skates one. I just picked
+yelloweye and redbanded for rockfish for now.
 
 ## Skate species
 
@@ -92,42 +89,13 @@ skate_sp <- c("aleutian skate",
 
 skate_ignore <- c("abyssal skate",
                   "broad skate")
-skate_unident <- "unidentified skate"
-# skates_combined <- "skates combined"
 ```
 
 Cache the data once (this is not evaluated each time):
 ```{r get_skates, eval=FALSE}
 cache_pbs_data_iphc(skate_sp)
 cache_pbs_data_iphc(skate_ignore)
-# cache_pbs_data_iphc(skate_unident)
 ```
-
-Next steps:
-
- D functionalise next bit, saving results (like in other vignette?)
-
- D show unident skate also
-
- D search all years for anything with skate, there are some rare ones not in GFbio
-
- D add unident and anything else to skate_sp, ensure consistent defns through time
-
- D create time series for combined skate_sp
-
- D create time series for the other predators
-
- - doing a combined rockfish one?
-
- - Then re-run again with 2020 data added and 2018
-    expanded areas accounted for (may be done already for Series EF).
-
- D create wrapper for format for Jennifer
-
- - fix Travis
-
- - merge into master
-
 ## Individual skate species
 
 Calculate series for each skate species in turn (saved as `species_name_area`)
@@ -169,11 +137,11 @@ dplyr::filter(data1996to2002,
 # And there were less unidentified through time:
 dplyr::filter(data1996to2002,
               spNameIPHC == "unident. Skate") %>%
-  select(year) %>%
+  dplyr::select(year) %>%
   table()
 
 
-# 2013 (not in GFbio), no unident. Skate:
+# 2013 (not in GFbio), no unident. Skate (checking 'skate' and 'Skate'):
 unique(countData2013$spNameIPHC)[grep("Skate", unique(countData2013$spNameIPHC))]
 grep("skate", unique(countData2013$spNameIPHC)) # none
 
@@ -181,7 +149,9 @@ grep("skate", unique(countData2013$spNameIPHC)) # none
 # See Issue #16 - not sure what the species code would be, but there may not be
 # one if they were all identified after 2000.
 
-# 2020 (not in GFbio). Not looked at yet. Presumably identified. TODO
+# 2020 (not in GFbio), no unident. Skate (checking 'skate' and 'Skate'):
+unique(countData2020$spNameIPHC)[grep("Skate", unique(countData2020$spNameIPHC))]
+grep("skate", unique(countData2020$spNameIPHC)) # none
 ```
 
 So, given none in 2001 or 2002 and numbers of unidentified declined from 1996 to
@@ -192,7 +162,7 @@ So, we can use `unidentified skate` as a species name (done above). Load in and
 examine that data:
 ```{r unidentsummary}
 unidentified_skate_area$sp_set_counts_with_area %>%
-  select(year) %>%
+  dplyr::select(year) %>%
   table()
 ```
 But there no positive counts after 2000, looking at first 20 hooks (Series E)
@@ -226,11 +196,22 @@ skates_combined$set_counts %>%
   t()
 ```
 
+Note that by simply adding the counts of each skate species, we are
+implicitly assuming that selectivity is the same across skate species. So true
+changes in relative abundance may not be accurately reflected in changes in the
+summed index.
+<!-- Started an example: We are summing relative indices, so if one species (call it 'roller skate') is twice as
+abundant as another (call it 'ice skate') but
+has half the selectivity then their relative catch rates (fish per 100 hooks)
+will be equal at, say, 1 fish per 100 hooks, given a summed rate of 2 fish per
+100 hooks. But if roller skates double in abundance then ...  -->
+
 Now use to calculate Series E, F and EF calculations for the restricted area:
 ```{r combineEF, warning = FALSE, results = FALSE}
 assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
        iphc_get_calc_plot_area(sp))
 ```
+
 
 ## Individual non-skate species
 
@@ -245,7 +226,8 @@ for(sp in sp_vec){
 ## Format for Jennifer's EAFM summary
 
 Save annual indices (with uncertainty) for all species of interest, in the
-format for the HG herring predators' EAFM summary.
+format for the HG herring predators' EAFM summary (first manually save previous
+versions in `for-jen-earlier-versions/` if want to keep them).
 
 ```{r allsp}
 all_sp_longest <- list()
@@ -261,11 +243,12 @@ for(sp in sp_vec_and_combined_skates){
 
 eafm_res <- iphc_format_for_EAFM(sp_vec_and_combined_skates,
                                  all_sp_longest) # also saves .csv, and .rds of
-                                        # all_sp_longest list
+                                                 #  all_sp_longest list
 
 eafm_res
 ```
 
-Note that the code may not yet fully account for all possibilities (for all
+Note that the analyses may not yet fully account for all possibilities (for all
 areas and species), particularly for rarer species. So do check that the output
-is sensible.
+is sensible by inspecting the above time series figures. And the analyses do not
+(yet) include hook competition, which is currently being investigated.
