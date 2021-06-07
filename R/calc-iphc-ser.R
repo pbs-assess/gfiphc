@@ -789,9 +789,99 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
   new_names
 }
 
+##' Get data, do calculations and plot Series A, B and longest series possible
+##' (usually Series AB) for the IPHC survey
+##'
+##' Get data, do calculations and plot longest series for the IPHC survey for
+##'  a given species. For species that have several years of zero catches,
+##'  Series B may be better to use (but shorter) than Series AB because all
+##'  hooks were counted. For example Walleye Pollock in 2016 -- see example.
+##'
+##'  Will take a while since queries GFbio (and need to be on DFO
+##'  network). Basically a wrapper for the calculations in the vignette
+##'  `data_for_one_species`. Based on `iphc_get_calc_plot_area()`. See
+##'  `gfsynopsis::iphc_get_calc_plot()` for function for gfsynopsis
+##'  reports. Calling this one `iphc_get_calc_plot_full()` to distinguish it.
+##'
+##' @param sp Species names (as used in gfdata and gfplot). Or something like
+##'   "skates combined" -- see vignette.
+##' @param cached if TRUE then used cached data (sp-name.rds)
+##' @param verbose if TRUE then print out some of the data (useful in vignette loops)
+##' @param print_sp_name if TRUE then print out species name (useful in vignette
+##'   loops)
+##' @return For the given species, list containing
+##'
+##'   sp_set_counts: list with one element (for consistency), a tibble
+##'   `set_counts` (the .RDS file saved when doing `cache_pbs_data_iphc(sp)`).
+##'
+##'   ser_ABCD_full: list of output from `calc_iphc_full_res()` from doing all
+##'    calculations.
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' @donttest{
+##' iphc_get_calc_plot_full("redbanded rockfish", cached = FALSE) # only at PBS
+##' # Example where longest series may not be the most useful since only looking
+##'   at first 20 hooks gives all zeros in 2016, but looking at all hooks gives
+##'   some non-zero sets. In practice, catches may be too sparse to be useful anyway.
+##' x <- iphc_get_calc_plot_full("walleye pollock", cached = FALSE) # only PBS
+##' filter(x$series_ABCD_full$ser_longest, year == 2016)
+##' # A tibble: 1 x 8
+##'   year  Sets num_pos20 I_t20SampleMean I_t20BootMean I_t20BootLow I_t20BootHigh
+##'  <dbl> <int>     <int>           <dbl>         <dbl>        <dbl>         <dbl>
+##'   2016   132         0               0             0            0             0
+##' ... with 1 more variable: I_t20BootCV <dbl>
+##' filter(x$series_ABCD_full$ser_all$ser_B, year == 2016)
+##' # A tibble: 1 x 8
+##'    year  Sets num_pos I_tSampleMean I_tBootMean I_tBootLow I_tBootHigh I_tBootCV
+##'   <dbl> <int>   <int>         <dbl>       <dbl>      <dbl>       <dbl>     <dbl>
+##' 1  2016   132       2       0.00252     0.00249          0     0.00629     0.719
+##' @}
+iphc_get_calc_plot_full <- function(sp,
+                                    cached = TRUE,
+                                    verbose = FALSE,
+                                    print_sp_name = TRUE
+                                    ){
+  if(!cached){
+    cache_pbs_data_iphc(sp)
+  }
+
+  if(print_sp_name){
+    print(paste("*****", sp, "*****"))
+  }
+
+  sp_set_counts <- readRDS(sp_hyphenate(sp))
+
+  # For multiple species:
+  if(!("N_it" %in% names(sp_set_counts)) &
+     "N_it_sum" %in% names(sp_set_counts)){
+    sp_set_counts <- sp_set_counts %>%
+      dplyr::rename(N_it = N_it_sum,
+                    N_it20 = N_it20_sum,
+                    C_it = C_it_sum,
+                    C_it20 = C_it20_sum)
+  }
+
+  series_ABCD_full <- calc_iphc_full_res(sp_set_counts$set_counts)
+
+  if(verbose){
+    # Print the first and last values:
+    print(sp_set_counts)
+    print(tail(sp_set_counts$set_counts))
+    print(series_ABCD_full)
+    print(paste("*****", sp, "*****"))
+  }
+
+  plot_IPHC_ser_four_panels_ABCD(series_ABCD_full,
+                                 sp = sp)
+
+  list(sp_set_counts = sp_set_counts,
+       series_ABCD_full = series_ABCD_full)
+}
+
 ##' Plot just the IPHC survey index, though works for all surveys - WON'T
 ##'   CURRENTLY WORK as commenting out reference to gfplot, need to move that
-##'   function here but want to test first.
+##'   function here but want to test first. Moving to gfsynopsis or gfplot.
 ##'
 ##' Plot just the IPHC survey index (mainly for testing).
 ##' @param iphc_set_counts_sp_format Set counts for a given species formatted
@@ -811,12 +901,16 @@ plot_iphc_index <- function(iphc_set_counts_sp_format) {
 #  iphc_plot
 }
 
-##' Get data, do calculations and plot longest series for the IPHC survey
+##' Get data, do calculations and plot longest series for the IPHC survey -
+##' original used for first gfsynopsis report.
 ##'
 ##' Get data, do calculations and plot longest series for the IPHC survey for
 ##'  a given species. Will take a while since queries GFbio (and need to be on DFO
-##'  network). WON'T CURRENTLY WORK AS plot_iphc_index() won't currently work.
-##' TODO: Am creating similar one for restricted area, may use cached data.
+##'  network). WON'T CURRENTLY WORK AS plot_iphc_index() won't currently work
+##'  (we previously had everything in just gfplot). See `iphc_get_calc_plot()`
+##'  to use separately, then move this and plot_iphc_index to use gfsynopsis
+##'  (Issue 140 in gfsynopsis).
+##'
 ##' @param sp Species names (as used in gfdata and gfplot).
 ##' @return For the given species, list containing
 ##'
@@ -829,7 +923,7 @@ plot_iphc_index <- function(iphc_set_counts_sp_format) {
 ##'   g_iphc_index: plot of just the iphc data (useful for testing all species)
 ##'     providing there are some data
 ##' @export
-iphc_get_calc_plot <- function(sp) {
+iphc_get_calc_plot_orig <- function(sp) {
   set_counts <- get_all_iphc_set_counts(sp)
   iphc_set_counts_sp <- calc_iphc_full_res(set_counts)
   iphc_set_counts_sp_format <-
