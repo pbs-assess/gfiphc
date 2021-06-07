@@ -67,37 +67,63 @@ sp_set_counts <- yelloweye_rockfish
 
 ## Details for all skates and stations, and hooks returned with bait
 
-Other data sets are already built into the gfiphc package, the main ones being:
+Other data sets are already built into the gfiphc package, the main ones are
+given here.
+
+Locations and effective skate values of stations for the 1995 survey:
 ```{r builtin}
-setData1995      # Locations and effective skate values of stations for the 1995 survey
+setData1995
+```
 
-countData1995    # Counts of each species at each station in 1995
+Counts of each species at each station in 1995:
+```{r builtin2}
+countData1995
+```
 
-data1996to2002   # Catches at each station from 1996 to 2002
+Catches at each station from 1996 to 2002:
+```{r builtin3}
+data1996to2002
+```
 
-setData2013      # Station details for 2013 survey
+Station details for 2013 survey:
+```{r builtin4}
+setData2013
+```
 
-setData2020      # Station details for 2020 survey
+Station details for 2020 survey:
+```{r builtin5}
+setData2020
+```
 
-setDataExpansion # Station details regarding expansion stations from 2018 (and
-                 # possibly onwards)
+Station details regarding expansion stations from 2018 (and some later years):
+```{r builtin6}
+setDataExpansion
 ```
 
 The following data sets are extracted from GFBio but extracted at PBS and then included
 in the package (using `data-raw/sets-skates-hooks-yelloweye.R`), which will be
-run each year to update the data objects:
+run each year to update the data objects.
+
+Station details from GFBio for years not mentioned above:
 ```{r builtinfromgfbio}
-sets_other_years   # Station details from GFBio for years not mentioned above
+sets_other_years
+```
 
-skates_other_years # Skate-level details from GFBio (such data are not available
-                   # for years for which data are only available at the
-                   # set-by-set level).
+Skate-level details from GFBio (though such data are not available for years for
+which data are only available at the set-by-set level):
+```{r builtinfromgfbio2}
+skates_other_years
+```
 
-hooks_with_bait    # Counts of hooks returned with bait on them, for each set,
-                   # for all years (note it is a list containing one tibble)
+Counts of hooks returned with bait on them, for each set, for all years (note it
+is a list containing one tibble):
+```{r builtinfromgfbio3}
+hooks_with_bait
+```
 
-yelloweye_rockfish # Counts of Yelloweye Rockfish on each set for all years
-                   #  (note it is a list containing one tibble)
+Counts of Yelloweye Rockfish on each set for all years (note it is a list containing one tibble):
+```{r builtinfromgfbio4}
+yelloweye_rockfish
 ```
 
 See `?<dataset>` for details of each, and `data(package = "gfiphc")` for other
@@ -249,10 +275,14 @@ series_ABCD_full <- calc_iphc_full_res(sp_set_counts$set_counts)
 series_ABCD_full
 ```
 
-Now plot Series A and B and show their scaled versions and the resulting Series AB:
+Now plot Series A and B and show their scaled versions and the resulting Series
+AB (bottom right), which is the longest series available and is considered
+applicable to the whole coast if `series_ABCD_full$full_coast` is `TRUE`:
 ```{r serplot, fig.width = 10, fig.height = 8}
 plot_IPHC_ser_four_panels_ABCD(series_ABCD_full,
                                sp = sp)
+series_ABCD_full$type
+series_ABCD_full$full_coast
 ```
 
 There is a wrapper function, HERE `iphc_get_calc_plot(sp)`,  NOT FULLY DONE YET,
