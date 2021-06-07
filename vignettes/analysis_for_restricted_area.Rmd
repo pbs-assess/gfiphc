@@ -1,9 +1,9 @@
 ---
-title: "Extract and analyse the IPHC data for a restricted area"
+title: "Data for a restricted area"
 author: "Andrew Edwards"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Extract the IPHC data for a restricted area}
+  %\VignetteIndexEntry{Data for a restricted area}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

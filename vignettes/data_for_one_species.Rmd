@@ -3,7 +3,7 @@ title: "Data for one species"
 author: "Andrew Edwards"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Extract the IPHC data for one species}
+  %\VignetteIndexEntry{Data for one species}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -58,7 +58,9 @@ cache_pbs_data_iphc(sp)
                                        # That creates species-name. [This is
                                        #  what gfsynopsis::get_data_iphc() calls,
                                        #  via gfsynopsis::get_data() in
-                                       #  report/make.R of gfsynopsis repo.]
+                                       #  report/make.R of gfsynopsis
+                                       #  repo.]. Note the argument can be a
+                                       #  vector species names to save multiple species.
 ```
 
 Once an external person has the `species-name.rds` file, the two lines in the
@@ -306,9 +308,8 @@ first 20 hooks (Series A). In such cases maybe a Series BA could be implemented
 
 ## Extracting multiple species (not run here)
 
-Did these for Joe Watson (16/12/20). May as well document here as will need to
-do again when the 2020 data are uploaded. Realised can just make a species vector
-so doing that here, though not fully tested.
+Originally did these for Joe Watson (16/12/20). Documenting here as an example,
+but not evaluated.
 
 ```{r multiple, eval=FALSE}
 sp_vec <- c("yelloweye rockfish",
@@ -319,15 +320,16 @@ sp_vec <- c("yelloweye rockfish",
             "pacific halibut",
             "redbanded rockfish",
             "sablefish",
-            "longnose skate",
-            "walleye pollock")
+            "walleye pollock",
+            "hook-with-bait.rds")
 
-cache_pbs_data_iphc(sp_vec)   # not double checked, as just ran them all individually
+path = "for-joe/"
+cache_pbs_data_iphc(sp_vec, path = path)
 
 # Do in console to just print the first and last values:
 for(sp in sp_vec){
   print(sp)
-  print(readRDS(paste0(gsub(" ", "-", sp), ".rds")))
-  print(tail(readRDS(paste0(gsub(" ", "-", sp), ".rds"))$set_counts))
+  print(readRDS(paste0(path, gsub(" ", "-", sp), ".rds")))
+  print(tail(readRDS(paste0(path, gsub(" ", "-", sp), ".rds"))$set_counts))
 }
 ```
