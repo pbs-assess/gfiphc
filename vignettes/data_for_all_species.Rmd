@@ -41,7 +41,7 @@ catch rates, it may make more sense to consider Series B.
 
 Change the options to use the cached data t
 ```{r extract, warning = FALSE, results = FALSE}
-for(sp in sp_vec[48:100]){      # increment these to test, done up to number shown
+for(sp in sp_vec[48:70]){      # increment these to test, done up to number shown
   iphc_get_calc_plot_full(sp,
                           cached_data = FALSE,    # set TRUE for testing if data saved
                           cached_results = FALSE, # set TRUE for testing if results saved

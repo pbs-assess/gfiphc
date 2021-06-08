@@ -106,9 +106,11 @@ calc_iphc_ser_all <- function(set_counts,
     set_counts_usable, year %in% years_full_coast$year,
     !is.na(E_it)
   )
-  if (nrow(ser_C_counts) == 0) {
-    ser_C_counts[1, ] <-
-      c(2003, rep(NA, ncol(ser_C_counts) - 1))
+
+  if (nrow(ser_C_counts) == 0) {       # pacific tomcod
+    ser_C_counts <- ser_B_counts[1, ]  # same names
+    ser_C_counts[1, "year"] <- 2003    # fake, else breaks later code
+    ser_C_counts[1, 2:ncol(ser_C_counts)] <- NA
   }
 
   ser_C_boot <- boot_iphc(select(
@@ -873,7 +875,7 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
 ##' @}
 iphc_get_calc_plot_full <- function(sp,
                                     cached_data = TRUE,
-                                    cached_results = TRUE,                                                                  verbose = FALSE,
+                                    cached_results = FALSE,                                                                 verbose = FALSE,
                                     print_sp_name = TRUE,
                                     path_data = ".",
                                     path_results = NULL){
