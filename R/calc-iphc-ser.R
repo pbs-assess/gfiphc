@@ -790,7 +790,7 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
 }
 
 ##' Get data, do calculations and plot Series A, B and longest series possible
-##' (usually Series AB) for the IPHC survey
+##' (usually Series AB) for the IPHC survey, and maybe save results
 ##'
 ##' Get data, do calculations and plot longest series for the IPHC survey for
 ##'  a given species. For species that have several years of zero catches,
@@ -809,7 +809,10 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
 ##' @param verbose if TRUE then print out some of the data (useful in vignette loops)
 ##' @param print_sp_name if TRUE then print out species name (useful in vignette
 ##'   loops)
-##' @return For the given species, list containing
+##' @param path_data path to save or load the cached data
+##' @param path_results path to save or load the cached data
+##' @return Saves results in `path_results/species-name.RDS` if `path_results`
+##'   is not NULL. For the given species, return list containing
 ##'
 ##'   sp_set_counts: list with one element (for consistency), a tibble
 ##'   `set_counts` (the .RDS file saved when doing `cache_pbs_data_iphc(sp)`).
@@ -840,17 +843,19 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
 iphc_get_calc_plot_full <- function(sp,
                                     cached = TRUE,
                                     verbose = FALSE,
-                                    print_sp_name = TRUE
-                                    ){
+                                    print_sp_name = TRUE,
+                                    path_data = ".",
+                                    path_results = NULL){
   if(!cached){
-    cache_pbs_data_iphc(sp)
+    cache_pbs_data_iphc(sp,
+                        path = path_data)
   }
 
   if(print_sp_name){
     print(paste("*****", sp, "*****"))
   }
 
-  sp_set_counts <- readRDS(sp_hyphenate(sp))
+  sp_set_counts <- readRDS(paste0(path_data, "/", sp_hyphenate(sp)))
 
   # For multiple species:
   if(!("N_it" %in% names(sp_set_counts)) &
@@ -875,8 +880,19 @@ iphc_get_calc_plot_full <- function(sp,
   plot_IPHC_ser_four_panels_ABCD(series_ABCD_full,
                                  sp = sp)
 
-  list(sp_set_counts = sp_set_counts,
-       series_ABCD_full = series_ABCD_full)
+  res <- list(sp_set_counts = sp_set_counts,
+              series_ABCD_full = series_ABCD_full)
+
+  if(!is.null(path_results)){
+    dir.create(path_results,
+               showWarnings = FALSE)
+    saveRDS(res,
+            file = paste0(file.path(path_results,
+                                    sp_hyphenate(sp,
+                                                 results = TRUE))),
+            compress = FALSE)
+  }
+  return(res)
 }
 
 ##' Plot just the IPHC survey index, though works for all surveys - WON'T

@@ -151,10 +151,9 @@ get_iphc_hooks <- function(species, usability = NULL) {
 #' @examples
 #' \dontrun{
 #' cache_pbs_data_iphc("redbanded rockfish")
-#' cache_pbs_data_iphc(c(
-#'   "redbanded rockfish",
-#'   "pacific ocean perch"
-#' ))
+#' cache_pbs_data_iphc(c("redbanded rockfish",
+#'                       "pacific ocean perch"),
+#'                     path = "two-rockfish")
 #' }
 cache_pbs_data_iphc <- function(species, file_name = NULL, path = ".",
                                 compress = FALSE) {
@@ -166,7 +165,9 @@ cache_pbs_data_iphc <- function(species, file_name = NULL, path = ".",
       this_sp_clean <- gsub("/", "-", gsub(" ", "-", this_sp))
     } else {
       this_sp_clean <- gsub("/", "-", gsub(" ", "-", file_name[[sp_i]]))
-    } # Not sure why Sean's works in cache_pbs_data without the { }
+    } # Not sure why Sean's works in cache_pbs_data without the { }. Also have
+      #  sp_hyphenate() now that could maybe replace this. The "/" are
+      #  thanks to blackspotted/rougheye
 
     message("Extracting IPHC data for ", this_sp)
     out <- list()
