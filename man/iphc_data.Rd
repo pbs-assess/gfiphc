@@ -76,9 +76,8 @@ species from \code{\link[=get_all_iphc_set_counts]{get_all_iphc_set_counts()}}
 \examples{
 \dontrun{
 cache_pbs_data_iphc("redbanded rockfish")
-cache_pbs_data_iphc(c(
-  "redbanded rockfish",
-  "pacific ocean perch"
-))
+cache_pbs_data_iphc(c("redbanded rockfish",
+                      "pacific ocean perch"),
+                    path = "two-rockfish")
 }
 }

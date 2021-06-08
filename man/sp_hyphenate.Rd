@@ -4,7 +4,13 @@
 \alias{sp_hyphenate}
 \title{Hyphenate or underscore species name.}
 \usage{
-sp_hyphenate(sp, hyphen_rds = TRUE, underscore = FALSE, area = FALSE)
+sp_hyphenate(
+  sp,
+  hyphen_rds = TRUE,
+  underscore = FALSE,
+  area = FALSE,
+  results = FALSE
+)
 }
 \arguments{
 \item{sp}{Species common name (as used in gfdata and gfplot) as a string,
@@ -18,6 +24,9 @@ objects), and overrides \code{hyphen} being TRUE.}
 
 \item{area}{If TRUE then return "yelloweye-rockfish-area" (or
 "yelloweye_rockfish_area") to use for area-restricted analyses.}
+
+\item{results}{If TRUE then append "results" to name also, for saving .RDS
+files in \code{data_for_all_species} vignette. E.g. return "yelloweye-rockfish-results.rds"}
 }
 \value{
 string of adapted species name
