@@ -857,7 +857,7 @@ iphc_get_calc_plot_full <- function(sp,
 
   sp_set_counts <- readRDS(paste0(path_data, "/", sp_hyphenate(sp)))
 
-  # For multiple species:
+  # For combined species:
   if(!("N_it" %in% names(sp_set_counts)) &
      "N_it_sum" %in% names(sp_set_counts)){
     sp_set_counts <- sp_set_counts %>%

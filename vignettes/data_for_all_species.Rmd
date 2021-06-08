@@ -41,9 +41,9 @@ catch rates, it may make more sense to consider Series B.
 
 Change the options to use the cached data t
 ```{r extract, warning = FALSE}
-for(sp in sp_vec[1:10]){
+for(sp in sp_vec[13]){      # increment these to test, done up to number shown
   iphc_get_calc_plot_full(sp,
-                          cached = FALSE,    # setting TRUE while testing
+                          cached = TRUE,    # set TRUE for testing and data saved
                           print_sp_name = FALSE,
                           path_data = "all-species-data",
                           path_results = "all-species-results")

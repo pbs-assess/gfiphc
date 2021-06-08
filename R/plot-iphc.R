@@ -281,6 +281,7 @@ plot_IPHC_ser_four_panels <- function(ser_E_and_F,
 
 ##' Single plotting function for Series A, B, C, D, or combination of two
 ##'
+##'
 ##' @param series_ABCD_full list containing tibbles for `ser_longest` etc.,
 ##'   an output from `calc_iphc_full_res`
 ##' @param plot_type one of
@@ -427,6 +428,11 @@ plot_IPHC_ser_ABCD <- function(series_ABCD_full,
         G_Y = 1
       }   # just don't rescale, since can't.
 
+      # May have overlapping years but they may have 0 catch, so
+      #  for example G_A = NaN for darkblotched rockfish.
+      if(is.na(G_X)){G_X = 1}
+      if(is.na(G_Y)){G_Y = 1}
+
       y_lim_X_Y_scaled <- c(0, max(c(ser_X$I_t20BootHigh / G_X,
                                      ser_Y$I_tBootHigh / G_Y)))
 
@@ -538,6 +544,26 @@ plot_IPHC_ser_four_panels_ABCD <- function(series_ABCD_full,
                                            line_title = -2,
                                            y_lim = NULL,
                                            ...){
+  # If no data
+  par(mfcol = c(1,1))
+  if(is.null(series_ABCD_full)){
+    plot(c(0, 1),
+         c(0, 1),
+         ann = FALSE,
+         bty = 'n',
+         type = 'n',
+         xaxt = 'n',
+         yaxt = 'n')
+    text(x = 0.5,
+         y = 0.5,
+         "Not caught on IPHC survey",
+         cex = 1)
+    title(simple_cap(sp),
+          line = line_title,
+          outer = TRUE)
+    return()
+  }
+
   par(mfcol = c(2,2))
 
   #   Do axes here
