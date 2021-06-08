@@ -12,8 +12,8 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.width = 6,
-  fig.height = 6
+  fig.width = 10,
+  fig.height = 8
 )
 ```
 
@@ -40,10 +40,10 @@ then one of the other time series is the longest. For rarer species with low
 catch rates, it may make more sense to consider Series B.
 
 Change the options to use the cached data t
-```{r extract}
-for(sp in sp_vec[7]){
+```{r extract, warning = FALSE}
+for(sp in sp_vec[1:10]){
   iphc_get_calc_plot_full(sp,
-                          cached = TRUE,    # setting TRUE while testing
+                          cached = FALSE,    # setting TRUE while testing
                           print_sp_name = FALSE,
                           path_data = "all-species-data",
                           path_results = "all-species-results")
