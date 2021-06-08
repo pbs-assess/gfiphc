@@ -9,6 +9,8 @@
 ##'   objects), and overrides `hyphen` being TRUE.
 ##' @param area If TRUE then return "yelloweye-rockfish-area" (or
 ##'   "yelloweye_rockfish_area") to use for area-restricted analyses.
+##' @param results If TRUE then append "results" to name also, for saving .RDS
+##'   files in `data_for_all_species` vignette. E.g. return "yelloweye-rockfish-results.rds"
 ##' @return string of adapted species name
 ##' @export
 ##' @author Andrew Edwards
@@ -19,17 +21,31 @@
 sp_hyphenate <- function(sp,
                          hyphen_rds = TRUE,
                          underscore = FALSE,
-                         area = FALSE){
+                         area = FALSE,
+                         results = FALSE){
   if(!hyphen_rds & !underscore) stop("Need one argument TRUE.")
 
   if(area){
     sp <- paste(sp, "area")
   }
 
+  if(results){
+    sp <- paste(sp, "results")
+  }
+
+  sp <- gsub("/",
+             " ",
+             sp)  # For rougheye/blackspotted rockfish complex
+
   if(underscore){
-    return(paste0(gsub(" ", "_", sp)))
+    return(paste0(gsub(" ",
+                       "_",
+                       sp)))
   } else {
-    return(paste0(gsub(" ", "-", sp), ".rds"))
+    return(paste0(gsub(" ",
+                       "-",
+                       sp),
+                  ".rds"))
   }
 }
 
