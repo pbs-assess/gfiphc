@@ -835,14 +835,15 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
 ##'
 ##' @param sp Species names (as used in gfdata and gfplot). Or something like
 ##'   "skates combined" -- see vignette.
-##' @param cached if TRUE then used cached data (sp-name.rds)
+##' @param cached_data if TRUE then use cached data (path_data/sp-name.rds)
+##' @param cached_results if TRUE then use cached results (path_results/sp-name-results.rds)
 ##' @param verbose if TRUE then print out some of the data (useful in vignette loops)
 ##' @param print_sp_name if TRUE then print out species name (useful in vignette
 ##'   loops)
 ##' @param path_data path to save or load the cached data
 ##' @param path_results path to save or load the cached data
-##' @return Saves results in `path_results/species-name.RDS` if `path_results`
-##'   is not NULL. For the given species, return list containing
+##' @return Saves results in `path_results/species-name-results.RDS`. If `path_results`
+##'   is NULL then do not save. For the given species, return list containing
 ##'
 ##'   sp_set_counts: list with one element (for consistency), a tibble
 ##'   `set_counts` (the .RDS file saved when doing `cache_pbs_data_iphc(sp)`).
@@ -853,7 +854,7 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
 ##' @author Andrew Edwards
 ##' @examples
 ##' @donttest{
-##' iphc_get_calc_plot_full("redbanded rockfish", cached = FALSE) # only at PBS
+##' iphc_get_calc_plot_full("redbanded rockfish", cached_data = FALSE) # only at PBS
 ##' # Example where longest series may not be the most useful since only looking
 ##'   at first 20 hooks gives all zeros in 2016, but looking at all hooks gives
 ##'   some non-zero sets. In practice, catches may be too sparse to be useful anyway.
@@ -871,12 +872,12 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
 ##' 1  2016   132       2       0.00252     0.00249          0     0.00629     0.719
 ##' @}
 iphc_get_calc_plot_full <- function(sp,
-                                    cached = TRUE,
-                                    verbose = FALSE,
+                                    cached_data = TRUE,
+                                    cached_results = TRUE,                                                                  verbose = FALSE,
                                     print_sp_name = TRUE,
                                     path_data = ".",
                                     path_results = NULL){
-  if(!cached){
+  if(!cached_data){
     cache_pbs_data_iphc(sp,
                         path = path_data)
   }
@@ -897,7 +898,14 @@ iphc_get_calc_plot_full <- function(sp,
                     C_it20 = C_it20_sum)
   }
 
-  series_ABCD_full <- calc_iphc_full_res(sp_set_counts$set_counts)
+  results_RDS_name <- paste0(file.path(path_results,
+                                       sp_hyphenate(sp,
+                                                    results = TRUE)))
+  if(cached_results){
+      series_ABCD_full <- readRDS(results_RDS_name)[["series_ABCD_full"]]
+    } else {
+      series_ABCD_full <- calc_iphc_full_res(sp_set_counts$set_counts)
+    }
 
   if(verbose){
     # Print the first and last values:
@@ -913,14 +921,14 @@ iphc_get_calc_plot_full <- function(sp,
   res <- list(sp_set_counts = sp_set_counts,
               series_ABCD_full = series_ABCD_full)
 
-  if(!is.null(path_results)){
-    dir.create(path_results,
-               showWarnings = FALSE)
-    saveRDS(res,
-            file = paste0(file.path(path_results,
-                                    sp_hyphenate(sp,
-                                                 results = TRUE))),
-            compress = FALSE)
+  if(!cached_results){
+    if(!is.null(path_results)){
+      dir.create(path_results,
+                 showWarnings = FALSE)
+      saveRDS(res,
+              file = results_RDS_name,
+              compress = FALSE)
+    }
   }
   return(res)
 }
