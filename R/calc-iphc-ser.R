@@ -568,6 +568,25 @@ compare_iphc_ser_B_C <- function(series_all) {
     I_tBootMean > 0
   )$I_tBootMean)))
 
+  # For widow rockfish needed this, until I realised the only fish ever caught
+  #  was in 2018 at an expansion station, which is now fixed in
+  #  calc_iphc_full_res(). This may be needed for other species:
+  if (is.na(G_B)){
+    return(list(
+      t_BC = NULL,
+      G_B = NA,
+      G_C = G_C    # may be NaN not NA
+    ))
+  }
+
+  if (is.na(G_C)){
+    return(list(
+      t_BC = NULL,
+      G_B = G_B,
+      G_C = NA
+    ))
+  }
+
   # Scale by G_B, geometric mean of bootstrapped means.
   ser_B_scaled <- filter(
     series_all$ser_B,
@@ -636,6 +655,17 @@ calc_iphc_full_res <- function(set_counts) {
     }
   }
   series_all <- calc_iphc_ser_all(set_counts)
+
+  # calc_iphc_ser_all defaults to only including standard stations, so need to
+  #  check here that we still have counts (we don't for widow rockfish, just
+  #  lots of 0's; only catch is in expansion station in 2018):
+  if(max(c(series_all$ser_A$num_pos20,
+           series_all$ser_B$num_pos,
+           series_all$ser_C$num_pos,
+           series_all$ser_D$num_pos20)) == 0){
+    return(NULL)
+  }
+
   iphc_ser_longest <- calc_iphc_ser_AB(series_all)
   # list of longest series and
   #  paired t-test results
