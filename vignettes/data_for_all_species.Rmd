@@ -1,0 +1,51 @@
+---
+title: "Analyses for all gfsynopsis species"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Analyses for all gfsynopsis species}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 6
+)
+```
+
+This vignette extracts, analyses, saves and plots the data for all (>100) species for the
+gfsynopsis reports. It only works for users with access to the GFBio database at
+the Pacific Biological Station.
+
+```{r setup, message = FALSE, results = FALSE}
+library(gfiphc)
+```
+
+## Data for all species for gfsynopsis reports
+
+Define common species name:
+```{r species}
+sp_vec <- gfsynopsis::get_spp_names()$species_common_name
+```
+
+Extract the data, create the four time Series A, B, C and D, compare them, and
+plot the results, for all species (will take some time). Series AB (bottom right
+panel), if shown, will be the longest time series that can be calculated and
+will be representative of the full coast (TODO: check). If it is empty
+then one of the other time series is the longest. For rarer species with low
+catch rates, it may make more sense to consider Series B.
+
+Change the options to use the cached data t
+```{r extract}
+for(sp in sp_vec[7]){
+  iphc_get_calc_plot_full(sp,
+                          cached = TRUE,    # setting TRUE while testing
+                          print_sp_name = FALSE,
+                          path_data = "all-species-data",
+                          path_results = "all-species-results")
+}
+```
