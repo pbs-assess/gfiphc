@@ -458,14 +458,34 @@ There are two options for getting halibut counts for the first 20 hooks (given
 we don't have hook-by-hook data, though it could probably be obtained just not
 from the IPHC website).
 
-1. Take the counts for all hooks and create `N_it20 = E_it20 / E_it * N_it`. Not
+### Option 1.
+
+Take the halibut counts for all the hooks and create `N_it20 = E_it20 / E_it * N_it`. Not
    strictly the first 20 hooks, but is a rescaling. But will not guarantee integer values.
 
-2. Add the counts for each set (which include `Hook with Skin` etc.) and compare
+```{r sethalibut}
+setData2020_and_halibut <- setData2020 %>%
+  dplyr::left_join(    by = "station")   # TODO probably keep halibut counts in
+                                        # sets_simp and sets_simp_std earlier, since accounts for
+                                        # the doubly fished station
+```
+
+### Option 2.
+
+Add the counts for each set (which include `Hook with Skin` etc.) and compare
    with `hooksObs`. I think the latter is higher, and the difference is halibut
    (as the only `non non-halibut` species). Compare with the results from
    option 1. If close then use option 2, since it will be just be halibut counts
    and gives an integer number.
+
+Add counts for each set:
+```{r countsmaybe}
+counts_maybe_halibut <- countData2020_no_halibut %>%
+  dplyr::group_by(station) %>%
+  dplyr::summarise(non_halibut = sum(specCount)) %>%
+  dplyr::ungroup()
+counts_maybe_halibut
+```
 
 
 ## Check species names
