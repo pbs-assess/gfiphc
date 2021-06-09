@@ -7,7 +7,8 @@
 \usage{
 iphc_get_calc_plot_full(
   sp,
-  cached = TRUE,
+  cached_data = TRUE,
+  cached_results = FALSE,
   verbose = FALSE,
   print_sp_name = TRUE,
   path_data = ".",
@@ -18,7 +19,9 @@ iphc_get_calc_plot_full(
 \item{sp}{Species names (as used in gfdata and gfplot). Or something like
 "skates combined" -- see vignette.}
 
-\item{cached}{if TRUE then used cached data (sp-name.rds)}
+\item{cached_data}{if TRUE then use cached data (path_data/sp-name.rds)}
+
+\item{cached_results}{if TRUE then use cached results (path_results/sp-name-results.rds)}
 
 \item{verbose}{if TRUE then print out some of the data (useful in vignette loops)}
 
@@ -30,8 +33,8 @@ loops)}
 \item{path_results}{path to save or load the cached data}
 }
 \value{
-Saves results in \code{path_results/species-name.RDS} if \code{path_results}
-is not NULL. For the given species, return list containing
+Saves results in \code{path_results/species-name-results.RDS}. If \code{path_results}
+is NULL then do not save. For the given species, return list containing
 
 sp_set_counts: list with one element (for consistency), a tibble
 \code{set_counts} (the .RDS file saved when doing \code{cache_pbs_data_iphc(sp)}).
