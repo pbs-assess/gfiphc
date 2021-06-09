@@ -541,13 +541,12 @@ countData2020_halibut <- dplyr::select(compare,
                                        spNameIPHC,
                                        specCount = N_it20_halibut_opt_2) %>%
   dplyr::mutate(specCount = as.integer(specCount))
-countData2020_NEW <- rbind(countData2020_no_halibut,
+countData2020 <- rbind(countData2020_no_halibut,
                        countData2020_halibut) %>%
   dplyr::arrange(station)
-# Check remaining data didn't change (at least the first time running this):
-expect_equal(countData2020, filter(countData2020_NEW, spNameIPHC !=
-                                                      "Pacific Halibut"))
-countData2020 <- countData2020_NEW
+# First time running, called the above countData2020_NEW to check remaining data didn't change:
+#expect_equal(countData2020, filter(countData2020_NEW, spNameIPHC !=
+#                                                      "Pacific Halibut"))
 ```
 
 ## Check species names
