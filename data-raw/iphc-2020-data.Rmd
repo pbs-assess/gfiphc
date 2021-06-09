@@ -129,7 +129,9 @@ sets_simp <- dplyr::filter(sets_raw, `Vessel code` != "HAN") %>%
                 effSkateIPHC = "Effective skates hauled",
                 soakTimeMinutes = "Soak time (min.)",  # Joe might want
                 usable = Eff,
-                purpose = Purpose) %>%
+                purpose = Purpose,
+                U32halibut = "U32 Pacific halibut count",
+                O32halibut = "O32 Pacific halibut count") %>%
   arrange(station) %>%
   dplyr::mutate(year = as.integer(year),
                 station = as.character(station),
@@ -191,7 +193,9 @@ filter(hooks_with_bait_revert$set_counts, year == 2018, station == 2343) %>%
 Plotting four years, with crosses showing 'non-standard'. (2020 is coloured
 different since no hooks with bait data yet, but the important bit is the crosses).
 ```{r maps}
-sets_2020 <- sets_simp_std  # not the same structure as sets_2018, below
+sets_2020 <- dplyr::select(sets_simp_std,
+                           -c(U32halibut, O32halibut))
+                           # not the same structure as sets_2018, below
 
 plot_iphc_map_panel(hooks_with_bait_revert$set_counts,
                sp = "Hooks with bait",
@@ -460,14 +464,25 @@ from the IPHC website).
 
 ### Option 1.
 
-Take the halibut counts for all the hooks and create `N_it20 = E_it20 / E_it * N_it`. Not
-   strictly the first 20 hooks, but is a rescaling. But will not guarantee integer values.
+Take the halibut counts for all the hooks and create `N_it20_halibut_est = E_it20 / E_it *
+N_it`, or equivalently just `N_it20_halibut_est = hooksObs / hooksRetr *
+N_it`. Note that observed refers to observed for non-halibut species
+(presumably `hooksRetr` works for halibut). Not
+strictly the first 20 hooks, but is a rescaling. But will not guarantee integer values.
 
 ```{r sethalibut}
-setData2020_and_halibut <- setData2020 %>%
-  dplyr::left_join(    by = "station")   # TODO probably keep halibut counts in
-                                        # sets_simp and sets_simp_std earlier, since accounts for
-                                        # the doubly fished station
+setData2020_and_halibut <-
+  dplyr::left_join(setData2020,
+                   dplyr::select(sets_simp_std_corrected,
+                                 c(station,
+                                   U32halibut,
+                                   O32halibut)),
+                   by = "station") %>%
+  dplyr::mutate(N_it_halibut = U32halibut + O32halibut,
+                N_it20_halibut_opt_1 = hooksObs / hooksRetr * N_it_halibut)
+setData2020_and_halibut %>% dplyr::select(station,
+                                          N_it_halibut,
+                                          N_it20_halibut_opt_1)
 ```
 
 ### Option 2.
@@ -480,12 +495,63 @@ Add the counts for each set (which include `Hook with Skin` etc.) and compare
 
 Add counts for each set:
 ```{r countsmaybe}
-counts_maybe_halibut <- countData2020_no_halibut %>%
+counts_20 <- countData2020_no_halibut %>%
   dplyr::group_by(station) %>%
   dplyr::summarise(non_halibut = sum(specCount)) %>%
   dplyr::ungroup()
-counts_maybe_halibut
+counts_20
 ```
+
+Now join the two options together to calculate `N_it20_halibut_opt_2` and
+compare the two estimates of `N_it20_halibut`:
+```{r compare}
+compare <-
+  dplyr::left_join(setData2020_and_halibut,
+                   counts_20,
+                   by = "station") %>%
+  dplyr::mutate(N_it20_halibut_opt_2 = hooksObs - non_halibut,
+                N_it20_opt_1_over_opt_2 = N_it20_halibut_opt_1 / N_it20_halibut_opt_2) %>%
+  dplyr::select(year,
+                station,
+                usable,
+                N_it20_halibut_opt_1,
+                N_it20_halibut_opt_2,
+                N_it20_opt_1_over_opt_2)
+compare$spNameIPHC <- "Pacific Halibut"
+compare
+
+plot(compare$N_it20_halibut_opt_1, compare$N_it20_halibut_opt_2)
+abline(a = 0, b = 1)
+```
+So this is the right approach, though numbers not quite as close as may have
+thought. But these data are used for aggregating across all stations in a year
+(and any further analyses on halibut should be done using the raw data
+anyway). And the means aren't too bad:
+```{r means}
+mean(compare$N_it20_halibut_opt_1)
+mean(compare$N_it20_halibut_opt_2)
+```
+
+So either of these would work. So use option 2 since gives an integer count:
+```{r combine}
+compare$N_it20_halibut_opt_2
+countData2020_halibut <- dplyr::select(compare,
+                                       year,
+                                       station,
+                                       spNameIPHC,
+                                       specCount = N_it20_halibut_opt_2) %>%
+  dplyr::mutate(specCount = as.integer(specCount))
+countData2020_NEW <- rbind(countData2020_no_halibut,
+                       countData2020_halibut) %>%
+  dplyr::arrange(station)
+# Check remaining data didn't change (at least the first time running this):
+expect_equal(countData2020, filter(countData2020_NEW, spNameIPHC !=
+                                                      "Pacific Halibut"))
+countData2020 <- countData2020_NEW
+```
+
+
+
 
 
 ## Check species names
