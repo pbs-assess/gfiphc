@@ -35,16 +35,18 @@ sp_vec <- gfsynopsis::get_spp_names()$species_common_name
 Extract the data, create the four time Series A, B, C and D, compare them, and
 plot the results, for all species (will take some time). Series AB (bottom right
 panel), if shown, will be the longest time series that can be calculated and
-will be representative of the full coast (TODO: check). If it is empty
+will be representative of the full coast (TODO: check - if others are longest it
+may not say that). If it is empty
 then one of the other time series is the longest. For rarer species with low
 catch rates, it may make more sense to consider Series B.
 
-Change the options to use the cached data t
+Change the options to use the cached data and cached results (for example, set
+both to `FALSE` when first running):
 ```{r extract, warning = FALSE, results = FALSE}
 for(sp in sp_vec){      # increment these to test, done up to number shown
   iphc_get_calc_plot_full(sp,
-                          cached_data = TRUE,    # set TRUE for testing if data saved
-                          cached_results = TRUE, # set TRUE for testing if results saved
+                          cached_data = TRUE,    # TRUE if data already saved
+                          cached_results = TRUE, # TRUE if results already saved
                           print_sp_name = FALSE,
                           path_data = "all-species-data",
                           path_results = "all-species-results")
