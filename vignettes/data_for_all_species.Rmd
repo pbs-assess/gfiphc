@@ -41,16 +41,19 @@ catch rates, it may make more sense to consider Series B.
 
 Change the options to use the cached data t
 ```{r extract, warning = FALSE, results = FALSE}
-for(sp in sp_vec[48:70]){      # increment these to test, done up to number shown
+for(sp in sp_vec){      # increment these to test, done up to number shown
   iphc_get_calc_plot_full(sp,
-                          cached_data = FALSE,    # set TRUE for testing if data saved
-                          cached_results = FALSE, # set TRUE for testing if results saved
+                          cached_data = TRUE,    # set TRUE for testing if data saved
+                          cached_results = TRUE, # set TRUE for testing if results saved
                           print_sp_name = FALSE,
                           path_data = "all-species-data",
                           path_results = "all-species-results")
 }
 
-# For investigating:
+```
+
+```{r investigating}
+# For investigating and checking:
 # sp_set_counts <- readRDS(paste0("all-species-data", "/", sp_hyphenate(sp)))
 # series_ABCD_full <- calc_iphc_full_res(sp_set_counts$set_counts)
 # which(sp_vec == sp)
