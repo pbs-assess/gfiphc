@@ -550,10 +550,6 @@ expect_equal(countData2020, filter(countData2020_NEW, spNameIPHC !=
 countData2020 <- countData2020_NEW
 ```
 
-
-
-
-
 ## Check species names
 
 The file `inst/extdata/iphc-spp-names.csv` contains species common names (as
