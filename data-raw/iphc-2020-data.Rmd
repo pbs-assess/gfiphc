@@ -346,8 +346,13 @@ testthat::expect_equal(unique(counts_raw$SampleType), as.factor("20Hook"))
 unique(counts_raw$"Species Name")
 ```
 
-Note that halibut are not included in these counts, which I presume explains why
-total number of counts for a station does not add up to `HooksObserved`.
+Note that halibut are not included in these counts:
+```{r nohalibut}
+dplyr::filter(counts_raw, "Species Name" == "Pacific Halibut")
+```
+which I presume explains why
+total number of counts for a station does not add up to `HooksObserved`. See
+later for halibut calculations.
 
 Need to remove the HAN records for the twice-fished station, which turns out to
 be set number 4 for station 2104:
@@ -370,7 +375,7 @@ dplyr::filter(counts_raw,
 dplyr::filter(counts_raw,
               !(Station == twice_fished & Setno == 4))
 
-countData2020 <- dplyr::filter(counts_raw,
+countData2020_no_halibut <- dplyr::filter(counts_raw,
                                !(Station == twice_fished & Setno == 4)) %>%
   dplyr::select(year = Year,
                 station = Station,
@@ -382,13 +387,9 @@ countData2020 <- dplyr::filter(counts_raw,
                 spNameIPHC = as.character(spNameIPHC),
                 specCount = as.integer(specCount))
 
-testthat::expect_equal(names(countData2013), names(countData2020))
-countData2020
-summary(countData2020)
-
-usethis::use_data(countData2020,
-                  overwrite = TRUE)
-
+testthat::expect_equal(names(countData2013), names(countData2020_no_halibut))
+countData2020_no_halibut
+summary(countData2020_no_halibut)
 ```
 
 ## Hooks observed and retrieved
@@ -440,9 +441,32 @@ setData2020 <- dplyr::left_join(sets_simp_std_corrected,
 setData2020
 testthat::expect_equal(names(setData2013), names(setData2020)[1:ncol(setData2013)])
 summary(setData2020)
-usethis::use_data(setData2020,
-                  overwrite = TRUE)
 ```
+
+## Pacific Halibut counts
+
+As noted above, the data extraction for the counts is for all non-halibut
+species. We still want the halibut counts for just the first 20 hooks -- the
+`data_for_all_species` vignette (for data up to 2019) shows that the 20-hook and full hook counts
+(Series A and B) are very similar when rescaled, and the rescaling is miniscule
+with $G_A / G_B = 1.005$. So this justifies sticking with 20-hook counts for
+halibut, even though the full data are available for all sets, given it is a
+halibut survey. (Using all hooks for all years could be done, but would be a lot
+of new code).
+
+There are two options for getting halibut counts for the first 20 hooks (given
+we don't have hook-by-hook data, though it could probably be obtained just not
+from the IPHC website).
+
+1. Take the counts for all hooks and create `N_it20 = E_it20 / E_it * N_it`. Not
+   strictly the first 20 hooks, but is a rescaling. But will not guarantee integer values.
+
+2. Add the counts for each set (which include `Hook with Skin` etc.) and compare
+   with `hooksObs`. I think the latter is higher, and the difference is halibut
+   (as the only `non non-halibut` species). Compare with the results from
+   option 1. If close then use option 2, since it will be just be halibut counts
+   and gives an integer number.
+
 
 ## Check species names
 
@@ -462,3 +486,14 @@ check_iphc_spp_name(countData2020)
 
 Of these, only the Thornyhead and Blackspotted Rockfish are likely of interest
 (Issues #17 and #18). And maybe the sharks.
+
+
+## Save data sets
+
+```{r savedata}
+usethis::use_data(countData2020,
+                  overwrite = TRUE)
+
+usethis::use_data(setData2020,
+                  overwrite = TRUE)
+```
