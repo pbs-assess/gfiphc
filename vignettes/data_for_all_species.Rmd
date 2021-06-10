@@ -33,8 +33,7 @@ Define common species name:
 sp_vec <- gfsynopsis::get_spp_names() %>%
   dplyr::arrange(species_code) %>%
   dplyr::pull(species_common_name)
-# sp_vec <- c(sp_vec, "hook with bait")
-sp_vec <- "hook with bait"
+sp_vec <- c(sp_vec, "hook with bait")
 ```
 
 Extract the data, create the four time Series A, B, C and D, compare them, and
@@ -50,8 +49,8 @@ both to `FALSE` when first running):
 ```{r extract, warning = FALSE, results = FALSE}
 for(sp in sp_vec){      # increment these to test, done up to number shown
   iphc_get_calc_plot_full(sp,
-                          cached_data = FALSE,    # TRUE if data already saved
-                          cached_results = FALSE, # TRUE if results already saved
+                          cached_data = TRUE,    # TRUE if data already saved
+                          cached_results = TRUE, # TRUE if results already saved
                           print_sp_name = FALSE,
                           path_data = "all-species-data",
                           path_results = "all-species-results")
