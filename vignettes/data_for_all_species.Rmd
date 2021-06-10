@@ -18,8 +18,9 @@ knitr::opts_chunk$set(
 ```
 
 This vignette extracts, analyses, saves and plots the data for all (>100) species for the
-gfsynopsis reports. It only works for users with access to the GFBio database at
-the Pacific Biological Station.
+gfsynopsis reports, plus "hooks with bait" considered as a species. It only
+works for users with access to the GFBio database at the Pacific Biological
+Station, or if you have the retrieved data cached locally (in default directory `all-species-data/`.
 
 ```{r setup, message = FALSE, results = FALSE}
 library(gfiphc)
@@ -32,23 +33,25 @@ Define common species name:
 sp_vec <- gfsynopsis::get_spp_names() %>%
   dplyr::arrange(species_code) %>%
   dplyr::pull(species_common_name)
+# sp_vec <- c(sp_vec, "hook with bait")
+sp_vec <- "hook with bait"
 ```
 
 Extract the data, create the four time Series A, B, C and D, compare them, and
 plot the results, for all species (will take some time). Series AB (bottom right
 panel), if shown, will be the longest time series that can be calculated and
-will be representative of the full coast (TODO: check - if others are longest it
-may not say that). If it is empty
-then one of the other time series is the longest. For rarer species with low
-catch rates, it may make more sense to consider Series B.
+will be representative of the full coast (others might be longest for rarer species).
+If it is empty then one of the other time series is the longest. For rarer
+species with low catch rates, it may make more sense to consider Series B
+instead of Series AB.
 
 Change the options to use the cached data and cached results (for example, set
 both to `FALSE` when first running):
 ```{r extract, warning = FALSE, results = FALSE}
 for(sp in sp_vec){      # increment these to test, done up to number shown
   iphc_get_calc_plot_full(sp,
-                          cached_data = TRUE,    # TRUE if data already saved
-                          cached_results = TRUE, # TRUE if results already saved
+                          cached_data = FALSE,    # TRUE if data already saved
+                          cached_results = FALSE, # TRUE if results already saved
                           print_sp_name = FALSE,
                           path_data = "all-species-data",
                           path_results = "all-species-results")
