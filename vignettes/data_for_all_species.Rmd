@@ -29,7 +29,9 @@ library(gfiphc)
 
 Define common species name:
 ```{r species}
-sp_vec <- gfsynopsis::get_spp_names()$species_common_name
+sp_vec <- gfsynopsis::get_spp_names() %>%
+  dplyr::arrange(species_code) %>%
+  dplyr::pull(species_common_name)
 ```
 
 Extract the data, create the four time Series A, B, C and D, compare them, and
@@ -56,7 +58,12 @@ for(sp in sp_vec){      # increment these to test, done up to number shown
 
 ```{r investigating}
 # For investigating and checking:
+# If results saved:
+# series_ABCD_full <- readRDS(paste0("all-species-results/", sp_hyphenate(sp, results = TRUE)))$series_ABCD_full
+#
+# Else load data and do calculations:
 # sp_set_counts <- readRDS(paste0("all-species-data", "/", sp_hyphenate(sp)))
 # series_ABCD_full <- calc_iphc_full_res(sp_set_counts$set_counts)
+#
 # which(sp_vec == sp)
 ```
