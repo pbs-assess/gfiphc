@@ -25,8 +25,7 @@ those data are saved in the package).
 Quick version -- there is a wrapper function, `iphc_get_calc_plot_area(sp)` that
 does all the extraction, calculations, and plotting for a given species
 (see examples in
-[analysis_for_HG_herring_predators.html](analysis_for_HG_herring_predators.html);
-(see the README on GitHub for link to the rendered version)).
+[analysis of HG herring predators vignette](analysis_for_HG_herring_predators.html).
 This vignette shows
 the details to aid understanding. So for a quick look to see if the data look
 potentially useful, just do, for example,
@@ -45,8 +44,7 @@ sp <- "yelloweye rockfish"
 sp_short_name <- "Yelloweye"  # short name for legends
 ```
 
-As for the [data_for_one_species.html](data_for_one_species.html) vignette (see the
-README on GitHub for link to the rendered version), change the above names to your
+As for the [analysis of one species](data_for_one_species.html) vignette, change the above names to your
 species of interest and have someone at PBS run the next chunk of code to extract data from
 the GFBio database.
 ```{r extract, eval = FALSE}
