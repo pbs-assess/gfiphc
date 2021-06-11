@@ -11,8 +11,6 @@ The gfiphc package contains functions for deriving relative biomass index trends
 
 The functions in this package were originally part of gfplot and have now been split out into their own package.
 
-**NEWS - May 2021** -- Andy is updating and improving this package quite a lot in the `maps/` branch, soon to be merged into here. Stay tuned.
-
 See the [vignette](vignettes/data_for_one_species.Rmd) for code for extracting data for a single species. 
 
 ## Installation
