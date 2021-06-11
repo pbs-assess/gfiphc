@@ -24,7 +24,8 @@ Fisheries Management Case Study on ecoystem influences of Haida Gwaii Pacific
 Herring.
 
 The area of interest is the same as shown in the [Restricted
-area](analysis_for_restricted_area.html) vignette, and the shapefile is
+area](analysis_for_restricted_area.html) vignette (see the
+README on GitHub for link to the rendered version), and the shapefile is
 saved in the package as `HG_herring_pred_area`.
 
 ```{r setup, results = FALSE}
