@@ -8,9 +8,12 @@ restricted to a specified area}
 iphc_get_calc_plot_area(
   sp,
   area = HG_herring_pred_area,
-  cached = TRUE,
+  cached_data = TRUE,
+  cached_results = FALSE,
   verbose = FALSE,
-  print_sp_name = TRUE
+  print_sp_name = TRUE,
+  path_data = ".",
+  path_results = NULL
 )
 }
 \arguments{
@@ -20,12 +23,19 @@ iphc_get_calc_plot_area(
 \item{area}{\code{data.frame} of (PBSmapping) class \code{PolySet} with column names
 \code{PID}, \code{SID}, \code{POS}, \code{X}, \code{Y},}
 
-\item{cached}{if TRUE then used cached data (sp-name.rds)}
+\item{cached_data}{if TRUE then use cached data (path_data/sp-name.rds)}
+
+\item{cached_results}{if TRUE then use cached results
+(path_results/sp-name-results.rds), else do calculations here and save results}
 
 \item{verbose}{if TRUE then print out some of the data (useful in vignette loops)}
 
 \item{print_sp_name}{if TRUE then print out species name (useful in vignette
 loops)}
+
+\item{path_data}{path to save or load the cached data}
+
+\item{path_results}{path to save or load the cached data}
 }
 \value{
 For the given species, list containing
@@ -43,7 +53,9 @@ series from Series E and F, and other objects, as output form \code{\link[=calc_
 \description{
 Get data, do calculations and plot longest series for the IPHC survey for
 a given species restricted to a given area. Will take a while if queries
-GFbio (for which need to be on DFO network), else can use cached data.
+GFbio (for which need to be on DFO network), else can use cached data
+(species-name.rds is always the full data for the species, before any
+calculations).
 If data are for combined species, as cached with \code{get_combined_species()},
 then the column \code{N_it_sum} etc. column names are used for \code{N_it} etc.
 }

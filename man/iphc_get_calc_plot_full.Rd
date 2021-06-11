@@ -21,7 +21,8 @@ iphc_get_calc_plot_full(
 
 \item{cached_data}{if TRUE then use cached data (path_data/sp-name.rds)}
 
-\item{cached_results}{if TRUE then use cached results (path_results/sp-name-results.rds)}
+\item{cached_results}{if TRUE then use cached results
+(path_results/sp-name-results.rds), else do calculations here and save results}
 
 \item{verbose}{if TRUE then print out some of the data (useful in vignette loops)}
 

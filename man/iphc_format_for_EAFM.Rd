@@ -8,6 +8,7 @@ Study and save them.}
 iphc_format_for_EAFM(
   sp_vec,
   sp_vec_list,
+  path = ".",
   filename = "herring-HG-predators-IPHC.csv"
 )
 }
@@ -19,6 +20,8 @@ list \code{species_name_area} in the workspace which is an output from
 \item{sp_vec_list}{list of output, with each element corresponding to each
 species (and named for that species), and being a tibble of the longest
 time series. See vignette, since needs to be created outside of a function.}
+
+\item{path}{The folder where the cached results will be saved.}
 
 \item{filename}{filename (including .csv) to save .csv file; also saves .rds
 of sp_vec_list.}
