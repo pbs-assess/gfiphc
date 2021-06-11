@@ -29,6 +29,8 @@ in our list of Type A or Type B species given in gfsynopsis.}
 
 \item{ignore_obvious}{Whether or not to ignore some obvious non-groundfish
 species (listed in function) when countData is NULL.}
+
+\item{year}{year of interest}
 }
 \value{
 IPHC species common name, or NA if species is not in IPHC data
@@ -162,5 +164,4 @@ yyr2013 <- get_iphc_from_gfiphc("yelloweye rockfish", year = 2013)
 summary(yyr2013)
 expect_equal(get_iphc_2013("yelloweye rockfish"), yyr2013)  # until I retire get_iphc_2013()
 }
-
 }

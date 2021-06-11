@@ -290,9 +290,6 @@ plot_BC <- function(xlim = c(-134,-124),
 ##' @param pch_pos_count pch for positive counts
 ##' @param cex_val cex size of plotted circles (or whatever is chosen using
 ##'   above `pch` options
-##' @param pos_catch_rates TRUE if plotting the positive (>0) catch rates for
-##'   the given species, FALSE if plotting the 0 catch rates (showing as open
-##'   circles).
 ##' @return adds points to existing plot
 ##' @export
 ##' @author Andrew Edwards

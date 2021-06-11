@@ -42,9 +42,13 @@ each series.}
 \item \code{F} to plot just Series F
 \item \code{E_F_scaled} to plot Series E and F each scaled by their geometric mean
 of the overlapping years (no scaling if no overlapping years)
-\item \code{EF} to plot Series EF \link{with E rescaled in red}, empty plot if longest
+\item \code{EF} to plot Series EF (with E rescaled in red), empty plot if longest
 series is just E or F
 }}
+
+\item{x_lim}{x range}
+
+\item{y_lim}{y range}
 
 \item{shift}{if plotting two then shift Series E to left and F to right by
 \code{shift} amount}

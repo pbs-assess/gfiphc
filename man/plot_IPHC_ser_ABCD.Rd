@@ -32,15 +32,27 @@ an output from \code{calc_iphc_full_res}}
 \item \code{X_Y_scaled} to plot Series X and Y each scaled by their geometric mean
 of the overlapping years (no scaling if no overlapping years), where X and
 Y are A, B, C, or D.
-\item \code{XY} to plot Series XY \link{with X rescaled in red}, empty plot if longest
+\item \code{XY} to plot Series XY (with X rescaled in red), empty plot if longest
 series is just X or Y - TODO - maybe. where X and
 Y are A, B, C, or D.
 }}
+
+\item{x_lim}{x limits}
+
+\item{y_lim}{y limits}
 
 \item{shift}{if plotting two then shift Series X to left and Y to right by
 \code{shift} amount}
 
 \item{tck_length}{small tickmark lengths}
+
+\item{ser_A_col}{colour for Series A}
+
+\item{ser_B_col}{colour for Series B}
+
+\item{ser_C_col}{colour for Series C}
+
+\item{ser_D_col}{colour for Series D}
 
 \item{legend_text}{text to override default if desired}
 
@@ -52,10 +64,6 @@ Y are A, B, C, or D.
 whiskers for confidence intervals}
 
 \item{...}{further arguments to \code{gplots::plotCI}}
-
-\item{ser_X_col}{colour for Series X}
-
-\item{ser_Y_col}{colour for Series Y}
 }
 \value{
 

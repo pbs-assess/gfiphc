@@ -518,6 +518,7 @@ get_iphc_1996to2002 <- function(species) {
 ##' Was `get_iphc_2013()` but generalising for future years.
 ##'
 ##' Details
+##' @param year year of interest
 ##' @return Tibble contains year, station name, lat, lon,
 ##'           E_it (effective skate number for that station, based on all
 ##'                   hooks, so all NA),
@@ -540,7 +541,6 @@ get_iphc_1996to2002 <- function(species) {
 ##' summary(yyr2013)
 ##' expect_equal(get_iphc_2013("yelloweye rockfish"), yyr2013)  # until I retire get_iphc_2013()
 ##' }
-##'
 ##' @rdname get_early_iphc
 get_iphc_from_gfiphc <- function(species,
                                  year){

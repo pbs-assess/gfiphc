@@ -29,8 +29,10 @@
 ##'  * `F` to plot just Series F
 ##'  * `E_F_scaled` to plot Series E and F each scaled by their geometric mean
 ##'   of the overlapping years (no scaling if no overlapping years)
-##'  * `EF` to plot Series EF [with E rescaled in red], empty plot if longest
+##'  * `EF` to plot Series EF (with E rescaled in red), empty plot if longest
 ##'   series is just E or F
+##' @param x_lim x range
+##' @param y_lim y range
 ##' @param ser_E_col colour for Series E
 ##' @param ser_F_col colour for Series F
 ##' @param legend_text text to override default if desired
@@ -292,12 +294,15 @@ plot_IPHC_ser_four_panels <- function(ser_E_and_F,
 ##'  * `X_Y_scaled` to plot Series X and Y each scaled by their geometric mean
 ##'   of the overlapping years (no scaling if no overlapping years), where X and
 ##'   Y are A, B, C, or D.
-##'  * `XY` to plot Series XY [with X rescaled in red], empty plot if longest
+##'  * `XY` to plot Series XY (with X rescaled in red), empty plot if longest
 ##'   series is just X or Y - TODO - maybe. where X and
 ##'   Y are A, B, C, or D.
-##'
-##' @param ser_X_col colour for Series X
-##' @param ser_Y_col colour for Series Y
+##' @param x_lim x limits
+##' @param y_lim y limits
+##' @param ser_A_col colour for Series A
+##' @param ser_B_col colour for Series B
+##' @param ser_C_col colour for Series C
+##' @param ser_D_col colour for Series D
 ##' @param legend_text text to override default if desired
 ##' @param x_lab x label to override default if desired
 ##' @param y_lab y label to override default if desired

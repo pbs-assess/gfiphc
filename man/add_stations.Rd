@@ -26,10 +26,6 @@ stations and whether they are usable or not.}
 
 \item{cex_val}{cex size of plotted circles (or whatever is chosen using
 above \code{pch} options}
-
-\item{pos_catch_rates}{TRUE if plotting the positive (>0) catch rates for
-the given species, FALSE if plotting the 0 catch rates (showing as open
-circles).}
 }
 \value{
 adds points to existing plot
