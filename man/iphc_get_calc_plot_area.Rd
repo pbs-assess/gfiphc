@@ -60,7 +60,7 @@ If data are for combined species, as cached with \code{get_combined_species()},
 then the column \code{N_it_sum} etc. column names are used for \code{N_it} etc.
 }
 \examples{
-\donttest{
+\dontrun{
 iphc_get_calc_plot_area("yelloweye rockfish")
 ##' # Gives a warning about hole vertices, can ignore.
 }

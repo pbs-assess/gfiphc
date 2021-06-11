@@ -416,7 +416,7 @@ add_in_area <- function(set_counts_of_sp,
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' \donttest{
+##' \dontrun{
 ##' iphc_get_calc_plot_area("yelloweye rockfish")
 ##' ##' # Gives a warning about hole vertices, can ignore.
 ##' }

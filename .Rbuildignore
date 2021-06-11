@@ -9,6 +9,8 @@
 ^data-raw$
 ^codecov\.yml$
 
+vignettes/
+# Keep these in case want to build one vignette
 vignettes/yeyeForBeauSep19.R
 vignettes/MEE_reproduce_2.Rmd
 vignettes/iphcCombineAB-YYR-ksTest.Snw
@@ -16,4 +18,7 @@ vignettes/iphcCombineAB-YYR-ksTest.Snw
 vignettes/data_for_one_species.Rmd
 vignettes/analysis_for_restricted_area.Rmd
 vignettes/analysis_for_HG_herring_predators.Rmd
-vignettes/*.Rmd
+vignettes/data_for_all_species.Rmd
+
+vignettes/HG-herring-predators-data/
+vignettes/HG-herring-predators-results/
