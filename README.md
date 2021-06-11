@@ -11,7 +11,7 @@ The gfiphc package contains functions for:
 
 - extracting data from the GFBio (GroundFish Biology) database, housed at the Pacific Biological Station, Nanaimo, BC, Canada
 - plotting maps (and movies) showing locations of stations each year
-- deriving relative biomass index trends from the IPHC survey for non-halibut groundfish species along the full BC coast, taking into account the changing survey methodologies
+- deriving relative biomass index trends from the IPHC survey for non-halibut groundfish species along the full BC coast, taking into account the changing survey methodologies and using consistent published methods
 - input into the [groundfish synopsis report](https://github.com/pbs-assess/gfsynopsis) for over 100 species of BC groundfish, which is to be updated every couple of years
 - generating trends for a group of species (e.g. "skates combined")
 - deriving relative biomass index trends for a specified area within BC waters, again taking into account the changing survey methodologies.
@@ -41,7 +41,7 @@ Updates since the synopsis report include
 - Series A-D automatically exclude the expanded grid stations for 2018 (these were included in the original synopsis report)
 - 2019 data are now in GFBio and automatically extracted in the queries here
 - 2020 data are included in `gfiphc` since only the first 20 hooks of each skate were enumerated (and previous years in GFBio had all skates enumerated).
-- 2020 data included also used an expanded grid, defined slightly differently to the expanded grid in 2018. We have stuck with the 2018 definition of which stations are not part of the standard grid. See [iphc-2020-data.pdf](data-raw/iphc-2020-data.pdf), and it's associated `.Rmd` if desired, for details. Also see that for instructions on extracting future years' data from the new IPHC data website
+- 2020 data included also used an expanded grid, defined slightly differently to the expanded grid in 2018. We have stuck with the 2018 definition of which stations are not part of the standard grid. See [iphc-2020-data.pdf](data-raw/iphc-2020-data.pdf), and it's associated `.Rmd` if desired, for details. Also see that for instructions on extracting future years' data from the new IPHC data website. See the IPHC website for full details on survey protocols -- note that fishing in 2020 was mostly in July and August, whereas it is usually May to August.
 - the boostrapping now uses 10,000 bootstrap samples instead of 1000, as it made a difference for some species.
 
 Note that the analyses still exclude hook competition, but we are working on that (using outputs from this package).
@@ -81,6 +81,9 @@ Due to the differing data-collection protocols, we developed different ways to o
 | All hooks from each skate      | B (17)             | C (15)     | F                           |
  
 with numbers in parentheses indicating the number of years for which data for each Series are available. For E and F this depends on the particular area of interest. 
+
+For any spatiotemporal analyses, note that there is the IPHC do assign a `don't use for spatiotemporal models` code for 
+each set, so look into that if necessary.
 
 ## Updating with new data each year
 
