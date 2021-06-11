@@ -241,8 +241,6 @@
 #' @source Created manually by Andrew Edwards. Most are obvious. If get a new
 #'   set-level dataset from IPHC (that doesn't get put into GFbio) then see
 #'   [check_iphc_spp_name()].
-#'   Currently this only has Type A species ****Andy to update with Type B.
-#'   **And may also want "Hook with Bait" if different in GFbio******
 #' @name iphc-spp-names.csv
 NULL
 
@@ -274,6 +272,9 @@ NULL
 
 #' Details of sets for data extracted from GFBio
 #'
+#' Saved details of sets for the years in which the data are in GFBio. Thus all
+#'  set data (not species) is now in `gfiphc`.
+#'
 #' @format A `tibble` with one row for each set, with columns:
 #' \describe{
 #'   \item{year}{year}
@@ -281,7 +282,7 @@ NULL
 #'   \item{setID}{set ID number from GFBio}
 #'   \item{station}{IPHC station number}
 #'   \item{setInTrip}{set number during the trip}
-#'   \item{{long}{longitude}
+#'   \item{long}{longitude}
 #'   \item{lat}{latitude}
 #'   \item{obsHooksPerSet}{observed number of hooks for that set}
 #'   \item{deplHooksPerSet}{deployed number of hooks for that set}

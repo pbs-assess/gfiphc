@@ -6,9 +6,11 @@ Authors@R:
       person(c("Sean", "C."), "Anderson", role = "aut"),
       person(c("Elise", "A."), "Keppel", role = "aut"),
       person("Chris", "Grandin", role = "aut"))
-Description: Facilitates IPHC groundfish data extraction and extraction
+Description: Facilitates IPHC (International Pacific Halibut Commission)
+    survey groundfish data extraction
     at the Canadian Department of Fisheries and Oceans (DFO) Pacific
-    Biological Station (PBS).
+    Biological Station (PBS), and analysis of the data for all species
+    caught in British Columbia waters.
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true
@@ -22,7 +24,10 @@ Imports:
     rlang,
     RColorBrewer,
     gfdata,
-    PBSmapping
+    PBSmapping,
+    gplots,
+    testthat,
+    tidyr
 Remotes: github::pbs-assess/gfdata
 Suggests:
     knitr,

@@ -14,8 +14,6 @@ A csv file:
 Created manually by Andrew Edwards. Most are obvious. If get a new
 set-level dataset from IPHC (that doesn't get put into GFbio) then see
 \code{\link[=check_iphc_spp_name]{check_iphc_spp_name()}}.
-Currently this only has Type A species \strong{\strong{Andy to update with Type B.
-\strong{And may also want "Hook with Bait" if different in GFbio}}}
 }
 \description{
 A data frame with the GFbio name and the corresponding name used by IPHC in

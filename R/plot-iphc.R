@@ -50,6 +50,7 @@
 ##' @examples
 ##' \dontrun{
 ##' # See vignettes.
+##'
 ##' }
 plot_IPHC_ser_E_and_F <- function(ser_E_and_F,
                                   series_longest = NULL,
@@ -234,8 +235,9 @@ plot_IPHC_ser_E_and_F <- function(ser_E_and_F,
     }
 }
 
-##' Wrapper to plot all four versions of Series E and F plots in one figure,
-##' with species name as main title
+##' Wrapper to plot all four versions of Series E and F plots in one figure
+##'
+##' Puts species name as main title.
 ##'
 ##' @param ser_E_and_F list containing tibbles for `ser_E` and `ser_F` of class
 ##'   `IPHC_ser_E_and_F`, an output from `calc_iphc_ser_E_and_F`
@@ -286,6 +288,7 @@ plot_IPHC_ser_four_panels <- function(ser_E_and_F,
 
 ##' Single plotting function for Series A, B, C, D, or combination of two
 ##'
+##' Plotting series.
 ##'
 ##' @param series_ABCD_full list containing tibbles for `ser_longest` etc.,
 ##'   an output from `calc_iphc_full_res`

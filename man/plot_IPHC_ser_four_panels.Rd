@@ -2,8 +2,7 @@
 % Please edit documentation in R/plot-iphc.R
 \name{plot_IPHC_ser_four_panels}
 \alias{plot_IPHC_ser_four_panels}
-\title{Wrapper to plot all four versions of Series E and F plots in one figure,
-with species name as main title}
+\title{Wrapper to plot all four versions of Series E and F plots in one figure}
 \usage{
 plot_IPHC_ser_four_panels(
   ser_E_and_F,
@@ -31,8 +30,7 @@ each series.}
 simple panel plot of four figures
 }
 \description{
-Wrapper to plot all four versions of Series E and F plots in one figure,
-with species name as main title
+Puts species name as main title.
 }
 \examples{
 \dontrun{

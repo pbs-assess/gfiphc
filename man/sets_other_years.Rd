@@ -12,7 +12,7 @@ A \code{tibble} with one row for each set, with columns:
 \item{setID}{set ID number from GFBio}
 \item{station}{IPHC station number}
 \item{setInTrip}{set number during the trip}
-\item{{long}{longitude}
+\item{long}{longitude}
 \item{lat}{latitude}
 \item{obsHooksPerSet}{observed number of hooks for that set}
 \item{deplHooksPerSet}{deployed number of hooks for that set}
@@ -33,6 +33,7 @@ Extracted from GFBio using \code{data-raw/sets-skates-hooks-yelloweye.R}.
 sets_other_years
 }
 \description{
-Details of sets for data extracted from GFBio
+Saved details of sets for the years in which the data are in GFBio. Thus all
+set data (not species) is now in \code{gfiphc}.
 }
 \keyword{datasets}

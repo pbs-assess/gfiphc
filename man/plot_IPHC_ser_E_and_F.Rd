@@ -91,6 +91,7 @@ both means that the y-axes will be standardised across the types of plot
 \examples{
 \dontrun{
 # See vignettes.
+
 }
 }
 \author{

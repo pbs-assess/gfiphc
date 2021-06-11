@@ -69,7 +69,7 @@ whiskers for confidence intervals}
 
 }
 \description{
-Single plotting function for Series A, B, C, D, or combination of two
+Plotting series.
 }
 \examples{
 \dontrun{
