@@ -1,0 +1,249 @@
+\documentclass[12pt]{article}
+
+\usepackage{tabu} % https://tex.stackexchange.com/questions/50332/vertical-spacing-of-a-table-cell
+
+\pdfcompresslevel=5 % faster PNGs
+
+% \bibliographystyle{csas-style/res-doc}
+
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{epsfig}
+% Let it begin
+\begin{document}
+\input{../1995/dataPrepPreamble.tex}
+
+<<knitr-opts, echo=FALSE, cache=FALSE>>=
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = NA,
+  fig.path = "knitr-figs/",
+  cache.path = "knitr-cache/",
+  fig.asp = 0.618,
+  fig.width = 9,
+  echo = TRUE,
+  autodep = TRUE,
+  cache = TRUE,
+  cache.comments = FALSE,
+  dev = "png",
+  dpi = 200,
+  fig.align = "center",
+  fig.pos = "htb"
+)
+@
+
+\title{Loading in, tidying up, understanding and saving 2013 data}
+\author{Andrew Edwards}
+% date: "`r Sys.Date()`"
+
+\maketitle
+
+Adapting from {\tt iphc1995data.Rnw}. Want to:
+
+1. load in the two sheets
+
+2. tidy up into same format as for 1995 (though 20-hooks only)
+
+3. check with {\tt iphc2013.Snw} from YYR assessment.
+
+3. check the mean agrees with YYR and RBR assessments.
+
+
+% Always run this:
+<<rm, cache.rebuild=TRUE>>=
+rm(list=ls())
+# devtools::load_all("../../../gfplot")
+devtools::load_all(".")
+@
+
+<<libs>>=
+library(dplyr)
+library(ggplot2)
+library(PBSmapping)
+figheight = 6
+figwidth = 5.7
+@
+
+\section{Load in 2013 data}
+
+\subsection{Overall reason for needing two data sets}
+
+You need to summarise (later) for a particular species at the station level to
+get counts of zero included. Then merge in the set-level details.
+
+\subsection{Sheet 1 -- set level information}
+
+Load in
+<<loadsheet1>>=
+sheet1 = read.csv("2013.20-SetInfo.csv", header=TRUE, sep=",",
+    na.strings="")
+sheet1 = as_tibble(sheet1)
+sheet1
+
+summary(sheet1)
+@
+
+Don't need all those columns based on {\tt iphc13.Snw} for YYR, and renaming
+based on {\tt iphc1995data.Rnw}, just need:
+<<sheet1simp>>=
+sheet1simp = select(sheet1,
+                    year = Year,
+                    station = Station,
+                    lat = MidLat,
+                    lon = MidLon,
+                    avgDepth = AvgDepth,
+                    hooksRetr = HooksRetrieved,
+                    hooksObs = HooksObserved,
+                    skatesHauled = SkatesHauled,
+                    effSkateIPHC = EffectiveSkates,
+                    usable = Effective) %>%
+             mutate(E_it20 = effSkateIPHC * hooksObs / hooksRetr,
+                    station = as.character(station),
+                    usable = as.character(usable))
+summary(sheet1simp)
+@
+
+Look into when there weren't 120 hooks observed (six skates, 20 hooks each):
+
+<<not>>=
+filter(sheet1simp, hooksObs != 120)
+@
+
+**So will have to scale the counts for those sets by 120/{\tt hooksObs} to get a
+fair counts for just 20 hooks on each skate. Though {\tt effSkateIPHC} may
+already take that into account? Not really, since that's for all hooks as
+they're interested in halibut (that are enumerated for all hooks).
+
+**Don't think have to make that adjustment, since need the ratio of hooks anyway
+to scale {\tt effSkateIPHC} that then scales the numbers. Mention somewhere that
+there are 9 sets in 2013 for which exactly 120 hooks were not evaluated across
+6 skates, though 5 have 119, and the others are 113, 115, 121 and 125. So will
+come out in the rescaling anyway -- conclusion: keep species counts as they
+are. The fact that it's not always exactly the first 20 hooks gets accounted for
+anyway but the scaling of the effective skates, the $\tilde{H}_{it}$ term (which
+isn't always 20).
+
+\subsection{Sheet 2}
+
+Sheet 2 has species in it:
+<<loadsheet2>>=
+sheet2 = read.csv("2013.20-SampleInfo.csv", header=TRUE, sep=",",
+                  na.strings="")
+sheet2 = as_tibble(sheet2)
+# sheet2$Station = trimWhiteSpace(sheet2$Station)
+sheet2
+
+length(unique(sheet2$Station))
+summary(sheet2)
+@
+
+Now simplify down to what's needed and rename:
+
+
+Note that set number and station do not always match:
+<<stationeqset>>=
+# This will give error if not unique:
+test1 = summarise(group_by(sheet2, Station), set.No = unique(SetNo))
+# summarise(group_by(sheet2, SetNo), station = unique(Station)) # this
+#   fails because set numbers are based on vessel, and there are two.
+unique(sheet2$SubSample)    # All 1 so don't need to keep
+@
+So just use {\tt Station}.
+
+
+Simplify down.
+<<usesheet2>>=
+sheet2simp = select(sheet2,
+                    year = Year,
+                    station = Station,
+                    spNameIPHC = Common.Name,
+                    specCount = Number.Observed) %>%
+            arrange(station) %>%
+            mutate(station = as.character(station),
+                   spNameIPHC = as.character(spNameIPHC))
+sheet2simp
+summary(sheet2simp)
+length(unique(sheet2simp$station))   # 170, verifies an obs on every set
+@
+\subsection{What to save\label{sec:what}}
+
+<<saving>>=
+setData2013 = select(sheet1simp,
+                     year,
+                     station,
+                     lat,
+                     lon,
+                     avgDepth,
+                     effSkateIPHC,
+                     E_it20,
+                     usable)
+# **May need:
+# setData1995$station = as.character(setData1995$station)
+     # to avoid warning when left_join with countData1995
+setData2013
+usethis::use_data(setData2013, overwrite = TRUE)
+
+countData2013 = sheet2simp
+countData2013
+usethis::use_data(countData2013, overwrite = TRUE)
+@
+
+\subsection{Use function}
+
+Adapted function based on 1995 query.
+
+\subsubsection{Yelloweye Rockfish}
+<<yyrcalc>>=
+rm(list=ls())
+devtools::load_all(".")
+yyr2013 = get_iphc_2013("yelloweye rockfish")
+yyr2013
+summary(yyr2013)
+@
+
+Now later doing all series together (so have taken out the latitude-based {\tt keep}). This did work before I took out the {\tt keep}
+option in {\tt get\_iphc\_2013()}:
+
+Comparing to Table B.5 (Series A) of YYR assessment, all agree:
+number of sets (135)
+sets with no YYR (0.77), and mean catch rate of 0.77.
+
+\subsubsection{Redbanded Rockfish}
+
+Use latitude from assessment:
+<<rbrcalc>>=
+rbr2013 = get_iphc_2013("redbanded rockfish")
+rbr2013
+summary(rbr2013)
+@
+
+Also worked before I changed keep option:
+
+Assessment was in 2013 so we have no 2013 data. See if numbers are somewhat
+comparable to 2012 in Table C.4 (Series A) of RBR assessment:
+number of sets (130, same)
+sets with no YYR (0.70, very close), and mean catch rate of 1.32 (here is
+lower but close to 2011 value of 1.08.
+
+\subsubsection{Big Skate}
+
+No Big Skate in 1995 data but there are in 2013 and 1996 to 2002:
+
+<<bigcalc>>=
+big2013 = get_iphc_2013("big skate")
+big2013
+summary(big2013)
+@
+
+\subsection{Check species names}
+
+Check any names in 2013 data that are not in {\tt extdata/iphc-spp-names.csv}.
+
+<<spnames>>=
+check_iphc_spp_name()     # All the names not in our Type A list
+check_iphc_spp_name(countData2013)     # All the 2013 names not in our Type A list
+@
+
+For 2013 that showed up Aleutian Skate, have now put in there.
+
+\end{document}

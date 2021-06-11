@@ -38,7 +38,7 @@ tidy_iphc_survey <- function(hook_level,
   if (nrow(hook_level) == 1) {
     if (is.na(hook_level$numOnHook)) {
       return(tibble(
-        year = 2003,
+        year = NA,
         set = NA,
         station = NA,
         lat = NA,

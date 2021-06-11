@@ -18,11 +18,13 @@ Conservation Area}
 \item{mpa}{whether or not (Y/N) the station is within a Marine Protected
 Area}
 \item{mpa_name}{name of the Marine Protected Area that the station is
-within, if applicable (else is character <NA>)}
+within, if applicable (else is character \code{NA})}
 }
 }
 \source{
-Originally from file IPHC_Stations_All.csv from Dana Haggarty, with
+Originally from file IPHC_Stations_All.csv from Dana Haggarty (later
+updated as IPHC_FISS_All_Stn_GFBio.csv to include the seven stations
+originally missing but that were in GFbio), with
 details and further tidying done here in \code{data-raw/IPHC-stations-expanded.R}.
 }
 \usage{
@@ -35,6 +37,9 @@ stations) was used this year, and the expansion stations need to be kept
 track of when comparing spatially-averaged catch rates to previous
 years. 2019 onwards may also use the expanded grids.
 Effective skate number, avgDepth and usability will come from the GFbio query (unlike, say,
-setData2013, for which the set details could not go into GFbio).
+setData2013, for which the set details could not go into GFbio). For 2020 the
+IPHC provided an expansion column, which didn't quite match these -- see
+\code{data-raw/iphc-2020-data.Rmd} or \code{.pdf} for calculations. In particular, to
+explain why station 2343 is redefined here as being \code{standard}.
 }
 \keyword{datasets}

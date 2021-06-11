@@ -26,12 +26,6 @@ stations and whether they are usable or not.}
 
 \item{cex_val}{cex size of plotted circles (or whatever is chosen using
 above \code{pch} options}
-
-\item{usable}{TRUE if plotting the usable stations, FALSE for unusable.}
-
-\item{pos_catch_rates}{TRUE if plotting the positive (>0) catch rates for
-the given species, FALSE if plotting the 0 catch rates (showing as open
-circles).}
 }
 \value{
 adds points to existing plot
@@ -39,7 +33,12 @@ adds points to existing plot
 \description{
 Add individual stations to map of BC, with options for all stations (no
 species catch information), or positive and zero catches for a given
-species. Called from within \code{plot_iphc_map()}.
+species, and more. Called from within \code{plot_iphc_map()}.
+}
+\examples{
+\dontrun{
+#
+}
 }
 \author{
 Andrew Edwards

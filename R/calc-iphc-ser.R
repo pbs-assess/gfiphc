@@ -2,7 +2,9 @@
 #'
 #' Calculate all four series for as many years as possible, including bootstrapped
 #'  values. Series with no data are treated slightly different to each other
-#'  (ser_C ends up as an empty tibble, which may cause problems down the road).
+#'  (ser_C ends up as an empty tibble, which may cause problems down the
+#'  road). Default is to only use `standard` stations.
+#'
 #' @details The four series are:
 #'
 #'  Series A: first 20 hooks from each skate, only north of WCVI
@@ -17,6 +19,9 @@
 #'  or other.
 #' @param lat_cut_off cut off below which sets are excluded for Series A and B,
 #'   default is that used in YYR 2014 assessment.
+#' @param only_standard only use the standard stations (default is TRUE); for
+#'   first synopsis report all stations were indadvertently used for 2018 (see
+#'   Issue 14).
 #' @return list containing four tibbles, one for each survey (ser_A, ser_B, ser_C
 #'   and ser_D). Each tibble has one row for each set in each year, with columns
 #'   year, station, lat, lon, E_it (effective skate number), N_it (number of
@@ -36,8 +41,14 @@
 #' calc_iphc_ser_all(yelloweye)
 #' }
 #' @export
-calc_iphc_ser_all <- function(set_counts, lat_cut_off = 50.6) {
-  set_counts_usable <- filter(set_counts, usable == "Y")
+calc_iphc_ser_all <- function(set_counts,
+                              lat_cut_off = 50.6,
+                              only_standard = TRUE) {
+  set_counts_usable <- filter(set_counts,
+                              usable == "Y",
+                              standard == ifelse(only_standard,
+                                                 "Y",
+                                                 "N"))
 
   # Series A
   ser_A_counts <- filter(
@@ -95,9 +106,11 @@ calc_iphc_ser_all <- function(set_counts, lat_cut_off = 50.6) {
     set_counts_usable, year %in% years_full_coast$year,
     !is.na(E_it)
   )
-  if (nrow(ser_C_counts) == 0) {
-    ser_C_counts[1, ] <-
-      c(2003, rep(NA, ncol(ser_C_counts) - 1))
+
+  if (nrow(ser_C_counts) == 0) {       # pacific tomcod
+    ser_C_counts <- ser_B_counts[1, ]  # same names
+    ser_C_counts[1, "year"] <- 2003    # fake, else breaks later code
+    ser_C_counts[1, 2:ncol(ser_C_counts)] <- NA
   }
 
   ser_C_boot <- boot_iphc(select(
@@ -153,7 +166,7 @@ calc_iphc_ser_all <- function(set_counts, lat_cut_off = 50.6) {
 ##'   I_tBootLow, I_tBootHigh and I_tBootCV. If ser_year_rates is NULL or all
 ##'   counts are NA then return year = 2003 and all NA's (to not break later code).
 boot_iphc <- function(ser_year_rates,
-                      num.boots = 1000,
+                      num.boots = 10000,
                       seed_val = 42) {
   if (dim(ser_year_rates)[2] != 2) stop("Tibble must have only two columns.")
 
@@ -236,15 +249,18 @@ boot_iphc <- function(ser_year_rates,
 ##'   resulting from [calc_iphc_ser_all()]
 ##' @return List containing
 ##'
-##'   ser_longest: the longest time series possible from
+##'   - ser_longest: the longest time series possible from
 ##'   Series A and B,
 ##'
-##'   test_AB: the results from the paired t-test, NULL if Series B is longest.
+##'   - test_AB: the results from the paired t-test, NULL if Series B is longest.
 ##'
-##'   G_A, G_B: geometric means of nonzero values in Series A and Series D
+##'   - G_A, G_B: geometric means of nonzero values in Series A and Series D
 ##'   (based on bootstrapped means).
 ##'
-##'   Longest series is either
+##'   - type: which type the longest series is, either `AB`, `A`, `B`, or
+##'   possibly `C` based on the descriptions below.
+##'
+##' Longest series is either
 ##'
 ##'   (i) Series AB (Series A with 1995 and 1996 appropriately scaled from
 ##'   Series B) if `test_AB$p.value >= 0.05`, because the p-value means that we
@@ -265,7 +281,8 @@ boot_iphc <- function(ser_year_rates,
 ##'
 ##'    (iv) But can also have Series C being the longest if A is all 0's and
 ##'    B and C cover the same years. Looks like this happens for Darkblotched.
-##'    Not implemented yet - see Issue 49.
+##'    Had said this was not implemented yet - see Issue 10, but there is an
+##'    instance below.
 calc_iphc_ser_AB <- function(series_all) {
   years_AB <- intersect(series_all$ser_A$year, series_all$ser_B$year)
   # Series B for English Sole catches none, and only returns 1995 and 1996.
@@ -280,7 +297,8 @@ calc_iphc_ser_AB <- function(series_all) {
         test_AB = list(
           t_AB = NULL,
           G_A = NA,
-          G_B = NA
+          G_B = NA,
+          type = "A"
         )
       ))
     } else {
@@ -289,7 +307,8 @@ calc_iphc_ser_AB <- function(series_all) {
         test_AB = list(
           t_AB = NULL,
           G_A = NA,
-          G_B = NA
+          G_B = NA,
+          type = "B"
         )
       ))
     }
@@ -302,7 +321,8 @@ calc_iphc_ser_AB <- function(series_all) {
       test_AB = list(
         t_AB = NULL,
         G_A = NA,
-        G_B = NA
+        G_B = NA,
+        type = "B"
       )
     ))
   }
@@ -333,7 +353,8 @@ calc_iphc_ser_AB <- function(series_all) {
           test_AB = list(
             t_AB = NULL,
             G_A = NA,
-            G_B = NA
+            G_B = NA,
+            type = "C"
           )
         ))
       } else {
@@ -342,7 +363,8 @@ calc_iphc_ser_AB <- function(series_all) {
           test_AB = list(
             t_AB = NULL,
             G_A = G_A,
-            G_B = G_B
+            G_B = G_B,
+            type = "B"
           )
         ))
       }
@@ -409,7 +431,8 @@ calc_iphc_ser_AB <- function(series_all) {
       test_AB = list(
         t_AB = t_AB,
         G_A = G_A,
-        G_B = G_B
+        G_B = G_B,
+        type = "AB"
       )
     ))
   } else {
@@ -418,7 +441,8 @@ calc_iphc_ser_AB <- function(series_all) {
       test_AB = list(
         t_AB = t_AB,
         G_A = G_A,
-        G_B = G_B
+        G_B = G_B,
+        type = "A"
       )
     ))
   }
@@ -546,6 +570,25 @@ compare_iphc_ser_B_C <- function(series_all) {
     I_tBootMean > 0
   )$I_tBootMean)))
 
+  # For widow rockfish needed this, until I realised the only fish ever caught
+  #  was in 2018 at an expansion station, which is now fixed in
+  #  calc_iphc_full_res(). This may be needed for other species:
+  if (is.na(G_B)){
+    return(list(
+      t_BC = NULL,
+      G_B = NA,
+      G_C = G_C    # may be NaN not NA
+    ))
+  }
+
+  if (is.na(G_C)){
+    return(list(
+      t_BC = NULL,
+      G_B = G_B,
+      G_C = NA
+    ))
+  }
+
   # Scale by G_B, geometric mean of bootstrapped means.
   ser_B_scaled <- filter(
     series_all$ser_B,
@@ -605,7 +648,7 @@ compare_iphc_ser_B_C <- function(series_all) {
 ##'
 ##' test_BC: t-test results from [compare_iphc_ser_B_C()]
 ##'
-##' If no observations at all for the species then return NA (says NULL, no?).
+##' If no observations at all for the species then return NULL.
 ##' @export
 calc_iphc_full_res <- function(set_counts) {
   if (length(unique(c(set_counts$N_it, set_counts$N_it20))) == 1) {
@@ -614,6 +657,17 @@ calc_iphc_full_res <- function(set_counts) {
     }
   }
   series_all <- calc_iphc_ser_all(set_counts)
+
+  # calc_iphc_ser_all defaults to only including standard stations, so need to
+  #  check here that we still have counts (we don't for widow rockfish, just
+  #  lots of 0's; only catch is in expansion station in 2018):
+  if(max(c(series_all$ser_A$num_pos20,
+           series_all$ser_B$num_pos,
+           series_all$ser_C$num_pos,
+           series_all$ser_D$num_pos20)) == 0){
+    return(NULL)
+  }
+
   iphc_ser_longest <- calc_iphc_ser_AB(series_all)
   # list of longest series and
   #  paired t-test results
@@ -657,6 +711,7 @@ calc_iphc_full_res <- function(set_counts) {
 
   list(
     ser_longest = iphc_ser_longest$ser_longest,
+    type = iphc_ser_longest$test_AB$type,
     full_coast = full_coast,
     ser_all = series_all,
     test_AB = iphc_ser_longest$test_AB,
@@ -766,9 +821,125 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
   new_names
 }
 
+##' Get data, do calculations and plot Series A, B and longest series possible
+##' (usually Series AB) for the IPHC survey, and maybe save results
+##'
+##' Get data, do calculations and plot longest series for the IPHC survey for
+##'  a given species. For species that have several years of zero catches,
+##'  Series B may be better to use (but shorter) than Series AB because all
+##'  hooks were counted. For example Walleye Pollock in 2016 -- see example.
+##'
+##'  Will take a while since queries GFbio (and need to be on DFO
+##'  network). Basically a wrapper for the calculations in the vignette
+##'  `data_for_one_species`. Based on `iphc_get_calc_plot_area()`. See
+##'  `gfsynopsis::iphc_get_calc_plot()` for function for gfsynopsis
+##'  reports. Calling this one `iphc_get_calc_plot_full()` to distinguish it.
+##'
+##' @param sp Species names (as used in gfdata and gfplot). Or something like
+##'   "skates combined" -- see vignette.
+##' @param cached_data if TRUE then use cached data (path_data/sp-name.rds)
+##' @param cached_results if TRUE then use cached results
+##'   (path_results/sp-name-results.rds), else do calculations here and save results
+##' @param verbose if TRUE then print out some of the data (useful in vignette loops)
+##' @param print_sp_name if TRUE then print out species name (useful in vignette
+##'   loops)
+##' @param path_data path to save or load the cached data
+##' @param path_results path to save or load the cached data
+##' @return Saves results in `path_results/species-name-results.RDS`. If `path_results`
+##'   is NULL then do not save. For the given species, return list containing
+##'
+##'   sp_set_counts: list with one element (for consistency), a tibble
+##'   `set_counts` (the .RDS file saved when doing `cache_pbs_data_iphc(sp)`).
+##'
+##'   ser_ABCD_full: list of output from `calc_iphc_full_res()` from doing all
+##'    calculations.
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' \dontrun{
+##' iphc_get_calc_plot_full("redbanded rockfish", cached_data = FALSE) # only at PBS
+##' # Example where longest series may not be the most useful since only looking
+##'   at first 20 hooks gives all zeros in 2016, but looking at all hooks gives
+##'   some non-zero sets. In practice, catches may be too sparse to be useful anyway.
+##' x <- iphc_get_calc_plot_full("walleye pollock", cached = FALSE) # only PBS
+##' filter(x$series_ABCD_full$ser_longest, year == 2016)
+##' # A tibble: 1 x 8
+##'   year  Sets num_pos20 I_t20SampleMean I_t20BootMean I_t20BootLow I_t20BootHigh
+##'  <dbl> <int>     <int>           <dbl>         <dbl>        <dbl>         <dbl>
+##'   2016   132         0               0             0            0             0
+##' ... with 1 more variable: I_t20BootCV <dbl>
+##' filter(x$series_ABCD_full$ser_all$ser_B, year == 2016)
+##' # A tibble: 1 x 8
+##'    year  Sets num_pos I_tSampleMean I_tBootMean I_tBootLow I_tBootHigh I_tBootCV
+##'   <dbl> <int>   <int>         <dbl>       <dbl>      <dbl>       <dbl>     <dbl>
+##' 1  2016   132       2       0.00252     0.00249          0     0.00629     0.719
+##' }
+iphc_get_calc_plot_full <- function(sp,
+                                    cached_data = TRUE,
+                                    cached_results = FALSE,
+                                    verbose = FALSE,
+                                    print_sp_name = TRUE,
+                                    path_data = ".",
+                                    path_results = NULL){
+  if(!cached_data){
+    cache_pbs_data_iphc(sp,
+                        path = path_data)
+  }
+
+  if(print_sp_name){
+    print(paste("*****", sp, "*****"))
+  }
+
+  sp_set_counts <- readRDS(paste0(path_data, "/", sp_hyphenate(sp)))
+
+  # For combined species:
+  if(!("N_it" %in% names(sp_set_counts)) &
+     "N_it_sum" %in% names(sp_set_counts)){
+    sp_set_counts <- sp_set_counts %>%
+      dplyr::rename(N_it = N_it_sum,
+                    N_it20 = N_it20_sum,
+                    C_it = C_it_sum,
+                    C_it20 = C_it20_sum)
+  }
+
+  results_RDS_name <- paste0(file.path(path_results,
+                                       sp_hyphenate(sp,
+                                                    results = TRUE)))
+  if(cached_results){
+      series_ABCD_full <- readRDS(results_RDS_name)[["series_ABCD_full"]]
+    } else {
+      series_ABCD_full <- calc_iphc_full_res(sp_set_counts$set_counts)
+    }
+
+  if(verbose){
+    # Print the first and last values:
+    print(sp_set_counts)
+    print(tail(sp_set_counts$set_counts))
+    print(series_ABCD_full)
+    print(paste("*****", sp, "*****"))
+  }
+
+  plot_IPHC_ser_four_panels_ABCD(series_ABCD_full,
+                                 sp = sp)
+
+  res <- list(sp_set_counts = sp_set_counts,
+              series_ABCD_full = series_ABCD_full)
+
+  if(!cached_results){
+    if(!is.null(path_results)){
+      dir.create(path_results,
+                 showWarnings = FALSE)
+      saveRDS(res,
+              file = results_RDS_name,
+              compress = FALSE)
+    }
+  }
+  return(res)
+}
+
 ##' Plot just the IPHC survey index, though works for all surveys - WON'T
 ##'   CURRENTLY WORK as commenting out reference to gfplot, need to move that
-##'   function here but want to test first.
+##'   function here but want to test first. Moving to gfsynopsis or gfplot.
 ##'
 ##' Plot just the IPHC survey index (mainly for testing).
 ##' @param iphc_set_counts_sp_format Set counts for a given species formatted
@@ -788,11 +959,16 @@ plot_iphc_index <- function(iphc_set_counts_sp_format) {
 #  iphc_plot
 }
 
-##' Get data, do calculations and plot longest series for the IPHC survey
+##' Get data, do calculations and plot longest series for the IPHC survey -
+##' original used for first gfsynopsis report.
 ##'
 ##' Get data, do calculations and plot longest series for the IPHC survey for
 ##'  a given species. Will take a while since queries GFbio (and need to be on DFO
-##'  network). WON'T CURRENTLY WORK AS plot_iphc_index() won't currently work.
+##'  network). WON'T CURRENTLY WORK AS plot_iphc_index() won't currently work
+##'  (we previously had everything in just gfplot). See `iphc_get_calc_plot()`
+##'  to use separately, then move this and plot_iphc_index to use gfsynopsis
+##'  (Issue 140 in gfsynopsis).
+##'
 ##' @param sp Species names (as used in gfdata and gfplot).
 ##' @return For the given species, list containing
 ##'
@@ -805,7 +981,7 @@ plot_iphc_index <- function(iphc_set_counts_sp_format) {
 ##'   g_iphc_index: plot of just the iphc data (useful for testing all species)
 ##'     providing there are some data
 ##' @export
-iphc_get_calc_plot <- function(sp) {
+iphc_get_calc_plot_orig <- function(sp) {
   set_counts <- get_all_iphc_set_counts(sp)
   iphc_set_counts_sp <- calc_iphc_full_res(set_counts)
   iphc_set_counts_sp_format <-

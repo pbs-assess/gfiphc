@@ -1,45 +1,58 @@
-##' Plot the locations of the IPHC stations for a given year, and whether or not
-##'  a given species was caught in that year.
+##' Plot the locations of the IPHC stations for a given year, with various
+##options.
+##'
+##' Options include whether or not a given species was caught in that year, or
+##'  indicating showing stations within a given area, or not referencing a
+##'  particular species (just showing stations), or showing non-standard stations.
 ##'
 ##' If possible, also show whether the species was caught in the first 20 hooks
-##' and only caught after the first 20 hooks. MAY ADD other options. Uses
-##' `PBSmapping` style of plot, as used in the Redbanded and Yelloweye Rockfish
-##' stock assessments.
+##' and only caught after the first 20 hooks. Uses `PBSmapping` style of plot,
+##' as used in the Redbanded and Yelloweye Rockfish stock assessments.
 ##'
 ##' @param set_counts_of_sp input tibble of the species of interest, likely generated from
 ##'   `cache_pbs_data_iphc` (which seems to save a list with the first element
 ##'   the desired tibble), with column names `year`, `station`, `lat`, `lon`,
-##'   `E_it`, `N_it`, `C_it`, `E_it20`, `N_it20`, `C_it20`, `usable`
+##'   `E_it`, `N_it`, `C_it`, `E_it20`, `N_it20`, `C_it20`, `usable`, and
+##'   `in_area` if `indicate_in_area` is TRUE
 ##' @param sp_short_name short name species of interest to have in legend,
 ##'   if NULL then plots all stations labelled as
 ##'   usable and unusable, but with no catch rates. Still needs
 ##'   `set_counts_of_sp` input tibble (can be any species, as they all have all
 ##'   stations documented).
-##' @param years years of interest ****currently just for one year, multiple will
-##'   get tricky
-##' @param main_title title for map, if NULL then is "All <year> stations"
+##' @param years year of interest. See vignettes for movie code.
+##' @param main_title title for map, if NULL then is All `years` stations
 ##' @param mar_val mar values to reduce whitespace around maps
 ##' @param mgp_val mgp values to reduce whitespace around maps
 ##' @param lat_cut_off latitudinal cut off near top of Vancouver Island, below
 ##'   which stations are excluded when constructing Series A and B; this is just
 ##'   below all stations from 1995-1998, so that Series A and B include all
-##'   stations for 1995-1998
+##'   stations for 1995-1998. If NULL then nothing plotted
 ##' @param lon_cut_off_1 left-hand end of line (longitude) to show cut off
 ##' @param lon_cut_off_2 right-hand end of line (longitude) to show cut off
-##' @param pch_pos_count pch for positive counts
-##' @param pch_zero_count pch for positive counts
+##' @param pch_pos_count pch for positive counts (or sets inside area if
+##'   `indicate_in_area` is TRUE)
+##' @param pch_zero_count pch for zero counts (or sets outside area if
+##'   `indicate_in_area` is FALSE)
+##' @param pch_non_standard pch for showing non-standard stations for that year
 ##' @param cex_val cex size of plotted circles (or whatever is chosen using
 ##'   above `pch` options
+##' @param add_to_existing if TRUE then add to an existing plot, if FALSE then
+##'   create new map using `plot_BC()`
+##' @param indicate_in_area indicate whether or not station is within a
+##'   specficied area, as indicated by TRUE/FALSE in `set_counts_of_sp$in_area`
+##' @param indicate_standard indicate whether or not station is part of the
+##'   standard stations or an expansion (in 2018, 2020, and maybe later), as
+##'   indicated by Y/N in `set_counts_of_sp$standard`
 ##' @param ... extra arguments to `par()`
 ##' @return A map of the IPHC survey stations for that year and species, with a
 ##'   legend describing the points.
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
-##' @ See vignette `data_for_one_species`
+##' \dontrun{
+##' # See vignette `data_for_one_species`
 ##' sp <- "yelloweye rockfish"
-##' sp_set_counts <- readRDS(paste0(gsub(" ", "-", sp), ".rds"))    # Need .rds
+##' sp_set_counts <- readRDS(sp_hyphenate(sp))    # Need .rds
 ##'   saved already
 ##' plot_iphc_map(sp_set_counts$set_counts, sp_short_name = "Yelloweye", years =
 ##'   2003)  # one year
@@ -52,12 +65,18 @@
 ##'   invisible(readline(prompt="Press [enter] to continue"))
 ##' }
 ##'
-##' # Just the stations with no species information:
+##' # Hooks with no bait, showing non-standard as crosses :
+##' plot_iphc_map(hooks_with_bait$set_counts,
+##'               sp = "Hooks with bait",
+##'               years = 2018,
+##'               indicate_standard = TRUE)
+##'
+##' # Just the stations, with no species information:
 ##' plot_iphc_map(sp_set_counts$set_counts,
 ##'               sp_short_name = NULL,
 ##'               years = 2008)
 ##' }
-##' @}
+##'
 plot_iphc_map <- function(set_counts_of_sp,
                           sp_short_name = NULL,
                           years,
@@ -69,7 +88,11 @@ plot_iphc_map <- function(set_counts_of_sp,
                           lon_cut_off_2 = -128.25,
                           pch_pos_count = 19,
                           pch_zero_count = 1,
+                          pch_non_standard = 4,
                           cex_val = 1,
+                          add_to_existing = FALSE,
+                          indicate_in_area = FALSE,
+                          indicate_standard = TRUE,
                           ...
                           ){
   par(mar = mar_val,
@@ -81,7 +104,9 @@ plot_iphc_map <- function(set_counts_of_sp,
   set_counts_of_sp_one_year <- filter(set_counts_of_sp,
                                       year == years)
 
-  plot_BC(main = main_title)
+  if(!add_to_existing){
+    plot_BC(main = main_title)
+  }
 
   if(!is.null(sp_short_name)){
     # Species-specific
@@ -90,38 +115,101 @@ plot_iphc_map <- function(set_counts_of_sp,
                  pch_zero_count = pch_zero_count,
                  pch_pos_count = pch_pos_count,
                  cex_val = cex_val)
-    legend("bottomleft", legend=c(paste("Did not catch", sp_short_name),
-                                  paste("Did catch", sp_short_name),
-                                  "Unusable station"),
-           pch = c(pch_zero_count, pch_pos_count, pch_pos_count),
-           pt.cex = rep(cex_val, 3),
-           col=c("red", "red", "grey"))
+    legend_text <- c(paste("Did not catch", sp_short_name),
+                     paste("Did catch", sp_short_name),
+                     "Unusable station")
+    legend_pch <- c(pch_zero_count,
+                    pch_pos_count,
+                    pch_pos_count)
+    legend_cex <- rep(cex_val, 3)
+    legend_col <- c("red",
+                    "red",
+                    "grey")
   } else {
+    # Just show stations for whole coast
+    if(!indicate_in_area){
 
-    # Just show stations
-    points(lat~lon,
-           data = filter(set_counts_of_sp_one_year,
-                         year == years,
-                         usable == "Y"),
-           col = "blue",
-           pch = pch_pos_count,
-           cex = cex_val)
+      points(lat~lon,
+             data = filter(set_counts_of_sp_one_year,
+                           year == years,
+                           usable == "Y"),
+             col = "blue",
+             pch = pch_pos_count,
+             cex = cex_val)
 
-    legend("bottomleft", legend=c(paste("Usable station"),
-                                  "Unusable station"),
-           pch = rep(pch_pos_count, 2),
-           pt.cex = rep(cex_val, 2),
-           col=c("blue", "grey"))
+      legend_text <- c("Usable station",
+                      "Unusable station")
+      legend_pch <- rep(pch_pos_count, 2)
+      legend_cex <- rep(cex_val, 2)
+      legend_col <- c("blue",
+                      "grey")
+
+    } else {
+      # Indicate whether stations are in or outside of a region (region to be
+      #  plotted outside of this function, see vignette)
+
+      points(lat~lon,
+             data = filter(set_counts_of_sp_one_year,
+                           year == years,
+                           usable == "Y",
+                           in_area == TRUE),
+             col = "blue",
+             pch = pch_pos_count,
+             cex = cex_val)
+
+      points(lat~lon,
+             data = filter(set_counts_of_sp_one_year,
+                           year == years,
+                           usable == "Y",
+                           in_area == FALSE),
+             col = "blue",
+             pch = pch_zero_count,
+             cex = cex_val)
+
+      legend_text <- c("In area of interest",
+                       "Outside area",
+                       "Unusable station")
+      legend_pch <- c(pch_pos_count,
+                      pch_zero_count,
+                      pch_pos_count)
+      legend_cex <- rep(cex_val, 3)
+      legend_col = c("blue",
+                     "blue",
+                     "grey")
     }
+  }
 
-    # Plot unusable stations (which have NA's for catch rates and E_it, E_it20)
+
+  # Plot unusable stations (which have NA's for catch rates and E_it, E_it20)
+  points(lat~lon,
+         data = filter(set_counts_of_sp_one_year,
+                       year == years,
+                       usable == "N"),
+         col = "grey",
+         pch = pch_pos_count,
+         cex = cex_val)
+
+  # Add crosses for those not considered 'standard' stations in 2018 and 2020,
+  #  originally to help figure out the differing definitions of standard in those two years.
+  if(indicate_standard){
     points(lat~lon,
            data = filter(set_counts_of_sp_one_year,
                          year == years,
-                         usable == "N"),
-           col = "grey",
-           pch = pch_pos_count,
-           cex = cex_val)
+                         standard == "N"),
+           pch = pch_non_standard,
+           cex = cex_val*1.5)
+
+    legend_text <- c(legend_text, "Non-standard station")
+    legend_pch <- c(legend_pch, pch_non_standard)
+    legend_cex <- c(legend_cex, cex_val*1.5)
+    legend_col <- c(legend_col, "black")
+  }
+
+  legend("bottomleft",
+         legend = legend_text,
+         pch = legend_pch,
+         pt.cex = legend_cex,
+         col = legend_col)
 
   # This is keeping in Series A or not - could just draw the horizontal line every time
   #points(lat~lon,
@@ -148,9 +236,9 @@ plot_iphc_map <- function(set_counts_of_sp,
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
-##' @
-##' @}
+##' \dontrun{
+##' #
+##' }
 plot_BC <- function(xlim = c(-134,-124),
                    ylim = c(48,54.6),
                    zlev = seq(200,1200,200),
@@ -191,7 +279,7 @@ plot_BC <- function(xlim = c(-134,-124),
 ##'
 ##' Add individual stations to map of BC, with options for all stations (no
 ##' species catch information), or positive and zero catches for a given
-##' species. Called from within `plot_iphc_map()`.
+##' species, and more. Called from within `plot_iphc_map()`.
 ##'
 ##' @param set_counts_of_sp_one_year tibble for just one year, from
 ##'   `set_counts_of_sp`.
@@ -202,17 +290,13 @@ plot_BC <- function(xlim = c(-134,-124),
 ##' @param pch_pos_count pch for positive counts
 ##' @param cex_val cex size of plotted circles (or whatever is chosen using
 ##'   above `pch` options
-##' @param usable TRUE if plotting the usable stations, FALSE for unusable.
-##' @param pos_catch_rates TRUE if plotting the positive (>0) catch rates for
-##'   the given species, FALSE if plotting the 0 catch rates (showing as open
-##'   circles).
 ##' @return adds points to existing plot
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
-##' @
-##' @}
+##' \dontrun{
+##' #
+##' }
 add_stations <- function(set_counts_of_sp_one_year,
                          species = TRUE,
                          pch_zero_count,
@@ -259,4 +343,34 @@ add_stations <- function(set_counts_of_sp_one_year,
            cex = cex_val)
     }
   invisible()
+}
+
+##' Plot a panel of maps
+##'
+##'
+##' @param set_counts_of_sp see `plot_iphc_map()`
+##' @param sp_short_name see `plot_iphc_map()`
+##' @param years_to_show see vector of years to show one map for each year
+##' @param par_mfrow two-value vector (rows by columns) for `par(mfrow = par_mfrow)`
+##' @param ... further arguments to `plot_iphc_map()`
+##' @return
+##' @export
+##' @author Andrew Edwards
+##' @examples
+##' \dontrun{
+##'
+##' }
+plot_iphc_map_panel <- function(set_counts_of_sp,
+                                sp_short_name,
+                                years_to_show,
+                                par_mfrow = c(2,2),
+                                ...){
+
+  par(mfrow = par_mfrow)
+  for(years in years_to_show){
+    plot_iphc_map(set_counts_of_sp,
+                  sp_short_name,
+                  years = years,
+                  ...)
+  }
 }

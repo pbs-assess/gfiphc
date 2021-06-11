@@ -4,7 +4,7 @@
 \alias{boot_iphc}
 \title{Do bootstrap calculations on each IPHC Series}
 \usage{
-boot_iphc(ser_year_rates, num.boots = 1000, seed_val = 42)
+boot_iphc(ser_year_rates, num.boots = 10000, seed_val = 42)
 }
 \arguments{
 \item{ser_year_rates}{Tibble of two columns containing just year and catch

@@ -32,7 +32,7 @@ test_AD: t-test results from \code{\link[=compare_iphc_ser_A_D]{compare_iphc_ser
 
 test_BC: t-test results from \code{\link[=compare_iphc_ser_B_C]{compare_iphc_ser_B_C()}}
 
-If no observations at all for the species then return NA (says NULL, no?).
+If no observations at all for the species then return NULL.
 }
 \description{
 From species-specific set-level counts, derive all the required Series and

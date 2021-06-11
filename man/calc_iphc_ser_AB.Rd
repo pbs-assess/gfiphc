@@ -12,14 +12,15 @@ resulting from \code{\link[=calc_iphc_ser_all]{calc_iphc_ser_all()}}}
 }
 \value{
 List containing
-
-ser_longest: the longest time series possible from
+\itemize{
+\item ser_longest: the longest time series possible from
 Series A and B,
-
-test_AB: the results from the paired t-test, NULL if Series B is longest.
-
-G_A, G_B: geometric means of nonzero values in Series A and Series D
+\item test_AB: the results from the paired t-test, NULL if Series B is longest.
+\item G_A, G_B: geometric means of nonzero values in Series A and Series D
 (based on bootstrapped means).
+\item type: which type the longest series is, either \code{AB}, \code{A}, \code{B}, or
+possibly \code{C} based on the descriptions below.
+}
 
 Longest series is either
 
@@ -42,7 +43,8 @@ series).
 
 (iv) But can also have Series C being the longest if A is all 0's and
 B and C cover the same years. Looks like this happens for Darkblotched.
-Not implemented yet - see Issue 49.
+Had said this was not implemented yet - see Issue 10, but there is an
+instance below.
 }
 \description{
 Calculate Series AB (Series A with 1995 and 1996 appropriately scaled from

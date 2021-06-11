@@ -19,3 +19,13 @@ vignettes/*.html
 vignettes/*.R
 vignettes/yeyeForBeauSep19.R
 vignettes/MEE_reproduce_2.Rmd
+vignettes/for-jen-earlier-versions/*.*
+
+data-raw/herring-predators-HG/
+/data-raw/Non-Pacific halibut data.xlsx
+/data-raw/all-2018-stations-before-updating-with-expansion-shown.png
+/data-raw/all-2018-stations-before-updating.png
+/data-raw/set-and-halibut-data-1998-2020.xlsx
+/data-raw/~$set-and-halibut-data-1998-2020.xlsx
+vignettes/for-jen-earlier-versions/*.*
+vignettes/HG-herring-predators-results/*

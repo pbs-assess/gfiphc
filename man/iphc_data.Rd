@@ -53,16 +53,17 @@ Get IPHC data
 \details{
 \itemize{
 \item \code{get_iphc_sets()} extracts IPHC survey data at the set level for given
-species, from 2003 to present (excluding 2013 which is not in database)
+species, from 2003 to present (excluding 2013 and any later years that are
+not in database)
 \item \code{get_iphc_sets_info()} extracts IPHC survey data regarding each set, with no
 species information, to give one unique row (with lat, lon etc.) for each
-set, from 2003 to present (excluding 2013 which is not in database)
+set, from 2003 to present (excluding 2013 and others not in database)
 \item \code{get_iphc_skates_info()} extracts IPHC survey data regarding each skate,
 with no species information, to give one unique row (with lat, lon etc.)
-for each set, from 2003 to present (excluding 2013 which is not in database);
+for each set, from 2003 to present (excluding 2013 and otheres not in database);
 needed for the hooks per skate
 \item \code{get_iphc_hooks()} extracts IPHC survey data at the hook level for given
-species, from 2003 to present (excluding 2013 which is not in database).
+species, from 2003 to present (excluding 2013 and others not in database).
 If species is 'hook with bait' then it returns the hooks that were returned
 with bait.
 \item \code{cache_pbs_data_iphc()} runs \code{get_all_iphc_set_counts()} for a given species
@@ -75,9 +76,8 @@ species from \code{\link[=get_all_iphc_set_counts]{get_all_iphc_set_counts()}}
 \examples{
 \dontrun{
 cache_pbs_data_iphc("redbanded rockfish")
-cache_pbs_data_iphc(c(
-  "redbanded rockfish",
-  "pacific ocean perch"
-))
+cache_pbs_data_iphc(c("redbanded rockfish",
+                      "pacific ocean perch"),
+                    path = "two-rockfish")
 }
 }
