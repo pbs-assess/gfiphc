@@ -1,16 +1,15 @@
 Package: gfiphc
-Title: Data Extraction and Processing for IPHC Survey Data for Pacific Groundfish
+Title: Data Extraction and Analysis for IPHC Survey Data for BC Groundfish
 Version: 0.0.0.9000
 Authors@R:
     c(person(c("Andrew", "M."), "Edwards", email = "a@a.com", role = c("cre", "aut")),
       person(c("Sean", "C."), "Anderson", role = "aut"),
       person(c("Elise", "A."), "Keppel", role = "aut"),
       person("Chris", "Grandin", role = "aut"))
-Description: Facilitates IPHC (International Pacific Halibut Commission)
+Description: Facilitates International Pacific Halibut Commission (IPHC)
     survey groundfish data extraction
-    at the Canadian Department of Fisheries and Oceans (DFO) Pacific
-    Biological Station (PBS), and analysis of the data for all species
-    caught in British Columbia waters.
+    at the Pacific Biological Station (PBS), Department of Fisheries and Oceans Canada,
+    and analysis of the data for all species caught in British Columbia waters.
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true
@@ -22,7 +21,6 @@ Imports:
     dplyr,
     boot,
     rlang,
-    RColorBrewer,
     gfdata,
     PBSmapping,
     gplots,

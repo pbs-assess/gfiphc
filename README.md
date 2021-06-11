@@ -115,6 +115,11 @@ So:
 
 1. May have to repeat this process as necessary. For example, in 2020 I saved the data, but then kept examining it in `data-raw/iphc-2020-data.Rmd`, realising need to change a `standard` designation in `setDataExpansion`, so then had to rerun all of these steps to update all .rda files. 
  
+## Citation
+
+If you use this package please cite it, as it is helpful for maintaining it. Type `citation("gfiphc")` (and manually include the year). Thanks!
+
+
 ## Issues, problems
 
 Please report any problems as a [GitHub Issue](https://github.com/pbs-assess/gfiphc/issues), using a minimal working example if possible (and please check the closed issues first).
