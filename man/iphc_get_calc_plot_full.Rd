@@ -56,6 +56,26 @@ network). Basically a wrapper for the calculations in the vignette
 \code{gfsynopsis::iphc_get_calc_plot()} for function for gfsynopsis
 reports. Calling this one \code{iphc_get_calc_plot_full()} to distinguish it.
 }
+\examples{
+\dontrun{
+iphc_get_calc_plot_full("redbanded rockfish", cached_data = FALSE) # only at PBS
+# Example where longest series may not be the most useful since only looking
+  at first 20 hooks gives all zeros in 2016, but looking at all hooks gives
+  some non-zero sets. In practice, catches may be too sparse to be useful anyway.
+x <- iphc_get_calc_plot_full("walleye pollock", cached = FALSE) # only PBS
+filter(x$series_ABCD_full$ser_longest, year == 2016)
+# A tibble: 1 x 8
+  year  Sets num_pos20 I_t20SampleMean I_t20BootMean I_t20BootLow I_t20BootHigh
+ <dbl> <int>     <int>           <dbl>         <dbl>        <dbl>         <dbl>
+  2016   132         0               0             0            0             0
+... with 1 more variable: I_t20BootCV <dbl>
+filter(x$series_ABCD_full$ser_all$ser_B, year == 2016)
+# A tibble: 1 x 8
+   year  Sets num_pos I_tSampleMean I_tBootMean I_tBootLow I_tBootHigh I_tBootCV
+  <dbl> <int>   <int>         <dbl>       <dbl>      <dbl>       <dbl>     <dbl>
+1  2016   132       2       0.00252     0.00249          0     0.00629     0.719
+}
+}
 \author{
 Andrew Edwards
 }

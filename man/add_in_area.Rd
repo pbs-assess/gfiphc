@@ -26,6 +26,13 @@ created to assign each set-year a unique ID, needed for
 \description{
 See example and the vignette.
 }
+\examples{
+\dontrun{
+sp_set_counts_with_area <- add_in_area(yelloweye_rockfish$set_counts,
+                                       HG_herring_pred_area)
+# Gives a warning about hole vertices, can ignore.
+}
+}
 \author{
 Andrew Edwards
 }

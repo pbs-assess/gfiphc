@@ -42,14 +42,31 @@ Y are A, B, C, or D.
 
 \item{tck_length}{small tickmark lengths}
 
+\item{legend_text}{text to override default if desired}
+
+\item{x_lab}{x label to override default if desired}
+
+\item{y_lab}{y label to override default if desired}
+
 \item{gap_ci}{gap (units of 'height of letter O') between cirlce and
 whiskers for confidence intervals}
+
+\item{...}{further arguments to \code{gplots::plotCI}}
+
+\item{ser_X_col}{colour for Series X}
+
+\item{ser_Y_col}{colour for Series Y}
 }
 \value{
 
 }
 \description{
 Single plotting function for Series A, B, C, D, or combination of two
+}
+\examples{
+\dontrun{
+# See vignettes.
+}
 }
 \author{
 Andrew Edwards

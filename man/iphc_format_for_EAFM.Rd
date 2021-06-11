@@ -52,6 +52,11 @@ The \code{Indicator} column could include:
 \details{
 Also saves \code{sp_vec_list} as an .rds file.
 }
+\examples{
+\dontrun{
+# See vignette.
+}
+}
 \author{
 Andrew Edwards
 }

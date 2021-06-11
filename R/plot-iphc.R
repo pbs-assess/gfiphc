@@ -31,14 +31,14 @@
 ##'   of the overlapping years (no scaling if no overlapping years)
 ##'  * `EF` to plot Series EF [with E rescaled in red], empty plot if longest
 ##'   series is just E or F
-##' @param ser_E_col
-##' @param ser_F_col
-##' @param legend_text
-##' @param x_lab
-##' @param y_lab
+##' @param ser_E_col colour for Series E
+##' @param ser_F_col colour for Series F
+##' @param legend_text text to override default if desired
+##' @param x_lab x label to override default if desired
+##' @param y_lab y label to override default if desired
 ##' @param gap_ci gap (units of 'height of letter O') between cirlce and
 ##'   whiskers for confidence intervals
-##' @param ...
+##' @param ... further arguments to `gplots::plotCI`
 ##' @param shift if plotting two then shift Series E to left and F to right by
 ##'   `shift` amount
 ##' @param tck_length small tickmark lengths
@@ -46,9 +46,9 @@
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
+##' \dontrun{
 ##' # See vignettes.
-##' @}
+##' }
 plot_IPHC_ser_E_and_F <- function(ser_E_and_F,
                                   series_longest = NULL,
                                  plot_type = "E",    # change back to default as EF
@@ -235,18 +235,21 @@ plot_IPHC_ser_E_and_F <- function(ser_E_and_F,
 ##' Wrapper to plot all four versions of Series E and F plots in one figure,
 ##' with species name as main title
 ##'
-##' @param ser_E_and_F
-##' @param series_longest
+##' @param ser_E_and_F list containing tibbles for `ser_E` and `ser_F` of class
+##'   `IPHC_ser_E_and_F`, an output from `calc_iphc_ser_E_and_F`
+##' @param series_longest list of outputs from `calc_iphc_ser_EF(ser_E_and_F)`,
+##'   including tibble `ser_longest` plus t-test results and geometric means of
+##'   each series.
 ##' @param sp species common name
-##' @param line_title
+##' @param line_title line number to put the title, tweak if necessary
 ##' @param ... further arguments to `plot_IPHC_ser_E_and_F()`
 ##' @return simple panel plot of four figures
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
-##' @ # see vignette
-##' @}
+##' \dontrun{
+##' # see vignette
+##' }
 plot_IPHC_ser_four_panels <- function(ser_E_and_F,
                                       series_longest,
                                       sp = NULL,
@@ -292,14 +295,15 @@ plot_IPHC_ser_four_panels <- function(ser_E_and_F,
 ##'  * `XY` to plot Series XY [with X rescaled in red], empty plot if longest
 ##'   series is just X or Y - TODO - maybe. where X and
 ##'   Y are A, B, C, or D.
-##' @param ser_X_col
-##' @param ser_Y_col
-##' @param legend_text
-##' @param x_lab
-##' @param y_lab
+##'
+##' @param ser_X_col colour for Series X
+##' @param ser_Y_col colour for Series Y
+##' @param legend_text text to override default if desired
+##' @param x_lab x label to override default if desired
+##' @param y_lab y label to override default if desired
 ##' @param gap_ci gap (units of 'height of letter O') between cirlce and
 ##'   whiskers for confidence intervals
-##' @param ...
+##' @param ... further arguments to `gplots::plotCI`
 ##' @param shift if plotting two then shift Series X to left and Y to right by
 ##'   `shift` amount
 ##' @param tck_length small tickmark lengths
@@ -307,9 +311,9 @@ plot_IPHC_ser_four_panels <- function(ser_E_and_F,
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
+##' \dontrun{
 ##' # See vignettes.
-##' @}
+##' }
 plot_IPHC_ser_ABCD <- function(series_ABCD_full,
                                plot_type = "AB",
                                x_lim = c(1995, as.integer(format(Sys.Date(),
@@ -534,11 +538,11 @@ plot_IPHC_ser_ABCD <- function(series_ABCD_full,
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
+##' \dontrun{
 ##' series_ABCD_full <- calc_iphc_full_res(yelloweye_rockfish$set_counts)
 ##' plot_IPHC_ser_four_panels_ABCD(series_ABCD_full, "yelloweye rockfish")
 ##' # and see vignette
-##' @}
+##' }
 plot_IPHC_ser_four_panels_ABCD <- function(series_ABCD_full,
                                            sp = NULL,
                                            line_title = -2,

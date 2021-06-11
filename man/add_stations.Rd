@@ -39,6 +39,11 @@ Add individual stations to map of BC, with options for all stations (no
 species catch information), or positive and zero catches for a given
 species, and more. Called from within \code{plot_iphc_map()}.
 }
+\examples{
+\dontrun{
+#
+}
+}
 \author{
 Andrew Edwards
 }

@@ -34,6 +34,11 @@ string of adapted species name
 \description{
 Hyphenate or underscore species name.
 }
+\examples{
+\dontrun{
+sp_hyphenate("yelloweye rockfish", underscore = TRUE)
+}
+}
 \author{
 Andrew Edwards
 }

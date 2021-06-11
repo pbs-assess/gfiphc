@@ -29,6 +29,11 @@ Map of BC land and sea
 \description{
 Map for BC coast, adapted from an example in Rowan Haigh's TESA course
 }
+\examples{
+\dontrun{
+#
+}
+}
 \author{
 Andrew Edwards
 }

@@ -39,7 +39,7 @@ stations documented).}
 
 \item{years}{year of interest. See vignettes for movie code.}
 
-\item{main_title}{title for map, if NULL then is "All <year> stations"}
+\item{main_title}{title for map, if NULL then is All \code{years} stations}
 
 \item{mar_val}{mar values to reduce whitespace around maps}
 
@@ -90,6 +90,36 @@ particular species (just showing stations), or showing non-standard stations.
 If possible, also show whether the species was caught in the first 20 hooks
 and only caught after the first 20 hooks. Uses \code{PBSmapping} style of plot,
 as used in the Redbanded and Yelloweye Rockfish stock assessments.
+}
+\examples{
+\dontrun{
+# See vignette `data_for_one_species`
+sp <- "yelloweye rockfish"
+sp_set_counts <- readRDS(sp_hyphenate(sp))    # Need .rds
+  saved already
+plot_iphc_map(sp_set_counts$set_counts, sp_short_name = "Yelloweye", years =
+  2003)  # one year
+# many years (matches maps in Yamanka et al. (2018) Yelloweye assessment,
+#  except stations 14A, 19IC, and 3D that are now marked as unusable):
+for(i in unique(sp_set_counts$set_counts$year)){
+  plot_iphc_map(sp_set_counts$set_counts,
+                sp_short_name = "Yelloweye",
+                years = i)
+  invisible(readline(prompt="Press [enter] to continue"))
+}
+
+# Hooks with no bait, showing non-standard as crosses :
+plot_iphc_map(hooks_with_bait$set_counts,
+              sp = "Hooks with bait",
+              years = 2018,
+              indicate_standard = TRUE)
+
+# Just the stations, with no species information:
+plot_iphc_map(sp_set_counts$set_counts,
+              sp_short_name = NULL,
+              years = 2008)
+}
+
 }
 \author{
 Andrew Edwards

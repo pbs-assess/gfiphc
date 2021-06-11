@@ -18,7 +18,7 @@ Conservation Area}
 \item{mpa}{whether or not (Y/N) the station is within a Marine Protected
 Area}
 \item{mpa_name}{name of the Marine Protected Area that the station is
-within, if applicable (else is character <NA>)}
+within, if applicable (else is character \code{NA})}
 }
 }
 \source{

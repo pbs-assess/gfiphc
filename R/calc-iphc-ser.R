@@ -856,7 +856,7 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
+##' \dontrun{
 ##' iphc_get_calc_plot_full("redbanded rockfish", cached_data = FALSE) # only at PBS
 ##' # Example where longest series may not be the most useful since only looking
 ##'   at first 20 hooks gives all zeros in 2016, but looking at all hooks gives
@@ -873,7 +873,7 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
 ##'    year  Sets num_pos I_tSampleMean I_tBootMean I_tBootLow I_tBootHigh I_tBootCV
 ##'   <dbl> <int>   <int>         <dbl>       <dbl>      <dbl>       <dbl>     <dbl>
 ##' 1  2016   132       2       0.00252     0.00249          0     0.00629     0.719
-##' @}
+##' }
 iphc_get_calc_plot_full <- function(sp,
                                     cached_data = TRUE,
                                     cached_results = FALSE,

@@ -29,6 +29,11 @@ plot_iphc_map_panel(
 \description{
 Plot a panel of maps
 }
+\examples{
+\dontrun{
+
+}
+}
 \author{
 Andrew Edwards
 }

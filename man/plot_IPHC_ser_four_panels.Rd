@@ -14,7 +14,16 @@ plot_IPHC_ser_four_panels(
 )
 }
 \arguments{
+\item{ser_E_and_F}{list containing tibbles for \code{ser_E} and \code{ser_F} of class
+\code{IPHC_ser_E_and_F}, an output from \code{calc_iphc_ser_E_and_F}}
+
+\item{series_longest}{list of outputs from \code{calc_iphc_ser_EF(ser_E_and_F)},
+including tibble \code{ser_longest} plus t-test results and geometric means of
+each series.}
+
 \item{sp}{species common name}
+
+\item{line_title}{line number to put the title, tweak if necessary}
 
 \item{...}{further arguments to \code{plot_IPHC_ser_E_and_F()}}
 }
@@ -24,6 +33,11 @@ simple panel plot of four figures
 \description{
 Wrapper to plot all four versions of Series E and F plots in one figure,
 with species name as main title
+}
+\examples{
+\dontrun{
+# see vignette
+}
 }
 \author{
 Andrew Edwards

@@ -20,7 +20,7 @@
 ##'   `set_counts_of_sp` input tibble (can be any species, as they all have all
 ##'   stations documented).
 ##' @param years year of interest. See vignettes for movie code.
-##' @param main_title title for map, if NULL then is "All <year> stations"
+##' @param main_title title for map, if NULL then is All `years` stations
 ##' @param mar_val mar values to reduce whitespace around maps
 ##' @param mgp_val mgp values to reduce whitespace around maps
 ##' @param lat_cut_off latitudinal cut off near top of Vancouver Island, below
@@ -49,8 +49,8 @@
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
-##' @ See vignette `data_for_one_species`
+##' \dontrun{
+##' # See vignette `data_for_one_species`
 ##' sp <- "yelloweye rockfish"
 ##' sp_set_counts <- readRDS(sp_hyphenate(sp))    # Need .rds
 ##'   saved already
@@ -76,7 +76,7 @@
 ##'               sp_short_name = NULL,
 ##'               years = 2008)
 ##' }
-##' @}
+##'
 plot_iphc_map <- function(set_counts_of_sp,
                           sp_short_name = NULL,
                           years,
@@ -236,9 +236,9 @@ plot_iphc_map <- function(set_counts_of_sp,
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
-##' @
-##' @}
+##' \dontrun{
+##' #
+##' }
 plot_BC <- function(xlim = c(-134,-124),
                    ylim = c(48,54.6),
                    zlev = seq(200,1200,200),
@@ -297,9 +297,9 @@ plot_BC <- function(xlim = c(-134,-124),
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
-##' @
-##' @}
+##' \dontrun{
+##' #
+##' }
 add_stations <- function(set_counts_of_sp_one_year,
                          species = TRUE,
                          pch_zero_count,
@@ -360,9 +360,9 @@ add_stations <- function(set_counts_of_sp_one_year,
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
-##' @
-##' @}
+##' \dontrun{
+##'
+##' }
 plot_iphc_map_panel <- function(set_counts_of_sp,
                                 sp_short_name,
                                 years_to_show,

@@ -16,3 +16,4 @@ vignettes/iphcCombineAB-YYR-ksTest.Snw
 vignettes/data_for_one_species.Rmd
 vignettes/analysis_for_restricted_area.Rmd
 vignettes/analysis_for_HG_herring_predators.Rmd
+vignettes/*.Rmd

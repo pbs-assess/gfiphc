@@ -6,6 +6,9 @@
 \usage{
 simple_cap(x)
 }
+\arguments{
+\item{x}{words to be capitalised}
+}
 \description{
 Capitalise first letters of words (from ?toupper)
 }

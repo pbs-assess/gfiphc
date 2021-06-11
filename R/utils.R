@@ -15,9 +15,9 @@
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
+##' \dontrun{
 ##' sp_hyphenate("yelloweye rockfish", underscore = TRUE)
-##' @}
+##' }
 sp_hyphenate <- function(sp,
                          hyphen_rds = TRUE,
                          underscore = FALSE,
@@ -51,7 +51,7 @@ sp_hyphenate <- function(sp,
 
 ##' Capitalise first letters of words (from ?toupper)
 ##'
-##' @param x
+##' @param x words to be capitalised
 simple_cap <- function(x) {
   s <- strsplit(x, " ")[[1]]
   paste(toupper(substring(s, 1,1)), substring(s, 2),

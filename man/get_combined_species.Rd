@@ -29,18 +29,18 @@ species) that contains year, station name, lat, lon, and
 \itemize{
 \item E_it - effective skate number for that station, based on all hooks (so
 NA for 1997-2002, 2013, 2020),
-\item N_it...<num> - number of 'species' caught on all hooks, so NA for
-1997-2002, 2013, 2020, where <num> is the column number appended by dplyr within this
+\item N_it...NUM - number of 'species' caught on all hooks, so NA for
+1997-2002, 2013, 2020, where NUM is the column number appended by dplyr within this
 function,
-\item N_it_sum - sum of \verb{N_it...<num>}, with NA's removed (treated as zeros)
+\item N_it_sum - sum of \code{N_it...NUM}, with NA's removed (treated as zeros)
 TODO: say what happens if some have NA
 \item C_it_sum - catch rate of all 'species' as number per effective skate,
 based on all hooks, so NA for 1997-2002, 2013, 2020,
 \item E_it20 - effective skate number for that station, based on first 20
 hooks, so NA for 1995 and 1996,
-\item N_it20...<num number of 'species' caught in first 20 hooks, so NA for
-1995 and 1996, where <num> is the column number appended by dplyr within this
-\item N_it20_sum - sum of \verb{N_it20...<num>}, with NA's removed (treated as zeros)
+\item N_it20...NUM number of 'species' caught in first 20 hooks, so NA for
+1995 and 1996, where NUM is the column number appended by dplyr within this
+\item N_it20_sum - sum of \code{N_it20...NUM}, with NA's removed (treated as zeros)
 TODO: say what happens if some have NA
 \item C_it20_sum - catch rate all 'species' as number per effective skate,
 based on the first 20 hooks, so NA for 1995 and 1996,
@@ -64,6 +64,18 @@ The .rds file for each species needs to already exist, from running
 \code{cache_pbs_data_iphc(sp_vec)}.
 This combines the values together, for example to give data for a number of
 skates combined, rather than individual species.
+}
+\examples{
+\dontrun{
+ skate_sp <- c("aleutian skate",
+               "big skate",
+               "roughtail skate",
+               "sandpaper skate",
+               "longnose skate",
+               "alaska skate")
+res <- get_combined_species(sp_vec = skate_sp)
+# And see `analysis_for_HG_predators` vignette.
+}
 }
 \author{
 Andrew Edwards

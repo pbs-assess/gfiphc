@@ -347,11 +347,11 @@ calc_iphc_ser_EF <- function(series_all,
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
+##' \dontrun{
 ##' sp_set_counts_with_area <- add_in_area(yelloweye_rockfish$set_counts,
 ##'                                        HG_herring_pred_area)
 ##' # Gives a warning about hole vertices, can ignore.
-##' @}
+##' }
 add_in_area <- function(set_counts_of_sp,
                         area = HG_herring_pred_area){
 
@@ -416,10 +416,10 @@ add_in_area <- function(set_counts_of_sp,
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
+##' \donttest{
 ##' iphc_get_calc_plot_area("yelloweye rockfish")
 ##' ##' # Gives a warning about hole vertices, can ignore.
-##' @}
+##' }
 iphc_get_calc_plot_area <- function(sp,
                                     area = HG_herring_pred_area,
                                     cached_data = TRUE,
@@ -530,9 +530,9 @@ iphc_get_calc_plot_area <- function(sp,
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
-##' @donttest{
+##' \dontrun{
 ##' # See vignette.
-##' @}
+##' }
 iphc_format_for_EAFM <- function(sp_vec,
                                  sp_vec_list,
                                  path = ".",

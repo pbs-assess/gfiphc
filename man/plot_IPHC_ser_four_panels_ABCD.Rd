@@ -33,6 +33,13 @@ Defaults to Series A, B, A and B scaled, and AB. Haven't generalised
 \code{plot_IPHC_ser_ABCD()} to combinations with C and D yet (though does them
 individually).
 }
+\examples{
+\dontrun{
+series_ABCD_full <- calc_iphc_full_res(yelloweye_rockfish$set_counts)
+plot_IPHC_ser_four_panels_ABCD(series_ABCD_full, "yelloweye rockfish")
+# and see vignette
+}
+}
 \author{
 Andrew Edwards
 }
