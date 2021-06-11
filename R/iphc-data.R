@@ -663,7 +663,8 @@ read_sql <- function(x) {
 ##' @param save_RDS_name name (with .rds suffix) to save the .rds file of the
 ##'   output (there is no natural obvious default based on `sp_vec`), if NULL
 ##'   then do not save
-##' @param path The folder where the cached data will be saved.
+##' @param path The folder where the cached data are saved, and the new one will
+##'   be saved.
 ##' @param compress Compress the `.rds` file? Defaults to `FALSE` for faster
 ##'   reading and writing at the expense of disk space.
 ##' @return list with  tibble `set_counts` (same format as for individual
@@ -697,7 +698,7 @@ read_sql <- function(x) {
 ##' If no data on any of the species in `sp_vec` then `C_it_all` and N_it are
 ##'   NA's. This happens for sure for years when the counts are not
 ##'   available. Examine each individual species count for NA's to check they
-##'   have propagated through okay.
+##'   have propagated through okay. Also saves the data in `path/save_RDS_name`.
 ##'
 ##' @export
 ##' @author Andrew Edwards
@@ -717,8 +718,8 @@ get_combined_species <- function(sp_vec,
                                  path = ".",
                                  compress = FALSE){
   for(i in 1:length(sp_vec)){
-    this_sp <- readRDS(sp_hyphenate(sp_vec[i]))
-                             # this will become part of the above function
+    this_sp <- readRDS(paste0(path, "/", sp_hyphenate(sp_vec[i])))
+                             # this will become part of the above function (?)
 
     if(i == 1){
       # TODO: put error check here - if no 2003-2012 years then need another, more common, species first

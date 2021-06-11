@@ -77,7 +77,7 @@ sp_set_counts <- yelloweye_rockfish
 ## Details for all skates and stations, and hooks returned with bait
 
 Other data sets are already built into the gfiphc package, the main ones are
-given here.
+given here for reference.
 
 Locations and effective skate values of stations for the 1995 survey:
 ```{r builtin}

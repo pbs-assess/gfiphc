@@ -24,7 +24,7 @@ Fisheries Management Case Study on ecoystem influences of Haida Gwaii Pacific
 Herring.
 
 The area of interest is the same as shown in the [Restricted
-area](vignettes/analysis_for_restricted_area.Rmd) vignette, and the shapefile is
+area](analysis_for_restricted_area.html) vignette, and the shapefile is
 saved in the package as `HG_herring_pred_area`.
 
 ```{r setup, results = FALSE}
@@ -194,7 +194,7 @@ dplyr::select(unidentified_skate_area$ser_E_and_F$ser_F,
 Now want to lump the skates in `skate_sp` together. Note that species counts get
 named as `N_it.1` etc. While each one has NA's, none of the summed `N_it_sum` or
 `N_it20_sum` do, because `get_combined_species()` ignores NA's when making the
-sums.
+sums. This is always recalculated (in case earlier cached data have changed).
 
 ```{r combine, warning = FALSE}
 sp <- "skates combined"
