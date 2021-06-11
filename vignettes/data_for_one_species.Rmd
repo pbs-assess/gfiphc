@@ -47,6 +47,16 @@ sp <- "yelloweye rockfish"
 sp_short_name <- "Yelloweye"  # short name for legends
 ```
 
+It is worth checking that your species of interest is not in this
+list of IPHC species names that are in the IPHC data but not automatically
+extracted by this package (because the synopsis report did not look at it, or it is a
+general term such as `Eelpout`):
+```{r checkspecies}
+check_iphc_spp_name()
+```
+If you want to look for one of these species, then the common name and IPHC name
+need to be added to `inst/extdata/iphc-spp-names.csv`.
+
 Someone at PBS has to run the next chunk of code to extract data from
 the GFBio database and send the external collaborator the resulting .rds file,
 which will have the format `species-name.rds`, e.g. `longnose-skate.rds`. As an
