@@ -24,10 +24,10 @@ Users outside of PBS can request someone at PBS to extract the data (try Andrew 
 
 The vignettes are the best place to start, as they should cover many analyses users would want to do. The links here go to  the saved .html versions on GitHub. The raw Rmarkdown code is available in the [vignettes](vignettes/) folder and should be used as a template.
 
-- [Single species](vignettes/data_for_one_species.Rmd) - shows example data that are saved in the package, and for extracting and generating the longest index possible for a single species for the whole BC coast.
-- [Restricted area](vignettes/analysis_for_restricted_area.Rmd) - for extracting and generating the longest index possible for a restricted area of interest.
-- [Herring predators](vignettes/analysis_for_HG_herring_predators.Rmd) - extraction of multiple species, and groups of species, for a restricted area, and analysed and saved as inputs for the Haida Gwaii Pacific Herring Case Study. 
-- [All species](vignettes/analysis_all_species.Rmd) - extraction of 113 species, to test updating of the groundfish synopsis report [(Anderson et al. 2019)](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2019/2019_041-eng.html).
+- [Single species](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/data_for_one_species.html) - shows example data that are saved in the package, and for extracting and generating the longest index possible for a single species for the whole BC coast.
+- [Restricted area](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/analysis_for_restricted_area.html) - for extracting and generating the longest index possible for a restricted area of interest.
+- [Herring predators](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/analysis_for_HG_herring_predators.html) - extraction of multiple species, and groups of species, for a restricted area, and analysed and saved as inputs for the Haida Gwaii Pacific Herring Case Study. 
+- [All species](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/analysis_all_species.html) - extraction of 113 species, to test updating of the groundfish synopsis report [(Anderson et al. 2019)](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2019/2019_041-eng.html).
 
 ## Installation
 
