@@ -1,5 +1,5 @@
 Package: gfiphc
-Title: Data Extraction and Analysis for IPHC Survey Data for BC Groundfish
+Title: Data Extraction and Analysis for Groundfish Data from the IPHC Longline Survey in BC
 Version: 0.0.0.9000
 Authors@R:
     c(person(c("Andrew", "M."), "Edwards", email = "a@a.com", role = c("cre", "aut")),
@@ -21,6 +21,7 @@ Imports:
     dplyr,
     boot,
     rlang,
+    RColorBrewer,
     gfdata,
     PBSmapping,
     gplots,

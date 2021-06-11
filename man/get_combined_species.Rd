@@ -18,7 +18,8 @@ get_combined_species(
 output (there is no natural obvious default based on \code{sp_vec}), if NULL
 then do not save}
 
-\item{path}{The folder where the cached data will be saved.}
+\item{path}{The folder where the cached data are saved, and the new one will
+be saved.}
 
 \item{compress}{Compress the \code{.rds} file? Defaults to \code{FALSE} for faster
 reading and writing at the expense of disk space.}
@@ -57,7 +58,7 @@ years so we put Y here
 If no data on any of the species in \code{sp_vec} then \code{C_it_all} and N_it are
 NA's. This happens for sure for years when the counts are not
 available. Examine each individual species count for NA's to check they
-have propagated through okay.
+have propagated through okay. Also saves the data in \code{path/save_RDS_name}.
 }
 \description{
 The .rds file for each species needs to already exist, from running
