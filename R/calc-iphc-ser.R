@@ -838,7 +838,8 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
 ##' @param sp Species names (as used in gfdata and gfplot). Or something like
 ##'   "skates combined" -- see vignette.
 ##' @param cached_data if TRUE then use cached data (path_data/sp-name.rds)
-##' @param cached_results if TRUE then use cached results (path_results/sp-name-results.rds)
+##' @param cached_results if TRUE then use cached results
+##'   (path_results/sp-name-results.rds), else do calculations here and save results
 ##' @param verbose if TRUE then print out some of the data (useful in vignette loops)
 ##' @param print_sp_name if TRUE then print out species name (useful in vignette
 ##'   loops)
@@ -875,7 +876,8 @@ format_iphc_longest <- function(iphc_set_counts_sp) {
 ##' @}
 iphc_get_calc_plot_full <- function(sp,
                                     cached_data = TRUE,
-                                    cached_results = FALSE,                                                                 verbose = FALSE,
+                                    cached_results = FALSE,
+                                    verbose = FALSE,
                                     print_sp_name = TRUE,
                                     path_data = ".",
                                     path_results = NULL){

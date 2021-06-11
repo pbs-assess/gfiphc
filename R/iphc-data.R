@@ -155,7 +155,8 @@ get_iphc_hooks <- function(species, usability = NULL) {
 #'                       "pacific ocean perch"),
 #'                     path = "two-rockfish")
 #' }
-cache_pbs_data_iphc <- function(species, file_name = NULL, path = ".",
+cache_pbs_data_iphc <- function(species, file_name = NULL,
+                                path = ".",
                                 compress = FALSE) {
   dir.create(path, showWarnings = FALSE)
   for (sp_i in seq_along(species)) {

@@ -29,6 +29,8 @@ saved in the package as `HG_herring_pred_area`.
 
 ```{r setup, results = FALSE}
 library(gfiphc)
+path_data = "HG-herring-predators-data"        # folder to save extracted raw data
+path_results = "HG-herring-predators-results"  # folder to save results
 ```
 
 ## Data for species of interest
@@ -93,8 +95,12 @@ skate_ignore <- c("abyssal skate",
 
 Cache the data once (this is not evaluated each time):
 ```{r get_skates, eval=FALSE}
-cache_pbs_data_iphc(skate_sp)
-cache_pbs_data_iphc(skate_ignore)
+cache_pbs_data_iphc(sp_vec,
+                    path = path_data)
+cache_pbs_data_iphc(skate_sp,
+                    path = path_data)
+cache_pbs_data_iphc(skate_ignore,
+                    path = path_data)
 ```
 ## Individual skate species
 
@@ -105,9 +111,16 @@ E or F are the longest (and automatically identified). But this only happens for
 the rare species, and so not when the skate species are combined.
 
 ```{r repeat, warning = FALSE, results = FALSE}
+cached_results = TRUE   # whether or not to use already-saved results
 for(sp in skate_sp){
-  assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
-         iphc_get_calc_plot_area(sp))
+  assign(sp_hyphenate(sp,
+                      underscore = TRUE,
+                      area = TRUE),
+         iphc_get_calc_plot_area(sp,
+                                 cached_data = TRUE,
+                                 cached_results = cached_results,
+                                 path_data = path_data,
+                                 path_results = path_results))
 }
 ```
 
@@ -186,6 +199,7 @@ sums.
 ```{r combine, warning = FALSE}
 sp <- "skates combined"
 skates_combined <- get_combined_species(sp_vec = skate_sp,
+                                        path = path_data,
                                         save_RDS_name = sp_hyphenate(sp))
 summary(skates_combined$set_counts)
 
@@ -209,7 +223,11 @@ will be equal at, say, 1 fish per 100 hooks, given a summed rate of 2 fish per
 Now use to calculate Series E, F and EF calculations for the restricted area:
 ```{r combineEF, warning = FALSE, results = FALSE}
 assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
-       iphc_get_calc_plot_area(sp))
+       iphc_get_calc_plot_area(sp,
+                               cached_data = TRUE,
+                               cached_results = cached_results,
+                               path_data = path_data,
+                               path_results = path_results))
 ```
 
 
@@ -219,7 +237,11 @@ Similarly for the other species:
 ```{r showmult, warning = FALSE, results = FALSE}
 for(sp in sp_vec){
   assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
-         iphc_get_calc_plot_area(sp))
+         iphc_get_calc_plot_area(sp,
+                                 cached_data = TRUE,
+                                 cached_results = cached_results,
+                                 path_data = path_data,
+                                 path_results = path_results))
 }
 ```
 
@@ -242,6 +264,7 @@ for(sp in sp_vec_and_combined_skates){
 }
 
 eafm_res <- iphc_format_for_EAFM(sp_vec_and_combined_skates,
+                                 path = path_results,
                                  all_sp_longest) # also saves .csv, and .rds of
                                                  #  all_sp_longest list
 

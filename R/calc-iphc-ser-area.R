@@ -384,7 +384,9 @@ add_in_area <- function(set_counts_of_sp,
 ##'
 ##' Get data, do calculations and plot longest series for the IPHC survey for
 ##'  a given species restricted to a given area. Will take a while if queries
-##'  GFbio (for which need to be on DFO network), else can use cached data.
+##'  GFbio (for which need to be on DFO network), else can use cached data
+##'  (species-name.rds is always the full data for the species, before any
+##'  calculations).
 ##'  If data are for combined species, as cached with `get_combined_species()`,
 ##'  then the column `N_it_sum` etc. column names are used for `N_it` etc.
 ##'
@@ -392,10 +394,14 @@ add_in_area <- function(set_counts_of_sp,
 ##'   "skates combined" -- see vignette.
 ##' @param area `data.frame` of (PBSmapping) class `PolySet` with column names
 ##'   `PID`, `SID`, `POS`, `X`, `Y`,
-##' @param cached if TRUE then used cached data (sp-name.rds)
+##' @param cached_data if TRUE then use cached data (path_data/sp-name.rds)
+##' @param cached_results if TRUE then use cached results
+##'   (path_results/sp-name-results.rds), else do calculations here and save results
 ##' @param verbose if TRUE then print out some of the data (useful in vignette loops)
 ##' @param print_sp_name if TRUE then print out species name (useful in vignette
 ##'   loops)
+##' @param path_data path to save or load the cached data
+##' @param path_results path to save or load the cached data
 ##' @return For the given species, list containing
 ##'
 ##'   sp_set_counts_with_area: tibble returned from [add_in_area()] of set
@@ -416,35 +422,49 @@ add_in_area <- function(set_counts_of_sp,
 ##' @}
 iphc_get_calc_plot_area <- function(sp,
                                     area = HG_herring_pred_area,
-                                    cached = TRUE,
+                                    cached_data = TRUE,
+                                    cached_results = FALSE,
                                     verbose = FALSE,
-                                    print_sp_name = TRUE
-                                    ){
-  if(!cached){
-    cache_pbs_data_iphc(sp)
+                                    print_sp_name = TRUE,
+                                    path_data = ".",
+                                    path_results = NULL){
+  if(!cached_data){
+    cache_pbs_data_iphc(sp,
+                        path = path_data)
   }
 
   if(print_sp_name){
     print(paste("*****", sp, "*****"))
   }
 
-  sp_set_counts <- readRDS(sp_hyphenate(sp))
+  sp_set_counts <- readRDS(paste0(path_data,
+                                  "/",
+                                  sp_hyphenate(sp)))
 
-  sp_set_counts_with_area <- add_in_area(sp_set_counts$set_counts,
-                                         area = area)
+  results_RDS_name <- paste0(file.path(path_results,
+                                       sp_hyphenate(sp,
+                                                    area = TRUE,
+                                                    results = TRUE)))
 
-  if(!("N_it" %in% names(sp_set_counts_with_area)) &
-     "N_it_sum" %in% names(sp_set_counts_with_area)){
-    sp_set_counts_with_area <- sp_set_counts_with_area %>%
-      dplyr::rename(N_it = N_it_sum,
-                    N_it20 = N_it20_sum,
-                    C_it = C_it_sum,
-                    C_it20 = C_it20_sum)
+  if(cached_results){
+    cached <- readRDS(results_RDS_name)
+    sp_set_counts_with_area <- cached[["sp_set_counts_with_area"]]
+    ser_E_and_F <- cached[["ser_E_and_F"]]
+    series_longest <- cached[["series_longest"]]
+  } else {
+    sp_set_counts_with_area <- add_in_area(sp_set_counts$set_counts,
+                                           area = area)
+    if(!("N_it" %in% names(sp_set_counts_with_area)) &
+       "N_it_sum" %in% names(sp_set_counts_with_area)){
+      sp_set_counts_with_area <- sp_set_counts_with_area %>%
+        dplyr::rename(N_it = N_it_sum,
+                      N_it20 = N_it20_sum,
+                      C_it = C_it_sum,
+                      C_it20 = C_it20_sum)
+    }
+    ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
+    series_longest <- calc_iphc_ser_EF(ser_E_and_F)
   }
-
-  ser_E_and_F <- calc_iphc_ser_E_and_F(sp_set_counts_with_area)
-
-  series_longest <- calc_iphc_ser_EF(ser_E_and_F)
 
   # Not creating gfsynopsis formatted output since shouldn't need that for a
   #  restricted area -- see iphc_get_calc_plot() to add something here.
@@ -461,11 +481,20 @@ iphc_get_calc_plot_area <- function(sp,
   plot_IPHC_ser_four_panels(ser_E_and_F,
                             series_longest,
                             sp = sp)
-  list(
-    sp_set_counts_with_area = sp_set_counts_with_area,
-    ser_E_and_F = ser_E_and_F,
-    series_longest = series_longest
-  )
+  res <- list(sp_set_counts_with_area = sp_set_counts_with_area,
+              ser_E_and_F = ser_E_and_F,
+              series_longest = series_longest)
+
+  if(!cached_results){
+    if(!is.null(path_results)){
+      dir.create(path_results,
+                 showWarnings = FALSE)
+      saveRDS(res,
+              file = results_RDS_name,
+              compress = FALSE)
+    }
+  }
+  return(res)
 }
 
 ##' Format results from multiple species for Jennifer's EAFM HG Herring Case
@@ -490,6 +519,7 @@ iphc_get_calc_plot_area <- function(sp,
 ##' @param sp_vec_list list of output, with each element corresponding to each
 ##'   species (and named for that species), and being a tibble of the longest
 ##'   time series. See vignette, since needs to be created outside of a function.
+##' @param path The folder where the cached results will be saved.
 ##' @param filename filename (including .csv) to save .csv file; also saves .rds
 ##'   of sp_vec_list.
 ##' @return saves a .csv file and returns the resulting tibble. Columns are:
@@ -505,10 +535,15 @@ iphc_get_calc_plot_area <- function(sp,
 ##' @}
 iphc_format_for_EAFM <- function(sp_vec,
                                  sp_vec_list,
+                                 path = ".",
                                  filename = "herring-HG-predators-IPHC.csv"){
 
+  dir.create(path,
+             showWarnings = FALSE)
+
   saveRDS(sp_vec_list,
-          gsub(".csv", ".rds", filename))
+          paste0(file.path(path,
+                           gsub(".csv", ".rds", filename))))
 
   eafm_res <- tibble()        # Long format for EAFM Case Study
 
@@ -541,7 +576,8 @@ iphc_format_for_EAFM <- function(sp_vec,
   }
 
   write.csv(eafm_res,
-            filename,
+            paste0(file.path(path,
+                             filename)),
             row.names = FALSE,
             quote = FALSE)
 
