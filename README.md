@@ -117,8 +117,11 @@ So:
  
 ## Citation
 
-If you use this package please cite it, as it is helpful for maintaining it. Type `citation("gfiphc")` (and manually include the year). Thanks!
+If you use this package please cite it as it is helpful for maintaining it:
 
+Edwards, A.M., S.C. Anderson, E.A. Keppel and C.Grandin (2021). gfiphc: Data Extraction and Analysis for Groundfish Data from the IPHC Longline Survey in BC. R package version 1.0.0.
+
+Check `citation("gfiphc")` for the latest version number, and for the bibtex entry (you have to manually add the year).
 
 ## Issues, problems
 

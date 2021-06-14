@@ -1,6 +1,6 @@
 Package: gfiphc
 Title: Data Extraction and Analysis for Groundfish Data from the IPHC Longline Survey in BC
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R:
     c(person(c("Andrew", "M."), "Edwards", email = "a@a.com", role = c("cre", "aut")),
       person(c("Sean", "C."), "Anderson", role = "aut"),
