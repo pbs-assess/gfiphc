@@ -315,31 +315,3 @@ ecologically useful. And a shorter series based on all years for which all hooks
 were counted (Series B) may be more useful than a longer one that uses only the
 first 20 hooks (Series A). In such cases maybe a Series BA could be implemented
 (use original Series B and then rescale Series A).
-
-## Extracting multiple species (not run here)
-
-Originally did these for Joe Watson (16/12/20). Documenting here as an example,
-but not evaluated, though they are needed for the
-`analysis_for_HG_herring_predators` vignette also.
-
-```{r multiple, eval=FALSE}
-sp_vec <- c("yelloweye rockfish",
-            "arrowtooth flounder",
-            "lingcod",
-            "north pacific spiny dogfish",
-            "pacific cod",
-            "pacific halibut",
-            "redbanded rockfish",
-            "sablefish",
-            "walleye pollock",
-            "hook-with-bait.rds")
-
-cache_pbs_data_iphc(sp_vec)
-
-# Do in console to just print the first and last values:
-for(sp in sp_vec){
-  print(sp)
-  print(readRDS(paste0(gsub(" ", "-", sp), ".rds")))
-  print(tail(readRDS(paste0(gsub(" ", "-", sp), ".rds"))$set_counts))
-}
-```

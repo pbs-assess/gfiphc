@@ -838,29 +838,6 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>Recall there is a wrapper function, <code>iphc_get_calc_plot_full(sp)</code>, mentioned at the start of this vignette.</p>
 <p>Note that the code may not yet fully account for all possibilities for the different Series, particularly for rarer species with, by definition, low count numbers. So do check that the output is sensible. The code may calculate a longest series, but it may not be ecologically useful. And a shorter series based on all years for which all hooks were counted (Series B) may be more useful than a longer one that uses only the first 20 hooks (Series A). In such cases maybe a Series BA could be implemented (use original Series B and then rescale Series A).</p>
 </div>
-<div id="extracting-multiple-species-not-run-here" class="section level2">
-<h2>Extracting multiple species (not run here)</h2>
-<p>Originally did these for Joe Watson (16/12/20). Documenting here as an example, but not evaluated, though they are needed for the <code>analysis_for_HG_herring_predators</code> vignette also.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">sp_vec &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;yelloweye rockfish&quot;</span>,</a>
-<a class="sourceLine" id="cb28-2" data-line-number="2">            <span class="st">&quot;arrowtooth flounder&quot;</span>,</a>
-<a class="sourceLine" id="cb28-3" data-line-number="3">            <span class="st">&quot;lingcod&quot;</span>,</a>
-<a class="sourceLine" id="cb28-4" data-line-number="4">            <span class="st">&quot;north pacific spiny dogfish&quot;</span>,</a>
-<a class="sourceLine" id="cb28-5" data-line-number="5">            <span class="st">&quot;pacific cod&quot;</span>,</a>
-<a class="sourceLine" id="cb28-6" data-line-number="6">            <span class="st">&quot;pacific halibut&quot;</span>,</a>
-<a class="sourceLine" id="cb28-7" data-line-number="7">            <span class="st">&quot;redbanded rockfish&quot;</span>,</a>
-<a class="sourceLine" id="cb28-8" data-line-number="8">            <span class="st">&quot;sablefish&quot;</span>,</a>
-<a class="sourceLine" id="cb28-9" data-line-number="9">            <span class="st">&quot;walleye pollock&quot;</span>,</a>
-<a class="sourceLine" id="cb28-10" data-line-number="10">            <span class="st">&quot;hook-with-bait.rds&quot;</span>)</a>
-<a class="sourceLine" id="cb28-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb28-12" data-line-number="12"><span class="kw">cache_pbs_data_iphc</span>(sp_vec)</a>
-<a class="sourceLine" id="cb28-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb28-14" data-line-number="14"><span class="co"># Do in console to just print the first and last values:</span></a>
-<a class="sourceLine" id="cb28-15" data-line-number="15"><span class="cf">for</span>(sp <span class="cf">in</span> sp_vec){</a>
-<a class="sourceLine" id="cb28-16" data-line-number="16">  <span class="kw">print</span>(sp)</a>
-<a class="sourceLine" id="cb28-17" data-line-number="17">  <span class="kw">print</span>(<span class="kw">readRDS</span>(<span class="kw">paste0</span>(<span class="kw">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;-&quot;</span>, sp), <span class="st">&quot;.rds&quot;</span>)))</a>
-<a class="sourceLine" id="cb28-18" data-line-number="18">  <span class="kw">print</span>(<span class="kw">tail</span>(<span class="kw">readRDS</span>(<span class="kw">paste0</span>(<span class="kw">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;-&quot;</span>, sp), <span class="st">&quot;.rds&quot;</span>))<span class="op">$</span>set_counts))</a>
-<a class="sourceLine" id="cb28-19" data-line-number="19">}</a></code></pre></div>
-</div>
 
 
 

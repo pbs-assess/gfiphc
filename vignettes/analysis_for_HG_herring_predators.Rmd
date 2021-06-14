@@ -36,8 +36,7 @@ path_results = "HG-herring-predators-results"  # folder to save results
 ## Data for species of interest
 
 These are the species (herring predators, excluding skate species) identified by
-Jennifer Boldt and used at the end of `data_for_one_species` vignette (the final
-code in that needs to be run first to cache the data).
+Jennifer Boldt:
 ```{r definesp}
 sp_vec <- c("yelloweye rockfish",
             "arrowtooth flounder",
