@@ -52,7 +52,7 @@ Updates since the 2019 synopsis report include
 - vignettes and better documentation
 - Series A-D automatically exclude the expanded grid stations for 2018 (these were included in the original synopsis report)
 - 2019 data are now in GFBio and automatically extracted in the queries here
-- 2020 data are included in `gfiphc` since only the first 20 hooks of each skate were enumerated (and previous years in GFBio had all skates enumerated).
+- 2020 data are included in `gfiphc` since only the first 20 hooks of each skate were enumerated (and previous years in GFBio had all hooks enumerated).
 - 2020 data included also used an expanded grid, defined slightly differently to the expanded grid in 2018. We have stuck with the 2018 definition of which stations are not part of the standard grid. See [iphc-2020-data.pdf](data-raw/iphc-2020-data.pdf), and it's associated `.Rmd` if desired, for details. Also see that for instructions on extracting future years' data from the new IPHC data website. See the IPHC website for full details on survey protocols -- note that fishing in 2020 was mostly in July and August, whereas it is usually May to August.
 - the boostrapping now uses 10,000 bootstrap samples instead of 1000, as it made a difference for some species.
 
