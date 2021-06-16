@@ -207,6 +207,7 @@ NULL
 ##' if species is NULL
 ##' then a data.frame of all species names (the file iphc-spp-names.csv).
 ##' @rdname get_early_iphc
+##' @export
 ##' @examples
 ##' \dontrun{
 ##' get_iphc_spp_name("redbanded rockfish")
@@ -249,6 +250,7 @@ get_iphc_spp_name <- function(species = NULL) {
 ##'  species (listed in function) when countData is NULL.
 ##' @return IPHC species common names in countData (or if NULL IPHC species names
 ##'  in saved set-level IPHC data that are not in iphc-spp-names.csv).
+##' @export
 ##' @examples
 ##' \dontrun{
 ##' check_iphc_spp_name()              # All the IPHC names not in
