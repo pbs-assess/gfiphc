@@ -20,6 +20,10 @@ The latter example is being used to generate predators of Haida Gwaii Pacific He
 
 Users outside of PBS can request someone at PBS to extract the data (try Andrew Edwards first - he has the data extracted and saved from running the `All species` vignette below) and then the analyses within the package will work. The set-level information (not species specific) is built into the package, as is some species-specific data.
 
+## A quick look
+
+To see the available data for your particular species of interest, look at the saved [All species](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/data_for_all_species.html) vignette, and scroll down to the species (the order is the same as in [Anderson et al., 2019](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2019/2019_041-eng.html)). If there are no time series shown, or there are but they have lots of zeros, then you can conclude that the survey does not really catch your species of interest (unless you want to look at occasional observations). If the data do look useful then you'll likely want install and understand the package. 
+ 
 ## Vignettes
 
 The vignettes are the best place to start, as they should cover many analyses users would want to do. The links here go to  the saved .html versions on GitHub. The raw Rmarkdown code is available in the [vignettes](vignettes/) folder and should be used as a template.
