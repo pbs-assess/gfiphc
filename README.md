@@ -89,8 +89,8 @@ Due to the differing data-collection protocols, we developed different ways to o
 
 |                                | Only north of WCVI | Full coast | Restricted area of interest |
 |--------------------------------|--------------------|------------|-----------------------------|
-| First 20 hooks from each skate | A (22)             | D (19)     | E                           |
-| All hooks from each skate      | B (17)             | C (15)     | F                           |
+| First 20 hooks from each skate | A (24)             | D (20)     | E                           |
+| All hooks from each skate      | B (18)             | C (16)     | F                           |
  
 with numbers in parentheses indicating the number of years for which data for each Series are available. For E and F this depends on the particular area of interest. 
 
