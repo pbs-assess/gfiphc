@@ -64,22 +64,22 @@ A particular issue is that the data resolution is not the same across the years.
 
 |Year         |Hooks enumerated          |Data resolution    |Location of data       |WCVI? |
 |-------------|--------------------------|-------------------|-----------------------|-------|
-|1995         |All                       |Set-by-set         |Spreadsheets           |N      |
-|1996         |All                       |Set-by-set         |Spreadsheet            |N      |
-|1997-1998    |First 20 of each skate    |Set-by-set         |Spreadsheet            |N      |
-|1999         |First 20 of each skate    |Set-by-set         |Spreadsheet            |Y      |
-|2000         |First 20 of each skate    |Set-by-set         |Spreadsheet            |N      |
-|2001-2002    |First 20 of each skate    |Set-by-set         |Spreadsheet            |Y      |
+|1995         |All                       |Set-by-set         |gfiphc package         |N      |
+|1996         |All                       |Set-by-set         |gfiphc package         |N      |
+|1997-1998    |First 20 of each skate    |Set-by-set         |gfiphc package         |N      |
+|1999         |First 20 of each skate    |Set-by-set         |gfiphc package         |Y      |
+|2000         |First 20 of each skate    |Set-by-set         |gfiphc package         |N      |
+|2001-2002    |First 20 of each skate    |Set-by-set         |gfiphc package         |Y      |
 |2003-2011    |All                       |Hook-by-hook       |DFO database GFBio     |Y      |
 |2012         |All (bait experiment)     |Hook-by-hook       |DFO database GFBio     |Y      |
-|2013         |First 20 of each skate    |Set-by-set         |Spreadsheet            |Y      |
+|2013         |First 20 of each skate    |Set-by-set         |gfiphc package         |Y      |
 |2014-2017    |All                       |Hook-by-hook       |DFO database GFBio     |Y      |
 |2018         |All (+ expansions stns)   |Hook-by-hook       |DFO database GFBio     |Y      |
 |2019         |All                       |Hook-by-hook       |DFO database GFBio     |Y      |
-|2020         |First 20 of each skate    |Set-by-set         |From IPHC website      |N      |
+|2020         |First 20 of each skate    |Set-by-set         |gfiphc package         |N      |
 
 <!-- for putting back into gfsynopsis, note that 2018 is now separated out) -->
-In 2018 there were extra expansion stations surveyed (see the vignettes), and in 2020 only the first 20 hooks were enumerated.
+In 2018 there were extra expansion stations surveyed (see the vignettes), and in 2020 only the first 20 hooks were enumerated. For 2020, the data were downloaded from the IPHC website and included in the package (see below).
 
 The structure of the data in GFBio is described by [Cooke and Olsen (2020)](https://waves-vagues.dfo-mpo.gc.ca/Library/40879100.pdf), but gfiphc's R functions and built-in SQL queries mean that gfiphc users do not need to have knowledge of GFBio. 
 
