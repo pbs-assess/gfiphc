@@ -80,7 +80,7 @@ sets_raw <- readr::read_csv("set-and-halibut-data-2021.csv") %>%
   dplyr::mutate_if(is.character, factor)
 ```
 
-Now load the original 2020 data (do not change this year) to then test that the column
+Now load the original 2020 data (do not change the 2020 here) to then test that the column
 names and types do not change in future years, and then check columns match `sets_raw`:
 ```{r load2020setdata}
 sets_raw_2020 <- readr::read_csv("set-and-halibut-data-2020.csv") %>%
@@ -99,18 +99,42 @@ setdiff(names(sets_raw_2020), names(sets_raw))
 # Columns in new data not in 2020:
 setdiff(names(sets_raw), names(sets_raw_2020))
 
-# For 2021 looks like Purpose became Purpose Code:
+# For 2021 looks like Purpose became Purpose Code, but are the same type:
 summary(sets_raw_2020$Purpose)
 summary(sets_raw$"Purpose Code")
+testthat::expect_equal(typeof(sets_raw_2020$Purpose),
+                       typeof(sets_raw$"Purpose Code"))
 ```
 
 Those extra columns in 2021 look related to oceanographic data, beyond the scope
 of gfiphc, so can just ignore shortly.
 
+Want to check the overlapping columns have the same type:
+```{r overlappingcols}
+overlap_col_names <- intersect(names(sets_raw_2020),
+                               names(sets_raw))
+# testthat::expect_equal(sapply(dplyr::select(sets_raw_2020,
+#                                            overlap_col_names),
+#                              typeof),
+#                       sapply(dplyr::select(sets_raw,
+#                                            overlap_col_names),
+#                              typeof))
+# Error: sapply(dplyr::select(sets_raw_2020, overlap_col_names), typeof) not equal to sapply(dplyr::select(sets_raw, overlap_col_names), typeof).
+# 1/32 mismatches
+# x[12]: "logical"
+# y[12]: "integer"
+dplyr::select(sets_raw_2020,
+              overlap_col_names[12])
+dplyr::select(sets_raw,
+              overlap_col_names[12])
+```
+These are all NA's anyway (see below) and don't get saved, so no worries.
+
+
 TODO: check if standard grid appears later.
 
 
-```{r new setdata}
+```{r newsetdata}
 sets_raw
 summary(sets_raw)
 testthat::expect_equal(unique(sets_raw$"IPHC Reg Area"), as.factor("2B")) # Check just BC
@@ -125,8 +149,8 @@ Uncomment those three `testthat` commands when looking at new data each year. If
 any of fail then have to comment it out and figure out what it means here.
 
 This is for 2020 (check for future years), to look for station(s) that was
-fished twice:
-```{r understand}
+fished twice (not needed for 2021 since that third test passed)
+```{r understand, eval = FALSE}
 length(unique(sets_raw$Station))
 length(sets_raw$Station)
 dplyr::count(sets_raw, Station) %>% dplyr::filter(n > 1)
@@ -139,36 +163,42 @@ as.data.frame(dplyr::filter(sets_raw,
                             Station == twice_fished))
 
 ```
-So Station `r twice_fished` had two vessels fishing the same station (which the code below
+Not needed for 2021: So Station `r twice_fished` had two vessels fishing the same station (which the code below
 originally caused a total of four rows for that station, explaining the 200 rows
 I had in original `setData2020` before fixing the issue). Interestingly the
 halibut catches were almost double for one vessel than the other (but were 6
 days apart):
 
-Note that one of those entries has 'Vessel code' HAN, but HAN only appears once
-in the whole data set (as seen in `summary(sets_raw)` above:
+2020: Note that one of those entries has 'Vessel code' HAN, but HAN only appears once
+in the whole data set (as seen in `summary(sets_raw)` above.
+
+2021: Two vessels used (these are different to those in 2020, for which HAN then
+got excluded):
 ```{r duplicate}
 summary(sets_raw$"Vessel code")
+summary(sets_raw_2020$"Vessel code")
 ```
 
-So given we want to exclude one of the duplicates, makes sense to exclude
+2020: So given we want to exclude one of the duplicates, makes sense to exclude
 HAN. (Also, Dana mentioned some gear comparison studies for 2020).
-Do this and simplify down to what's needed and rename, based on `iphc2013data.Rnw` (need
+
+Simplify down to what's needed and rename, based on `iphc2013data.Rnw` (need
 to include the 'purpose' column, unlike 2013):
 ```{r simplify}
-sets_simp <- dplyr::filter(sets_raw, `Vessel code` != "HAN") %>%
-  dplyr::select(year = Year,
-                station = Station,
-                lat = "MidLat fished",
-                lon = "MidLon fished",
-                avgDepth = "AvgDepth (fm)",
-                skatesHauled = "No. skates hauled",
-                effSkateIPHC = "Effective skates hauled",
-                soakTimeMinutes = "Soak time (min.)",  # Joe might want
-                usable = Eff,
-                purpose = Purpose,
-                U32halibut = "U32 Pacific halibut count",
-                O32halibut = "O32 Pacific halibut count") %>%
+# sets_simp <- dplyr::filter(sets_raw, `Vessel code` != "HAN") %>%
+sets_simp <- dplyr::select(sets_raw,
+                           year = Year,
+                           station = Station,
+                           lat = "MidLat fished",
+                           lon = "MidLon fished",
+                           avgDepth = "AvgDepth (fm)",
+                           skatesHauled = "No. skates hauled",
+                           effSkateIPHC = "Effective skates hauled",
+                           soakTimeMinutes = "Soak time (min.)",  # Joe might want
+                           usable = Eff,
+                           purpose = "Purpose Code",
+                           U32halibut = "U32 Pacific halibut count",
+                           O32halibut = "O32 Pacific halibut count") %>%
   arrange(station) %>%
   dplyr::mutate(year = as.integer(year),
                 station = as.character(station),
@@ -176,7 +206,7 @@ sets_simp <- dplyr::filter(sets_raw, `Vessel code` != "HAN") %>%
                 usable = as.character(usable))
 sets_simp
 ```
-
+HERE
 For future years check the HAN issue and remove that first line if necessary
 (especially if HAN is used in the survey).
 
