@@ -172,8 +172,8 @@ days apart):
 2020: Note that one of those entries has 'Vessel code' HAN, but HAN only appears once
 in the whole data set (as seen in `summary(sets_raw)` above.
 
-2021: Two vessels used (these are different to those in 2020, for which HAN then
-got excluded):
+For 2021, just noting that two vessels were used, and these are different to those in 2020 (for which HAN then
+got excluded anyway):
 ```{r duplicate}
 summary(sets_raw$"Vessel code")
 summary(sets_raw_2020$"Vessel code")
@@ -206,18 +206,24 @@ sets_simp <- dplyr::select(sets_raw,
                 usable = as.character(usable))
 sets_simp
 ```
-HERE
-For future years check the HAN issue and remove that first line if necessary
-(especially if HAN is used in the survey).
 
-Then change purpose to `standard` (`Y/N`) to match 2018 data (`Y` for the
-standard grid). Here `purpose` takes three values, and we need to convert to
-`standard`:
+## Standard grid or not
+
+Need to change purpose to `standard` (`Y/N`) to match 2018 data (`Y` for the
+standard grid). In the raw 2020 data, `purpose` takes three values that we
+converted to `standard` to save in the package:
+```{r purpose2020}
+summary(sets_raw_2020$Purpose)
+summary(setData2020$standard)
+```
+
+For 2021 we have all as Standard Grid, which probably needs correcting in the
+next section. TODO revise
 ```{r purpose}
 summary(sets_simp$purpose)
 
 sets_simp_std <- dplyr::mutate(sets_simp,
-                               standard_tmp = (purpose == "Standard grid"))
+                               standard_tmp = (purpose == "Standard Grid")) # was g not G in 2020
 
 standard <- as.character(sets_simp_std$standard_tmp)  # to get the right length
 standard[sets_simp_std$standard_tmp] = "Y"
@@ -229,7 +235,11 @@ sets_simp_std <- cbind(sets_simp_std,
   as_tibble() %>%
   dplyr::select(-c("standard_tmp"))
 summary(sets_simp_std)
+unique(sets_simp_std$standard)
 ```
+
+So they are all classified as standard. Now need to understand if this is
+correct.
 
 ## Look at data and show map to understand changing definition of standard station from 2018 to 2020.
 
