@@ -243,51 +243,64 @@ correct.
 
 ## Look at data and show map to understand changing definition of standard station from 2018 to 2020.
 
-It seems that the definition of 'standard grid' has changed from 2018 (when
-first needed due to the expanded grid) to 2020. Simply equating them as above is
-not sufficient.
+The definition of 'standard grid' changed from 2018 (when
+first needed due to the expanded grid) to 2020 (and 2021). Simply equating them as above is
+not sufficient. For 2021 we so far have
+
+```{r map2021
+plot_iphc_map(sets_simp_std,
+              sp = NULL,
+              years = 2021,
+              indicate_standard = TRUE)
+```
+
+
 
 This section figures out the two problems and corrects them. However, to replicate the original
 analysis we need to revert the second correction (the correction changes station
-`2343` to be non-standard, even though it originally was classed as standard --
+`2343` to be non-standard in the package, even though it originally was classed as standard --
 see later):
 ```{r revert}
 hooks_with_bait_revert <- hooks_with_bait
 
 # This should be commented out for 2021 survey analysis in iphc-2021-data.Rmd,
-#  since the problem is fixed:
-hooks_with_bait_revert$set_counts[hooks_with_bait_revert$set_counts$year == 2018 &
-                           hooks_with_bait_revert$set_counts$station == 2343,
-                           ]$standard = "Y"
+#  since the problem is presumably fixed. This is to revert back to the original
+#  problem, for which 2343 was called standard in 2018 but we changed it. Map on
+#  page 10 of iphc-2020-data.pdf has this station (second one down off
+#  north-east tip of Haida Gwaii) as non-standard in 2018 but not 2020.
+# hooks_with_bait_revert$set_counts[hooks_with_bait_revert$set_counts$year == 2018 &
+#                            hooks_with_bait_revert$set_counts$station == 2343,
+#                            ]$standard = "Y"
 
-filter(hooks_with_bait$set_counts, year == 2018, station == 2343) %>%
-  as.data.frame()      # saved version
-filter(hooks_with_bait_revert$set_counts, year == 2018, station == 2343) %>%
-  as.data.frame()      # reverted version
+#filter(hooks_with_bait$set_counts, year == 2018, station == 2343) %>%
+#  as.data.frame()      # saved version
+#filter(hooks_with_bait_revert$set_counts, year == 2018, station == 2343) %>%
+#  as.data.frame()      # reverted version
 
 ```
 
-Plotting four years, with crosses showing 'non-standard'. (2020 is coloured
+Plotting four years, with crosses showing 'non-standard'. (2021 is coloured
 different since no hooks with bait data yet, but the important bit is the crosses).
 ```{r maps}
-sets_2020 <- dplyr::select(sets_simp_std,
+plot_iphc_map_panel(hooks_with_bait$set_counts,
+                    sp = "Hooks with bait",
+                    years = 2018:2020,
+                    indicate_standard = TRUE)
+
+sets_2021 <- dplyr::select(sets_simp_std,
                            -c(U32halibut, O32halibut))
-                           # not the same structure as sets_2018, below
+                           # else not the same structure as sets_2018, below
 
-plot_iphc_map_panel(hooks_with_bait_revert$set_counts,
-               sp = "Hooks with bait",
-               years = 2017:2019,
-               indicate_standard = TRUE)
-
-plot_iphc_map(sets_2020,
+plot_iphc_map(sets_2021,
               sp = NULL,
-              years = 2020,
+              years = 2021,
               indicate_standard = TRUE)
 ```
 
 Clearly 2020 has a few less stations just north of Vancouver Island, but not
-enough to worry about greatly. The curious ones are the ones way in in the
-inlets that are no longer flagged as non-standard.
+enough to worry about greatly, and 2021 has kind of done a few of those. The
+curious ones are the 2021 ones way in in the inlets that are no longer flagged as
+non-standard (they were originally in 2020); in fact none are.
 
 Need to look and plot values:
 ```{r standardornot}
@@ -296,65 +309,65 @@ sets_2018 <- filter(hooks_with_bait_revert$set_counts,
 not_std_2018 <- filter(sets_2018,
                        standard == "N")$station
 
-
-not_std_2020 <- filter(sets_2020,
+not_std_2021 <- filter(sets_2021,
                        standard == "N")$station
 
 # Not standard in both:
-not_std_2018_and_2020 <- intersect(not_std_2018, not_std_2020)
-not_std_2018_and_2020
+not_std_2018_and_2021 <- intersect(not_std_2018, not_std_2021)
+not_std_2018_and_2021
 
 length(not_std_2018)
-length(not_std_2020)
-length(not_std_2018_and_2020)
+length(not_std_2021)
+length(not_std_2018_and_2021)
 
 # 2018 has some east of the map, all non-standard:
 filter(hooks_with_bait_revert$set_counts, year == 2018, lon > -124)$standard
 nrow(filter(hooks_with_bait_revert$set_counts, year == 2018, lon > -124))
 
-std_in_2018_but_not_std_in_2020 <- intersect(filter(sets_2018,
+std_in_2018_but_not_std_in_2021 <- intersect(filter(sets_2018,
                                                     standard == "Y")$station,
-                                             not_std_2020)
-std_in_2018_but_not_std_in_2020
+                                             not_std_2021)
+std_in_2018_but_not_std_in_2021
 
-not_std_in_2018_but_std_in_2020 <- intersect(not_std_2018,
-                                             filter(sets_2020,
+not_std_in_2018_but_std_in_2021 <- intersect(not_std_2018,
+                                             filter(sets_2021,
                                                     standard == "Y")$station)
-not_std_in_2018_but_std_in_2020
+not_std_in_2018_but_std_in_2021
 
 # setdiff(x, y) - elements in x but not in y
 # setdiff(not_std_2018, not_std_2020) - but 2020 fewer coverage so misleading
 ```
 
-Plot stations not standard in 2018 but standard in 2020, and vice versa, using
+Plot stations not standard in 2018 but standard in 2021, and vice versa, using
 each years' lats and lons (to verify that they all still agree -- i.e., that station
 numbers have consistent lats and lons), and show 2019 data to check no 'usual'
-stations are non-standard in 2018 or 2020:
+stations are non-standard in 2018 or 2021:
 
 ```{r mapstandard}
 plot_BC()
 points(lat~lon,
        data = filter(sets_2018,
-                     station %in% not_std_in_2018_but_std_in_2020),
+                     station %in% not_std_in_2018_but_std_in_2021),
        col="red",
        pch = 19)
 
-# Do the same but using 2020 station co-ordinates - should overlap:
+# Do the same but using 2021 station co-ordinates - should overlap:
 points(lat~lon,
-       data = filter(sets_2020,
-                     station %in% not_std_in_2018_but_std_in_2020),
+       data = filter(sets_2021,
+                     station %in% not_std_in_2018_but_std_in_2021),
        col="blue",
        pch = 3)
 
-# And show the single station std in 2018 but not 2020:
+# And for 2020 showed the single station std in 2018 but not 2020, for 2021
+# there are none:
 points(lat~lon,
        data = filter(sets_2018,
-                     station %in% std_in_2018_but_not_std_in_2020),
+                     station %in% std_in_2018_but_not_std_in_2021),
        col="red",
        pch = 17)
 points(lat~lon,
-       data = filter(sets_2020,
-                     station %in% std_in_2018_but_not_std_in_2020),
+       data = filter(sets_2021,
+                     station %in% std_in_2018_but_not_std_in_2021),
        col="blue",
        pch = 1,
        cex = 2)
@@ -367,42 +380,47 @@ points(lat~lon,
        pch = 0)
 
 legend("bottomleft",
-       legend = c("Not std 2018 but std 2020 (2018 co-ords)",
-                  "Not std 2018 but std 2020 (2020 co-ords)",
-                  "Std 2018 but not std 2020 (2018 co-ords)",
-                  "Std 2018 but not std 2020 (2020 co-ords)",
+       legend = c("Not std 2018 but std 2021 (2018 co-ords)",
+                  "Not std 2018 but std 2021 (2021 co-ords)",
+                  "Std 2018 but not std 2021 (2018 co-ords)",
+                  "Std 2018 but not std 2021 (2021 co-ords)",
                   "All 2019 stations"),
              pch = c(19, 3, 17, 1, 0),
              pt.cex = c(1, 1, 1, 2, 1),
              col = c("red", "blue", "red", "blue", "darkgreen"))
 ```
+So the co-ordinates look close enough (red circles and blue corsses overlap),
+none were defined as non-standard in 2021 so there are no red triangles or blue
+circles, and the green squares for 2019 stations correctly do not overlap with
+the non-standard 2018 stations.
 
+2020 only (there were no non-standard stations defined in raw data for 2021):
 Check if the one standard station in 2018 but not in 2020 (not fished at all in 2019)
 appears in any earlier years:
-```{r checkearly}
-filter(hooks_with_bait_revert$set_counts,
-       station == std_in_2018_but_not_std_in_2020) %>%
+```{r checkearly, eval=FALSE}
+# Fails since empty in 2021, and this is corrected
+dplyr::filter(hooks_with_bait_revert$set_counts,
+              station == std_in_2018_but_not_std_in_2021) %>%
   as.data.frame()
 ```
-Was only fished in 2018 and 2020, so we should define it as non-standard.
+For 2020 worked out it was only fished in 2018 and 2020 so we defined it as non-standard.
 
-So, the conclusions from this section are that we should:
+So, the conclusion from this section is that we should:
 
-1. Retain the 2018 definitions of standard stations, not the new ones defined in 2020:
+1. Retain the 2018 definitions of standard stations, not the new ones defined in
+2021, as we did for 2020:
 ```{r corrected}
 sets_simp_std_corrected <- sets_simp_std
 
 sets_simp_std_corrected$standard[sets_simp_std_corrected$station %in%
-                                 not_std_in_2018_but_std_in_2020] <- "N"
+                                 not_std_in_2018_but_std_in_2021] <- "N"
 # cbind(sets_simp_std$standard, sets_simp_std_corrected$standard) # to check
 ```
 
-2. Define station 2343 as non-standard (over-riding original 2018 designation).
-
-So check which functions that need changing, since they create a 'standard'
+2020 (no need to change for 2021): So check which functions need changing, since they create a 'standard'
 column. These do not need changing: `get_iphc_hooks()` and `get_iphc_skates_info`.
 
-Then `get_iphc_sets_info()` does return `standard`, but the `standard`
+2020: Then `get_iphc_sets_info()` does return `standard`, but the `standard`
 designation is not saved in GFBio it is saved in `setDataExpansion` in `gfiphc`.
 So just need to add a line in `IPHC-stations-expanded.R` and then re-save all
 .rda files. Fixed that, now recreating all .rda files, as per the README.
