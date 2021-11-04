@@ -427,22 +427,48 @@ So just need to add a line in `IPHC-stations-expanded.R` and then re-save all
 
 ## Species counts
 
-First, get the species counts into the desired format (to match `countData2013` shown earlier):
-```{r counts}
-counts_raw <- readr::read_csv("non-halibut-data-2020.csv") %>%
+Now get the species counts into the desired format (to match `countData2013`
+shown earlier). First check that the column names and types haven't changed
+(they did for set data from 2020 to 2021):
+```{r countsnames}
+counts_raw_2020 <- readr::read_csv("non-halibut-data-2020.csv") %>%
   dplyr::mutate_if(is.character, factor)
 
+counts_raw <- readr::read_csv("non-halibut-data-2021.csv") %>%
+  dplyr::mutate_if(is.character, factor)
+
+testthat::expect_equal(names(counts_raw_2020),
+                       names(counts_raw))
+
+testthat::expect_equal(sapply(counts_raw_2020, typeof),
+                       sapply(counts_raw, typeof))
+```
+Great, nothing changed in the structure.
+
+```{r counts}
 counts_raw
 summary(counts_raw)
-testthat::expect_equal(unique(counts_raw$Year), 2020)
+testthat::expect_equal(unique(counts_raw$Year), 2021)
 testthat::expect_equal(unique(counts_raw$SampleType), as.factor("20Hook"))
 
-# This mismatches for 2020:
-# testthat::expect_equal(length(unique(counts_raw$Station)),
-#                        length(sets_raw$Station))
+# This mismatches for 2020, not for 2021:
+testthat::expect_equal(length(unique(counts_raw$Station)),
+                       length(sets_raw$Station))
 
 unique(counts_raw$"Species Name")
 ```
+
+Here's what was seen in 2020 but not 2021, and vice versa:
+```{r seenoneyear}
+# Seen in 2020 not 2021
+setdiff(unique(counts_raw_2020$"Species Name"),
+        unique(counts_raw$"Species Name"))
+# Seen in 2021 not 2020
+setdiff(unique(counts_raw$"Species Name"),
+        unique(counts_raw_2020$"Species Name"))
+```
+Presumably Sun Sea Star and Sunflower Sea Star are the same. Will look into and
+fix later on.
 
 Note that halibut are not included in these counts:
 ```{r nohalibut}
@@ -452,6 +478,7 @@ which I presume explains why
 total number of counts for a station does not add up to `HooksObserved`. See
 later for halibut calculations.
 
+HERE for 2021 - don't need next stuff.
 Need to remove the HAN records for the twice-fished station, which turns out to
 be set number 4 for station 2104:
 ```{r twicefished}
