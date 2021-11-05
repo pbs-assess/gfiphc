@@ -5,8 +5,8 @@
 
 <!-- badges: end -->
 
-[If badge above says build-error you can probably ignore it - it's using Travis
-and I'll update it to GitHub Actions, so downloading should work]
+[If the badge above says `build error` you can probably ignore it and install
+the package as usual. It's a Travis thing and I'll soon update it to GitHub Actions]
 
 The International Pacific Halibut Commission (IPHC) conducts an annual stock assessment longline survey in waters from California to Alaska, including British Columbia (BC) waters. The survey's main goal is to provide data on Pacific Halibut (*Hippoglosus stenolepis*) for stock assessment purposes. However, data are also recorded on other species caught, making it the longest ongoing groundfish survey in BC waters and hence a valuable source of data for many species.
 
