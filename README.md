@@ -108,23 +108,17 @@ So:
 
 1. Adapt `data-raw/iphc-2020-data.Rmd` as just described.
 
-1. Create/adapt new functions to include the data in the calculations. For data in GFbio this should be automatic, else see what was done just after commit a5ecd2a for 2020, though I made some notes here which am updating for 2021:
+1. Create/adapt new functions to include the data in the calculations. For data in GFbio this should be automatic, else see what was done just after commit a5ecd2a for 2020, or (easier) see these notes made updated in 2021:
 
-1. Further files in `R/` that need checking (search through for most recent year and update); I copied the names here for 2021 and deleted the ones that didn't need updating (? means not done yet); this could be automated but it's actually good to look through the code each year:
+1. Further files in `R/` that need checking (search through for most recent year and update; I checked all `R/` files in 2021 and these are the ones; this could be automated but it's actually good to look through the code each year:
 
-  - gfiphc.R  
-  - iphc-data.R
-  - plot-iphc.R
-  - tidy-iphc-survey.R ?
-  - utils-pipe.R ? 
-  - utils.R ?
-
+ * gfiphc.R  
+ * iphc-data.R
+ * plot-iphc.R
 
 1. Re-run (line by line to check) `data-raw/sets-skates-hooks-yelloweye.R` to save some more new data into package.
 
-1. Add lines for new year, `data_names_XXXX` in `check_iphc_spp_name()`.
-
-1. Update documentation of data sets in `R/data.R` if necessary.
+1. Check that lines for new year, `data_names_XXXX` in `check_iphc_spp_name()` in `iphc-data.R` got updated.
 
 1. Go through and rerun the vignettes, adapting any called functions or printed results as necessary to include latest year of data, making sure the latest year is included and the maps make sense.
 
