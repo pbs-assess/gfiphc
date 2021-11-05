@@ -116,9 +116,9 @@ So:
    * iphc-data.R
    * plot-iphc.R
 
-1. Re-run (line by line to check) `data-raw/sets-skates-hooks-yelloweye.R` to save some more new data into package.
+1. Check that the lines for new year `data_names_XXXX` in `check_iphc_spp_name()` in `iphc-data.R` got updated.
 
-1. Check that lines for new year, `data_names_XXXX` in `check_iphc_spp_name()` in `iphc-data.R` got updated.
+1. Re-run (line by line to check) `data-raw/sets-skates-hooks-yelloweye.R` to save some more new data into package.
 
 1. Go through and rerun the vignettes, adapting any called functions or printed results as necessary to include latest year of data, making sure the latest year is included and the maps make sense.
 
@@ -126,6 +126,8 @@ So:
 
 1. Re-run `data-raw/iphc-****-data.Rmd` again to use all the finalised saved data, and commit its .pdf file.
 
+1. Update the two tables above of what data are available each year and what Series can be made, checking with vignettes. Add notes as necessary (e.g. 2021 only subsampled off WCVI).
+ 
 1. Update version number.
 
 ## Citation
