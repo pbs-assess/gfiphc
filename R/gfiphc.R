@@ -132,7 +132,9 @@ if (getRversion() >= "2.15.1") {
     "setDataExpansion",
     "C_it20_sum", "C_it_sum", "EID", "HG_herring_pred_area",
     "N_it20_sum N_it_sum",
-    "Year", "axis", "countData2020", "in_area", "tail", "text", "title", "write.csv",
+    "Year", "axis", "countData2020", "in_area", "tail", "text", "title",
+    "write.csv", "setData2020", "countData2021", "setData2021",
+
 
     # others
     "parent_rsty_id", "parent_taxonomic_unit", "row_version", "rsty_id",

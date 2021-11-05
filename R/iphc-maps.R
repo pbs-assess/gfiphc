@@ -41,7 +41,7 @@
 ##' @param indicate_in_area indicate whether or not station is within a
 ##'   specficied area, as indicated by TRUE/FALSE in `set_counts_of_sp$in_area`
 ##' @param indicate_standard indicate whether or not station is part of the
-##'   standard stations or an expansion (in 2018, 2020, and maybe later), as
+##'   standard stations or an expansion (in 2018, 2020, and later), as
 ##'   indicated by Y/N in `set_counts_of_sp$standard`
 ##' @param ... extra arguments to `par()`
 ##' @return A map of the IPHC survey stations for that year and species, with a
@@ -189,7 +189,7 @@ plot_iphc_map <- function(set_counts_of_sp,
          pch = pch_pos_count,
          cex = cex_val)
 
-  # Add crosses for those not considered 'standard' stations in 2018 and 2020,
+  # Add crosses for those not considered 'standard' stations in 2018, 2020 and later,
   #  originally to help figure out the differing definitions of standard in those two years.
   if(indicate_standard){
     points(lat~lon,

@@ -832,3 +832,5 @@ usethis::use_data(countData2021,
 usethis::use_data(setData2021,
                   overwrite = TRUE)
 ```
+
+Add descriptions for new years in `R/data.R`.
