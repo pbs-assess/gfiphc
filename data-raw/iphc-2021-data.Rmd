@@ -722,29 +722,98 @@ unique(dplyr::filter(countData2021, specCount == 0)$spNameIPHC)
 
 The file `inst/extdata/iphc-spp-names.csv` contains species common names (as
 used for gfsynopsis, and a few extra like `unidentified skate`) and the IPHC
-common name.
+common name. The function `check_iphc_spp_name()` has a list of non-groundfish
+species that are automatically ignored. These first results are from running
+these functions *before* updating anything, so the results are hardwired
+here (chunks are not evaluated). Then we update the species list and re-run the functions.
 
-These are IPHC names that are not given in `iphc-spp-names.csv`.
-```{r notconverted}
+These are IPHC names that are not given in `iphc-spp-names.csv` (ignoring
+obvious ones that are listed in the function):
+```{r notconverted, eval=FALSE}
 check_iphc_spp_name()
+##  [1] "Unidentified Shark"          "Unident. Rockfish"
+##  [3] "unident. thornyhead (Idiot)" "Grenadier (Rattails)"
+##  [5] "Miscellaneous Shark"         "Eelpout"
+##  [7] "unident. Roundfish"          "unident. Sculpin"
+##  [9] "Unident. Flatfish"           "Greenland Turbot"
+## [11] "unident. Hagfish"            "Starry Skate"
+## [13] "Black Skate"                 "Brittle Star"
+## [15] "Glass Sponge"                "Basketstar"
+## [17] "Blackspotted Rockfish"
 ```
 
-These are the ones just for the new 2020 data:
-```{r justnew}
+These are the ones just for the new 2021 data:
+```{r justnew, eval=FALSE}
+check_iphc_spp_name(countData2021)
+##  [1] "Basketstar"                   "unident. thornyhead (Idiot)"
+##  [3] "Sandpaper Skate"              "Sea Whip"
+##  [5] "Stylaster campylecus (coral)" "Brittle Star"
+##  [7] "unident. Sculpin"             "Glass Sponge"
+##  [9] "Sun Sea Star"                 "Salmon Shark"
+## [11] "Jellyfish"                    "Great Sculpin"
+## [13] "Cabezon"                      "Unident. Salmon"
+## [15] "Unident. Rockfish"            "unident. organic matter"
+## [17] "Dungeness Crab"               "Blackspotted Rockfish"
+```
+There were only six for 2020 though (a lot more for 2021):
+```{r new2020, eval=FALSE}
 check_iphc_spp_name(countData2020)
+## [1] "unident. thornyhead (Idiot)" "Brittle Star"
+## [3] "Glass Sponge"                "Basketstar"
+## [5] "Blackspotted Rockfish"       "unident. Sculpin"
 ```
 
-Of these, only the Thornyhead and Blackspotted Rockfish are likely of interest
-(Issues #17 and #18). And maybe the sharks.
+For 2020 I said that only the Thornyhead and Blackspotted Rockfish are likely of
+interest (Issues #17 and #18). And the sharks from the earlir list. So look at just the new ones in 2021 that
+aren't in 2020 or any previous year:
 
-TODO: See earlier regarding Sun Sea Star
+```{r new2021, eval =FALSE}
+setdiff(check_iphc_spp_name(countData2021),
+        check_iphc_spp_name())
+# Before updating anything this gives:
+# [1] "Sandpaper Skate"              "Sea Whip"
+# [3] "Stylaster campylecus (coral)" "Sun Sea Star"
+# [5] "Salmon Shark"                 "Jellyfish"
+# [7] "Great Sculpin"                "Cabezon"
+# [9] "Unident. Salmon"              "unident. organic matter"
+# [11] "Dungeness Crab"
+```
+
+Of these, Sandpaper Skate, Salmon Shark, Great Sculpin, and Cabezon are in gfsynopsis but have not been
+designated an `iphc_common_name` in `iphc-spp-names.csv` (have to do that manually). Though Sandpaper Skate,
+Salmon Shark, and Great Sculpin do show up has having IPHC data in 2019 gfsynopsis report,
+but looks like only data from GFBio, looking carefully at the
+`data_for_all_species` vignette for 2020:
+http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/data_for_all_species.html
+They did not have 2020 IPHC data, but do for 2021 (GS had 1995 and 1996 as zeros;
+don't think others did). Cabezon has no previous data.
+
+So, need to add those species to `iphc-spp-names.csv`, which may discover some
+old data for those years when I redo the vignettes, as it seems strange that
+they never seem to show up in the 20-hook-only data, just in GFBio.
+
+Also add these to the `ignore_obvious` list in `check_iphc_spp_name()`:
+
+"Sea Whip",
+"Stylaster campylecus (coral)",
+"Sun Sea Star",
+"Jellyfish"
+"Unident. Salmon",
+"unident. organic matter",
+"Dungeness Crab"
+
+That list already had Sunflower Sea Star in it, presumably the same as Sun Sea
+Star.
+
+Then redoing those above commands with updated code gives:
+
 
 ## Save data sets
 
 ```{r savedata}
-usethis::use_data(countData2020,
+usethis::use_data(countData2021,
                   overwrite = TRUE)
 
-usethis::use_data(setData2020,
+usethis::use_data(setData2021,
                   overwrite = TRUE)
 ```
