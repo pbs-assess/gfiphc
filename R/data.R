@@ -180,7 +180,7 @@
 "setDataExpansion"
 
 
-#' Count data for 20202 IPHC survey
+#' Count data for 2020 IPHC survey
 #'
 #' A dataset containing counts of each species for each
 #' station for the 2020 IPHC survey.
@@ -193,7 +193,8 @@
 #'   \item{spNameIPHC}{species name for the counts for that set}
 #'   \item{specCount}{count of that species for that set}
 #' }
-#' @source See `data-raw/iphc-2020-data.Rmd` for full details and how data were
+#' @source See `data-raw/iphc-2020-data.Rmd` and saved
+#'   `data-raw/iphc-2020-data.pdf` for full details and how data were
 #'   extracted from IPHC website.
 "countData2020"
 
@@ -223,9 +224,55 @@
 #'   \item{hooksObs}{number of hooks observed for that set (already used to
 #'   calculate `E_it20`, but saving anyway)}
 #' }
-#' @source See `data-raw/iphc-2020-data.Rmd` for full details and how data were
-#'   extracted from IPHC website.
+#' @source See `data-raw/iphc-2020-data.Rmd` and `data-raw/iphc-2020-data.pdf`
+#'   for full details and how data were extracted from IPHC website.
 "setData2020"
+
+#' Count data for 2021 IPHC survey (following 2020 approach since 20-hooks again)
+#'
+#' A dataset containing counts of each species for each
+#' station for the 2021 IPHC survey.
+#'
+#' @format A tibble:
+#' \describe{
+#'
+#'   \item{year}{2021 for this data set}
+#'   \item{station}{station name}
+#'   \item{spNameIPHC}{species name for the counts for that set}
+#'   \item{specCount}{count of that species for that set}
+#' }
+#' @source See `data-raw/iphc-2021-data.Rmd` and saved
+#'   `data-raw/iphc-2021-data.pdf` for full details and how data were
+#'   extracted from IPHC website.
+"countData2021"
+
+#' Station data for 2021 IPHC survey (following 2020 approach since 20-hooks again)
+#'
+#' A dataset containing details of the stations for the 2021
+#' IPHC survey; one set was deployed at each station.
+#'
+#' @format A tibble:
+#' \describe{
+#'   \item{year}{2021 for this data set}
+#'   \item{station}{station name}
+#'   \item{lat}{latitude of station}
+#'   \item{lon}{longitude of station}
+#'   \item{avgDepth}{average depth of set (in fathoms, haven't checked units for
+#'   earlier years)}
+#'   \item{effSkateIPHC}{effective skate number of the set, as calculated by IPHC}
+#'   \item{E_it20}{effective skate number of the set based on the first 20 hooks
+#'     only, calculated as the (number of hooks observed)/
+#'     (number of hooks retrieved) * effSkateIPHC}
+#'   \item{usable}{whether or not the set is usable, as determined by IPHC}
+#'   \item{standard}{whether or not the station is a standard station or in the
+#'   expanded grid}
+#'   \item{hooksRetr}{number of hooks retrieved for that set}
+#'   \item{hooksObs}{number of hooks observed for that set (already used to
+#'   calculate `E_it20`, but saving anyway)}
+#' }
+#' @source See `data-raw/iphc-2021-data.Rmd` and `data-raw/iphc-2021-data.pdf`
+#'   for full details and how data were extracted from IPHC website.
+"setData2021"
 
 
 
