@@ -153,7 +153,7 @@ length(sets_raw$Station)
 dplyr::count(sets_raw, Station) %>% dplyr::filter(n > 1)
 twice_fished <- dplyr::count(sets_raw, Station) %>%
   dplyr::filter(n > 1) %>%
-  select(Station) %>%
+  dplyr::select(Station) %>%
   as.numeric()
 # If there's more than a single station then adapt later code
 as.data.frame(dplyr::filter(sets_raw,
@@ -277,14 +277,15 @@ hooks_with_bait_revert <- hooks_with_bait
 Plotting four years, with crosses showing 'non-standard'. (2021 is coloured
 different since no hooks with bait data yet, but the important bit is the crosses).
 ```{r maps}
+sets_2021 <- dplyr::select(sets_simp_std,
+                           -c(U32halibut, O32halibut))
+                           # else not the same structure as sets_2018, below
+
 plot_iphc_map_panel(hooks_with_bait$set_counts,
                     sp = "Hooks with bait",
                     years = 2018:2020,
                     indicate_standard = TRUE)
 
-sets_2021 <- dplyr::select(sets_simp_std,
-                           -c(U32halibut, O32halibut))
-                           # else not the same structure as sets_2018, below
 
 plot_iphc_map(sets_2021,
               sp = NULL,
@@ -292,10 +293,11 @@ plot_iphc_map(sets_2021,
               indicate_standard = TRUE)
 ```
 
-Clearly 2020 has a few less stations just north of Vancouver Island, but not
+Can see that 2020 has a few less stations just north of Vancouver Island, but not
 enough to worry about greatly, and 2021 has kind of done a few of those. The
-curious ones are the 2021 ones way in in the inlets that are no longer flagged as
-non-standard (they were originally in 2020); in fact none are.
+2021 ones way in in the inlets are not currently flagged as non-standard but
+will be below (using the 2018 definitions). Main thing is 2021 doing a random
+sample of WCVI stations, some of which will be non-standard.
 
 Need to look and plot values:
 ```{r standardornot}
@@ -336,7 +338,8 @@ not_std_in_2018_but_std_in_2021
 Plot stations not standard in 2018 but standard in 2021, and vice versa, using
 each years' lats and lons (to verify that they all still agree -- i.e., that station
 numbers have consistent lats and lons), and show 2019 data to check no 'usual'
-stations are non-standard in 2018 or 2021:
+stations are non-standard in 2018 or 2021. Also (for 2021) adding all stations,
+since this will clearly show the random sampling off WCVI
 
 ```{r mapstandard}
 plot_BC()
@@ -367,6 +370,7 @@ points(lat~lon,
        pch = 1,
        cex = 2)
 
+
 # Now show all 2019 stations:
 points(lat~lon,
        data = filter(hooks_with_bait_revert$set_counts,
@@ -374,20 +378,29 @@ points(lat~lon,
        col="darkgreen",
        pch = 0)
 
+# Add all 2021 stations as a small black dot
+points(lat~lon,
+       data = sets_2021,
+       col="black",
+       pch = 20,
+       cex = 0.8)
+
 legend("bottomleft",
        legend = c("Not std 2018 but std 2021 (2018 co-ords)",
                   "Not std 2018 but std 2021 (2021 co-ords)",
                   "Std 2018 but not std 2021 (2018 co-ords)",
                   "Std 2018 but not std 2021 (2021 co-ords)",
-                  "All 2019 stations"),
-             pch = c(19, 3, 17, 1, 0),
-             pt.cex = c(1, 1, 1, 2, 1),
-             col = c("red", "blue", "red", "blue", "darkgreen"))
+                  "All 2019 stations",
+                  "All 2021 stations"),
+             pch = c(19, 3, 17, 1, 0, 20),
+             pt.cex = c(1, 1, 1, 2, 1, 0.8),
+             col = c("red", "blue", "red", "blue", "darkgreen", "black"))
 ```
 So the co-ordinates look close enough (red circles and blue corsses overlap),
 none were defined as non-standard in 2021 so there are no red triangles or blue
 circles, and the green squares for 2019 stations correctly do not overlap with
-the non-standard 2018 stations.
+the non-standard 2018 stations. Black dots (2021 stations) with no green squares
+off WCVI clearly shows the reduced coverage there.
 
 2020 only (there were no non-standard stations defined in raw data for 2021):
 Check if the one standard station in 2018 but not in 2020 (not fished at all in 2019)
@@ -415,7 +428,26 @@ summary(as.factor(sets_simp_std_corrected$standard))
 ```
 
 Think I hadn't originally defined them as factors in early code, so keeping them
-as characters now.
+as characters now. Just to vefify that none of the 2018 non-standard stations
+were fished before 2018:
+```{r checknon}
+dplyr::filter(hooks_with_bait$set_counts,
+              station %in% not_std_2018) %>%
+  dplyr::select(year) %>%
+  unique()
+```
+Note 2021 won't show up here until .rda objects are resaved in package, at the
+end of this .pdf.
+
+So here are the final station designations for 2021:
+```{r map2021}
+plot_iphc_map(sets_simp_std_corrected,
+              sp = NULL,
+              years = 2021,
+              indicate_standard = TRUE)
+```
+Can see that they did 10 random stations off WCVI that we're calling
+non-standard (because they were never fished before 2018).
 
 2020 (no need to change for 2021): So check which functions need changing, since they create a 'standard'
 column. These do not need changing: `get_iphc_hooks()` and `get_iphc_skates_info`.
@@ -468,7 +500,7 @@ setdiff(unique(counts_raw$"Species Name"),
         unique(counts_raw_2020$"Species Name"))
 ```
 Presumably Sun Sea Star and Sunflower Sea Star are the same. Will look into and
-fix later on.
+fix later on. TODO
 
 Note that halibut are not included in these counts:
 ```{r nohalibut}
