@@ -108,7 +108,23 @@ So:
 
 1. Adapt `data-raw/iphc-2020-data.Rmd` as just described.
 
-1. Create/adapt new functions to include the data in the calculations. For data in GFbio this should be automatic, else see what was done just after commit a5ecd2a for 2020 (may make notes here).
+1. Create/adapt new functions to include the data in the calculations. For data in GFbio this should be automatic, else see what was done just after commit a5ecd2a for 2020, though I made some notes here which am updating for 2021:
+
+1. Files in `R/` that need checking (search through for most recent year and update); I copied the names here for 2021 and deleted the ones that didn't need updating (? means not done yet):
+
+
+  - calc-iphc-ser-area.R 	 ?
+  - calc-iphc-ser.R ?
+  - data.R ? 
+  - gfiphc.R ? 
+  - iphc-data.R
+  - iphc-maps.R  ?	
+  - plot-iphc.R ?
+  - tidy-iphc-survey.R ?
+  - utils-pipe.R ? 
+  - utils.R ?
+
+
 
 1. Change `get_all_iphc_set_counts()` to include new year, checking that `get_iphc_from_gfiphc()` works.
 
