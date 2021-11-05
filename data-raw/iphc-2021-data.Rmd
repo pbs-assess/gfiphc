@@ -3,6 +3,7 @@ title: "Check the 2021 data and incorporate it into gfiphc"
 author: "Andrew Edwards"
 output: pdf_document
 fontsize: 12pt
+date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 ---
 
 ```{r, include = FALSE}
@@ -16,12 +17,14 @@ knitr::opts_chunk$set(
 
 In 2021 (as for 2020) only the first 20 hooks were evaluated, so those data are not easily imported into
 GFBio. Going to incorporate into gfiphc here. Likely need this as a template for
-future years (resave this file with new year, and change all 2021's to the
-subsequent year -- and go through the code somewhat manually to check the output
-as you go along; do Emacs Alt-query replace but read carefully as going along). This code includes some
+future years: resave this file with new year, and change all 2021's to the
+subsequent year, go through the code somewhat manually to check the output
+as you go along (in Emacs do Alt-query-replace to change years but read
+carefully as going along), and then finally render the full document to make the
+.pdf. This code includes some
 manual checks to make sure the data look
-okay. The intended stations for 2021 are shown in this [IPHC
-sampling manual](https://www.iphc.int/uploads/pdf/fiss/2021/iphc-2021-fiss-stations.pdf);
+okay. The planned stations for the 2021 survey are shown in this [IPHC
+sampling manual (click here)](https://www.iphc.int/uploads/pdf/fiss/2021/iphc-2021-fiss-stations.pdf);
 page 23 has Vancouver [Island] Outside, showing that not all stations were
 intended to be fished there.
 
@@ -44,9 +47,9 @@ station level, and needs to create counts of zeros for the species of interest
 ## Set-level information
 
 For 2020, Maria was sent the file `2020 IPHCtoDFO_dataExtraction-Maria.xls` for set
-details, but this is multiple sheets and more complex than needed. Will try
-extracting directly from IPHC website (which they want us to do in the future
-anyway), using the following instructions (worked for 2020 and 2021):
+details, but this is multiple sheets and more complex than needed. So I tried
+extracting directly from the IPHC website (which they want us to do in the future
+anyway), using the following instructions, which worked for 2020 and 2021:
 
 Go to https://www.iphc.int/data/fiss-data-query and select the following options:
 
@@ -134,7 +137,8 @@ These are all NA's anyway (see below) and don't get saved, so no worries.
 ```{r newsetdata}
 sets_raw
 summary(sets_raw)
-testthat::expect_equal(unique(sets_raw$"IPHC Reg Area"), as.factor("2B")) # Check just BC
+testthat::expect_equal(unique(sets_raw$"IPHC Reg Area"),
+                       as.factor("2B")) # Check just BC
 testthat::expect_equal(unique(sets_raw$Year), 2021)
 testthat::expect_equal(length(unique(sets_raw$Station)),
                        length(sets_raw$Station))
@@ -146,8 +150,9 @@ Uncomment those three `testthat` commands when looking at new data each year. If
 any of fail then have to comment it out and figure out what it means here.
 
 This is for 2020 (check for future years), to look for station(s) that was
-fished twice (not needed for 2021 since that third test passed)
-```{r understand, eval = FALSE}
+fished twice. Not really needed for 2021 since that third test passed, but
+`twice_fished` gets used later, so do evaluate here:
+```{r understand}
 length(unique(sets_raw$Station))
 length(sets_raw$Station)
 dplyr::count(sets_raw, Station) %>% dplyr::filter(n > 1)
@@ -155,9 +160,10 @@ twice_fished <- dplyr::count(sets_raw, Station) %>%
   dplyr::filter(n > 1) %>%
   dplyr::select(Station) %>%
   as.numeric()
+twice_fished
 # If there's more than a single station then adapt later code
-as.data.frame(dplyr::filter(sets_raw,
-                            Station == twice_fished))
+#as.data.frame(dplyr::filter(sets_raw,
+#                            Station == twice_fished))
 
 ```
 Not needed for 2021: So Station `r twice_fished` had two vessels fishing the same station (which the code below
@@ -207,7 +213,7 @@ sets_simp
 ## Standard grid or not
 
 Need to change purpose to `standard` (`Y/N`) to match 2018 data (`Y` for the
-standard grid). In the raw 2020 data, `purpose` takes three values that we
+standard grid). In the raw 2020 data, `Purpose` took three values that we
 converted to `standard` to save in the package:
 ```{r purpose2020}
 summary(sets_raw_2020$Purpose)
@@ -220,7 +226,8 @@ non-standard) in the next section.
 summary(sets_simp$purpose)
 
 sets_simp_std <- dplyr::mutate(sets_simp,
-                               standard_tmp = (purpose == "Standard Grid")) # was g not G in 2020
+                               standard_tmp = (purpose == "Standard Grid"))
+                               # was grid in 2020, Grid in 2021
 
 standard <- as.character(sets_simp_std$standard_tmp)  # to get the right length
 standard[sets_simp_std$standard_tmp] = "Y"
@@ -242,19 +249,18 @@ definitions of standard, so doing that next.
 
 The definition of 'standard grid' changed from 2018 (when
 first needed due to the expanded grid) to 2020 (and 2021). Simply equating them as above is
-not sufficient. For 2021 we so far have
-
-```{r map2021
+not sufficient. For 2021 we so far have:
+```{r map2021}
 plot_iphc_map(sets_simp_std,
               sp = NULL,
               years = 2021,
               indicate_standard = TRUE)
 ```
 
-This section figures out the two problems and corrects them. However, to replicate the original
-analysis we need to revert the second correction (the correction changes station
-`2343` to be non-standard in the package, even though it originally was classed as standard --
-see later):
+This next section was to first figure out the twice-fished station `2343` in 2020, and to
+replicate that original analysis (station ends up being non-standard later), so
+mostly commented out except first bit which is used later so keeping in case
+need in future years:
 ```{r revert}
 hooks_with_bait_revert <- hooks_with_bait
 
@@ -274,7 +280,7 @@ hooks_with_bait_revert <- hooks_with_bait
 
 ```
 
-Plotting four years, with crosses showing 'non-standard'. (2021 is coloured
+Now to figure out standard/non-standard stations. Plotting four years, with crosses showing 'non-standard'. (2021 is coloured
 different since no hooks with bait data yet, but the important bit is the crosses).
 ```{r maps}
 sets_2021 <- dplyr::select(sets_simp_std,
@@ -296,8 +302,9 @@ plot_iphc_map(sets_2021,
 Can see that 2020 has a few less stations just north of Vancouver Island, but not
 enough to worry about greatly, and 2021 has kind of done a few of those. The
 2021 ones way in in the inlets are not currently flagged as non-standard but
-will be below (using the 2018 definitions). Main thing is 2021 doing a random
-sample of WCVI stations, some of which will be non-standard.
+will be below (using the 2018 definitions). In fact no stations are flagged for
+2021 as non-standard. And the other main issue is that 2021 is doing a random
+sample of WCVI stations (some of which will become non-standard).
 
 Need to look and plot values:
 ```{r standardornot}
@@ -339,9 +346,8 @@ Plot stations not standard in 2018 but standard in 2021, and vice versa, using
 each years' lats and lons (to verify that they all still agree -- i.e., that station
 numbers have consistent lats and lons), and show 2019 data to check no 'usual'
 stations are non-standard in 2018 or 2021. Also (for 2021) adding all stations,
-since this will clearly show the random sampling off WCVI
-
-```{r mapstandard}
+since this will clearly show the random sampling off WCVI:
+```{r mapstandard, out.width = '120%', fig.align = "center"}
 plot_BC()
 points(lat~lon,
        data = filter(sets_2018,
@@ -396,7 +402,7 @@ legend("bottomleft",
              pt.cex = c(1, 1, 1, 2, 1, 0.8),
              col = c("red", "blue", "red", "blue", "darkgreen", "black"))
 ```
-So the co-ordinates look close enough (red circles and blue corsses overlap),
+So the co-ordinates look close enough (red circles and blue crosses overlap),
 none were defined as non-standard in 2021 so there are no red triangles or blue
 circles, and the green squares for 2019 stations correctly do not overlap with
 the non-standard 2018 stations. Black dots (2021 stations) with no green squares
@@ -406,16 +412,15 @@ off WCVI clearly shows the reduced coverage there.
 Check if the one standard station in 2018 but not in 2020 (not fished at all in 2019)
 appears in any earlier years:
 ```{r checkearly, eval=FALSE}
-# Fails since empty in 2021, and this is corrected
+# Fails (so not evaluated here) since empty in 2021, and this is corrected
 dplyr::filter(hooks_with_bait_revert$set_counts,
               station == std_in_2018_but_not_std_in_2021) %>%
   as.data.frame()
 ```
-For 2020 worked out it was only fished in 2018 and 2020 so we defined it as non-standard.
+For 2020 I worked out it was only fished in 2018 and 2020 so we defined it as non-standard.
 
-So, the conclusion from this section is that we should:
-
-1. Retain the 2018 definitions of standard stations, not the new ones defined in
+So, the conclusion from this section is that we should retain the 2018
+definitions of standard stations, not the new ones defined in
 2021, as we did for 2020:
 ```{r corrected}
 sets_simp_std_corrected <- sets_simp_std
@@ -440,7 +445,7 @@ Note 2021 won't show up here until .rda objects are resaved in package, at the
 end of this .pdf.
 
 So here are the final station designations for 2021:
-```{r map2021}
+```{r map2021final}
 plot_iphc_map(sets_simp_std_corrected,
               sp = NULL,
               years = 2021,
@@ -499,8 +504,7 @@ setdiff(unique(counts_raw_2020$"Species Name"),
 setdiff(unique(counts_raw$"Species Name"),
         unique(counts_raw_2020$"Species Name"))
 ```
-Presumably Sun Sea Star and Sunflower Sea Star are the same. Will look into and
-fix later on.
+Presumably Sun Sea Star and Sunflower Sea Star are the same. Will mention this later on.
 
 Note that halibut are not included in these counts:
 ```{r nohalibut}
@@ -528,8 +532,8 @@ dplyr::filter(counts_raw,
               Station == twice_fished & Setno == 4)
 
 # So just keep these:
-dplyr::filter(counts_raw,
-              !(Station == twice_fished & Setno == 4))
+# dplyr::filter(counts_raw,
+#              !(Station == twice_fished & Setno == 4))
 
 #countData2020_no_halibut <- dplyr::filter(counts_raw,
 #                               !(Station == twice_fished & Setno == 4)) %>%
@@ -643,9 +647,9 @@ setData2021_and_halibut %>% dplyr::select(station,
 
 ### Option 2.
 
-Add the 20-hook counts for each set (which include `Hook with Skin` etc.) and compare
+Add all the 20-hook counts for a set (which include `Hook with Skin` etc.) and compare
    with `hooksObs`. The latter is higher (or equal), and the difference is halibut
-   (as the only `non non-halibut` species). Compare with the results from
+   (as the only **non** non-halibut` species). Compare with the results from
    option 1. If close then use option 2, since it will be just be halibut counts
    and gives an integer number, and is based on the first 20 hooks.
 
@@ -685,7 +689,8 @@ cor(compare$N_it20_halibut_opt_1,
 So this is the right approach and correlation coefficient is high, though
 numbers not quite as close as may have thought. But these data are used for
 aggregating across all stations in a year
-(and any further analyses on halibut for management purposes should be done using the raw data
+(and any further analyses on halibut for management purposes should be done
+using the full halibut data
 anyway -- we wouldn't really need that). And the means aren't too bad:
 ```{r means}
 mean(compare$N_it20_halibut_opt_1)
@@ -709,7 +714,7 @@ countData2021 <- rbind(countData2021_no_halibut,
 #                                                      "Pacific Halibut"))
 ```
 
-Note that for 2021 this does give zeros for Pacific Halibut (only species that
+Note that for 2021 this does give zeros for Pacific Halibut (the only species that
 will have a zero, because we have a value for each station because zero counts are in
 the original `sets_raw`):
 ```{r countData}
@@ -808,14 +813,14 @@ Star.
 
 Then redoing those above commands with updated code gives this, where some
 species are returned because they are not non-groundfish ones (or Brittle Star
-or Glass Sponge which we also keep) that we want to automatically ignore:
+or Glass Sponge which we also kept in the past) that we want to automatically ignore:
 ```{r updatedspnames}
 check_iphc_spp_name(countData2021)
 # That still retains some we may want to think about further at some point, but
 #  these are all in the overall list for all years:
-check_iphc_spp_name()
 setdiff(check_iphc_spp_name(countData2021),
         check_iphc_spp_name())
+check_iphc_spp_name()
 ```
 
 ## Save data sets
