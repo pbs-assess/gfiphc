@@ -112,9 +112,9 @@ So:
 
 1. Further files in `R/` that need checking (search through for most recent year and update; I checked all `R/` files in 2021 and these are the ones; this could be automated but it's actually good to look through the code each year:
 
- * gfiphc.R  
- * iphc-data.R
- * plot-iphc.R
+   * gfiphc.R  
+   * iphc-data.R
+   * plot-iphc.R
 
 1. Re-run (line by line to check) `data-raw/sets-skates-hooks-yelloweye.R` to save some more new data into package.
 
@@ -123,6 +123,10 @@ So:
 1. Go through and rerun the vignettes, adapting any called functions or printed results as necessary to include latest year of data, making sure the latest year is included and the maps make sense.
 
 1. May have to repeat this process as necessary. For example, in 2020 I saved the data, but then kept examining it in `data-raw/iphc-2020-data.Rmd`, realising need to change a `standard` designation in `setDataExpansion`, so then had to rerun all of these steps to update all .rda files.
+
+1. Re-run `data-raw/iphc-****-data.Rmd` again to use all the finalised saved data, and commit its .pdf file.
+
+1. Update version number.
 
 ## Citation
 
