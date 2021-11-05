@@ -305,7 +305,14 @@ check_iphc_spp_name <- function(countData = NULL, ignore_obvious = TRUE) {
       "Sunflower Sea Star",
       "Gorgonian coral",
       "Giant Pacific Octopus",
-      "Fish-eating Star"
+      "Fish-eating Star",
+      "Sea Whip",
+      "Stylaster campylecus (coral)",
+      "Sun Sea Star",
+      "Jellyfish",
+      "Unident. Salmon",
+      "unident. organic matter",
+      "Dungeness Crab"
     )
   }
   if (!is.null(countData)) {
