@@ -5,9 +5,12 @@
 
 <!-- badges: end -->
 
-The International Pacific Halibut Commission (IPHC) conducts an annual stock assessment longline survey in waters from California to Alaska, including British Columbia (BC) waters. The survey's main goal is to provide data on Pacific Halibut (*Hippoglosus stenolepis*) for stock assessment purposes. However, data are also recorded on other species caught, making it the longest ongoing groundfish survey in BC waters and hence a valuable source of data for many species. 
+[If badge above says build-error you can probably ignore it - it's using Travis
+and I'll update it to GitHub Actions, so downloading should work]
 
-The gfiphc package contains functions for: 
+The International Pacific Halibut Commission (IPHC) conducts an annual stock assessment longline survey in waters from California to Alaska, including British Columbia (BC) waters. The survey's main goal is to provide data on Pacific Halibut (*Hippoglosus stenolepis*) for stock assessment purposes. However, data are also recorded on other species caught, making it the longest ongoing groundfish survey in BC waters and hence a valuable source of data for many species.
+
+The gfiphc package contains functions for:
 
 - extracting data from the GFBio (GroundFish Biology) database, housed at the Pacific Biological Station, Nanaimo, BC, Canada
 - plotting maps (and movies) showing locations of stations each year
@@ -16,21 +19,21 @@ The gfiphc package contains functions for:
 - generating trends for a group of species (e.g. "skates combined")
 - deriving relative biomass index trends for a specified area within BC waters, again taking into account the changing survey methodologies.
 
-The latter example is being used to generate predators of Haida Gwaii Pacific Herring as information for a Case Study in DFO's Ecoystem Approach to Fisheries Management initiative. 
+The latter example is being used to generate predators of Haida Gwaii Pacific Herring as information for a Case Study in DFO's Ecoystem Approach to Fisheries Management initiative.
 
 Users outside of PBS can request someone at PBS to extract the data (try Andrew Edwards first - he has the data extracted and saved from running the `All species` vignette below) and then the analyses within the package will work. The set-level information (not species specific) is built into the package, as is some species-specific data.
 
 ## A quick look
 
-To see the available data for your particular species of interest, look at the saved [All species](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/data_for_all_species.html) vignette, and scroll down to the species (the order is the same as in [Anderson et al., 2019](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2019/2019_041-eng.html)). If there are no time series shown, or there are but they have lots of zeros, then you can conclude that the survey does not really catch your species of interest (unless you want to look at occasional observations). If the data do look useful then you'll likely want install and understand the package. 
- 
+To see the available data for your particular species of interest, look at the saved [All species](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/data_for_all_species.html) vignette, and scroll down to the species (the order is the same as in [Anderson et al., 2019](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2019/2019_041-eng.html)). If there are no time series shown, or there are but they have lots of zeros, then you can conclude that the survey does not really catch your species of interest (unless you want to look at occasional observations). If the data do look useful then you'll likely want install and understand the package.
+
 ## Vignettes
 
 The vignettes are the best place to start, as they should cover many analyses users would want to do. The links here go to  the saved .html versions on GitHub. The raw Rmarkdown code is available in the [vignettes](vignettes/) folder and should be used as a template.
 
 - [Single species](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/data_for_one_species.html) - shows example data that are saved in the package, and for extracting and generating the longest index possible for a single species for the whole BC coast.
 - [Restricted area](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/analysis_for_restricted_area.html) - for extracting and generating the longest index possible for a restricted area of interest.
-- [Herring predators](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/analysis_for_HG_herring_predators.html) - extraction of multiple species, and groups of species, for a restricted area, and analysed and saved as inputs for the Haida Gwaii Pacific Herring Case Study. 
+- [Herring predators](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/analysis_for_HG_herring_predators.html) - extraction of multiple species, and groups of species, for a restricted area, and analysed and saved as inputs for the Haida Gwaii Pacific Herring Case Study.
 - [All species](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/data_for_all_species.html) - extraction of 113 species, to test updating of the groundfish synopsis report [(Anderson et al. 2019)](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2019/2019_041-eng.html).
 
 ## Installation
@@ -81,7 +84,7 @@ A particular issue is that the data resolution is not the same across the years.
 <!-- for putting back into gfsynopsis, note that 2018 is now separated out) -->
 In 2018 there were extra expansion stations surveyed (see the vignettes), and in 2020 only the first 20 hooks were enumerated. For 2020, the data were downloaded from the IPHC website and included in the package (see below).
 
-The structure of the data in GFBio is described by [Cooke and Olsen (2020)](https://waves-vagues.dfo-mpo.gc.ca/Library/40879100.pdf), but gfiphc's R functions and built-in SQL queries mean that gfiphc users do not need to have knowledge of GFBio. 
+The structure of the data in GFBio is described by [Cooke and Olsen (2020)](https://waves-vagues.dfo-mpo.gc.ca/Library/40879100.pdf), but gfiphc's R functions and built-in SQL queries mean that gfiphc users do not need to have knowledge of GFBio.
 
 ## Summary of Series that can be constructed
 
@@ -91,10 +94,10 @@ Due to the differing data-collection protocols, we developed different ways to o
 |--------------------------------|--------------------|------------|-----------------------------|
 | First 20 hooks from each skate | A (24)             | D (20)     | E                           |
 | All hooks from each skate      | B (18)             | C (16)     | F                           |
- 
-with numbers in parentheses indicating the number of years for which data for each Series are available. For E and F this depends on the particular area of interest. 
 
-For any spatiotemporal analyses, note that there the IPHC assign a "don't use for spatiotemporal models" code for 
+with numbers in parentheses indicating the number of years for which data for each Series are available. For E and F this depends on the particular area of interest.
+
+For any spatiotemporal analyses, note that there the IPHC assign a "don't use for spatiotemporal models" code for
 each set, so look into that if necessary.
 
 ## Updating with new data each year
@@ -103,22 +106,22 @@ For 2020, only the first 20 hooks were evaluated from each skate. So, like for 2
 
 So:
 
-1. Adapt `data-raw/iphc-2020-data.Rmd` as just described. 
+1. Adapt `data-raw/iphc-2020-data.Rmd` as just described.
 
-1. Create/adapt new functions to include the data in the calculations. For data in GFbio this should be automatic, else see what was done just after commit a5ecd2a for 2020 (may make notes here). 
+1. Create/adapt new functions to include the data in the calculations. For data in GFbio this should be automatic, else see what was done just after commit a5ecd2a for 2020 (may make notes here).
 
 1. Change `get_all_iphc_set_counts()` to include new year, checking that `get_iphc_from_gfiphc()` works.
 
 1. Re-run (line by line to check) `data-raw/sets-skates-hooks-yelloweye.R` to save some more new data into package.
 
 1. Add lines for new year, `data_names_XXXX` in `check_iphc_spp_name()`.
- 
+
 1. Update documentation of data sets in `R/data.R` if necessary.
 
-1. Go through and rerun the vignettes, adapting any called functions or printed results as necessary to include latest year of data, making sure the latest year is included and the maps make sense. 
+1. Go through and rerun the vignettes, adapting any called functions or printed results as necessary to include latest year of data, making sure the latest year is included and the maps make sense.
 
-1. May have to repeat this process as necessary. For example, in 2020 I saved the data, but then kept examining it in `data-raw/iphc-2020-data.Rmd`, realising need to change a `standard` designation in `setDataExpansion`, so then had to rerun all of these steps to update all .rda files. 
- 
+1. May have to repeat this process as necessary. For example, in 2020 I saved the data, but then kept examining it in `data-raw/iphc-2020-data.Rmd`, realising need to change a `standard` designation in `setDataExpansion`, so then had to rerun all of these steps to update all .rda files.
+
 ## Citation
 
 If you use this package please cite it as it is helpful for maintaining it:
