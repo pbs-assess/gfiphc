@@ -480,8 +480,8 @@ Great, nothing changed in the structure.
 ```{r counts}
 counts_raw
 summary(counts_raw)
-testthat::expect_equal(unique(counts_raw$Year), 2021)
-testthat::expect_equal(unique(counts_raw$SampleType), as.factor("20Hook"))
+testthat::expect_equal(unique(counts_raw$Year), 2021)  # All 2021
+testthat::expect_equal(unique(counts_raw$SampleType), as.factor("20Hook")) # All 20Hook
 
 # This mismatches for 2020, not for 2021:
 testthat::expect_equal(length(unique(counts_raw$Station)),
@@ -500,7 +500,7 @@ setdiff(unique(counts_raw$"Species Name"),
         unique(counts_raw_2020$"Species Name"))
 ```
 Presumably Sun Sea Star and Sunflower Sea Star are the same. Will look into and
-fix later on. TODO
+fix later on.
 
 Note that halibut are not included in these counts:
 ```{r nohalibut}
@@ -510,8 +510,7 @@ which I presume explains why
 total number of counts for a station does not add up to `HooksObserved`. See
 later for halibut calculations.
 
-HERE for 2021 - don't need next stuff.
-Need to remove the HAN records for the twice-fished station, which turns out to
+2020 only: Need to remove the HAN records for the twice-fished station, which turns out to
 be set number 4 for station 2104:
 ```{r twicefished}
 dplyr::filter(counts_raw, Station == twice_fished) %>%
@@ -522,8 +521,8 @@ dplyr::filter(counts_raw, Station == twice_fished) %>%
 dplyr::filter(sets_raw, Station == twice_fished)
 ```
 
-So use that here to remove the species counts for that vessel (note that vessel
-code is not in `counts_raw`)
+So for 2020 had to use that here to remove the species counts for that vessel (note that vessel
+code is not in `counts_raw`), just commenting that part out for 2021:
 ```{r countcalcs}
 dplyr::filter(counts_raw,
               Station == twice_fished & Setno == 4)
@@ -532,8 +531,10 @@ dplyr::filter(counts_raw,
 dplyr::filter(counts_raw,
               !(Station == twice_fished & Setno == 4))
 
-countData2020_no_halibut <- dplyr::filter(counts_raw,
-                               !(Station == twice_fished & Setno == 4)) %>%
+#countData2020_no_halibut <- dplyr::filter(counts_raw,
+#                               !(Station == twice_fished & Setno == 4)) %>%
+# Seems that can't just keep using that even if twice_fished = NA
+countData2021_no_halibut <- counts_raw %>%
   dplyr::select(year = Year,
                 station = Station,
                 spNameIPHC = "Species Name",
@@ -544,9 +545,9 @@ countData2020_no_halibut <- dplyr::filter(counts_raw,
                 spNameIPHC = as.character(spNameIPHC),
                 specCount = as.integer(specCount))
 
-testthat::expect_equal(names(countData2013), names(countData2020_no_halibut))
-countData2020_no_halibut
-summary(countData2020_no_halibut)
+testthat::expect_equal(names(countData2013), names(countData2021_no_halibut))
+countData2021_no_halibut
+summary(countData2021_no_halibut)
 ```
 
 ## Hooks observed and retrieved
@@ -554,8 +555,9 @@ summary(countData2020_no_halibut)
 Now, obtain the numbers of hooks observed and retrieved from `counts_raw`, to
 then merge into the set details:
 ```{r hookdetails}
-hook_details <- dplyr::filter(counts_raw,
-                              !(Station == twice_fished & Setno == 4)) %>%
+# hook_details <- dplyr::filter(counts_raw,
+#                               !(Station == twice_fished & Setno == 4)) %>%
+hook_details <- counts_raw %>%
   dplyr::group_by(Station) %>%
   dplyr::summarise(year = unique(Year),
                    hooksRetr = unique(HooksRetrieved),
@@ -568,14 +570,14 @@ hook_details <- dplyr::filter(counts_raw,
 
 hook_details
 
-expect_equal(sets_simp_std_corrected$station, hook_details$station)
+testthat::expect_equal(sets_simp_std_corrected$station, hook_details$station)
 ```
 
 So now need to get the hook details into the set details, and keep columns as
 for `setData2013` but also with `standard`, and may as well keep `hooksRetr` and
 `hooksObs`:
 ```{r merge}
-setData2020 <- dplyr::left_join(sets_simp_std_corrected,
+setData2021 <- dplyr::left_join(sets_simp_std_corrected,
                                 hook_details,
                                 by = c("year", "station")) %>%
   dplyr::mutate(E_it20 = effSkateIPHC * hooksObs / hooksRetr) %>%
@@ -595,9 +597,9 @@ setData2020 <- dplyr::left_join(sets_simp_std_corrected,
                 avgDepth = as.integer(avgDepth),
                 usable = as.character(usable),
                 standard = as.factor(standard))
-setData2020
-testthat::expect_equal(names(setData2013), names(setData2020)[1:ncol(setData2013)])
-summary(setData2020)
+setData2021
+testthat::expect_equal(names(setData2013), names(setData2021)[1:ncol(setData2013)])
+summary(setData2021)
 ```
 
 ## Pacific Halibut counts
@@ -612,20 +614,21 @@ halibut survey. (Using all hooks for all years could be done, but would be a lot
 of new code).
 
 There are two options for getting halibut counts for the first 20 hooks (given
-we don't have hook-by-hook data, though it could probably be obtained just not
-from the IPHC website).
+we don't have hook-by-hook data, though it could probably be obtained just maybe
+not from the IPHC website).
 
 ### Option 1.
 
-Take the halibut counts for all the hooks and create `N_it20_halibut_est = E_it20 / E_it *
+Take the halibut counts for all the hooks (which we have in `sets_raw` and
+subsequent objects) and create `N_it20_halibut_est = E_it20 / E_it *
 N_it`, or equivalently just `N_it20_halibut_est = hooksObs / hooksRetr *
 N_it`. Note that observed refers to observed for non-halibut species
 (presumably `hooksRetr` works for halibut). Not
 strictly the first 20 hooks, but is a rescaling. But will not guarantee integer values.
 
 ```{r sethalibut}
-setData2020_and_halibut <-
-  dplyr::left_join(setData2020,
+setData2021_and_halibut <-
+  dplyr::left_join(setData2021,
                    dplyr::select(sets_simp_std_corrected,
                                  c(station,
                                    U32halibut,
@@ -633,33 +636,33 @@ setData2020_and_halibut <-
                    by = "station") %>%
   dplyr::mutate(N_it_halibut = U32halibut + O32halibut,
                 N_it20_halibut_opt_1 = hooksObs / hooksRetr * N_it_halibut)
-setData2020_and_halibut %>% dplyr::select(station,
+setData2021_and_halibut %>% dplyr::select(station,
                                           N_it_halibut,
                                           N_it20_halibut_opt_1)
 ```
 
 ### Option 2.
 
-Add the counts for each set (which include `Hook with Skin` etc.) and compare
-   with `hooksObs`. I think the latter is higher, and the difference is halibut
+Add the 20-hook counts for each set (which include `Hook with Skin` etc.) and compare
+   with `hooksObs`. The latter is higher (or equal), and the difference is halibut
    (as the only `non non-halibut` species). Compare with the results from
    option 1. If close then use option 2, since it will be just be halibut counts
-   and gives an integer number.
+   and gives an integer number, and is based on the first 20 hooks.
 
 Add counts for each set:
 ```{r countsmaybe}
-counts_20 <- countData2020_no_halibut %>%
+counts_20 <- countData2021_no_halibut %>%
   dplyr::group_by(station) %>%
   dplyr::summarise(non_halibut = sum(specCount)) %>%
   dplyr::ungroup()
 counts_20
 ```
 
-Now join the two options together to calculate `N_it20_halibut_opt_2` and
+Now join the two options together to calculate `N_it20_halibut_opt_2` and then
 compare the two estimates of `N_it20_halibut`:
 ```{r compare}
 compare <-
-  dplyr::left_join(setData2020_and_halibut,
+  dplyr::left_join(setData2021_and_halibut,
                    counts_20,
                    by = "station") %>%
   dplyr::mutate(N_it20_halibut_opt_2 = hooksObs - non_halibut,
@@ -675,11 +678,15 @@ compare
 
 plot(compare$N_it20_halibut_opt_1, compare$N_it20_halibut_opt_2)
 abline(a = 0, b = 1)
+
+cor(compare$N_it20_halibut_opt_1,
+    compare$N_it20_halibut_opt_2)
 ```
-So this is the right approach, though numbers not quite as close as may have
-thought. But these data are used for aggregating across all stations in a year
-(and any further analyses on halibut should be done using the raw data
-anyway). And the means aren't too bad:
+So this is the right approach and correlation coefficient is high, though
+numbers not quite as close as may have thought. But these data are used for
+aggregating across all stations in a year
+(and any further analyses on halibut for management purposes should be done using the raw data
+anyway -- we wouldn't really need that). And the means aren't too bad:
 ```{r means}
 mean(compare$N_it20_halibut_opt_1)
 mean(compare$N_it20_halibut_opt_2)
@@ -688,18 +695,27 @@ mean(compare$N_it20_halibut_opt_2)
 So either of these would work. So use option 2 since gives an integer count:
 ```{r combine}
 compare$N_it20_halibut_opt_2
-countData2020_halibut <- dplyr::select(compare,
+countData2021_halibut <- dplyr::select(compare,
                                        year,
                                        station,
                                        spNameIPHC,
                                        specCount = N_it20_halibut_opt_2) %>%
   dplyr::mutate(specCount = as.integer(specCount))
-countData2020 <- rbind(countData2020_no_halibut,
-                       countData2020_halibut) %>%
+countData2021 <- rbind(countData2021_no_halibut,
+                       countData2021_halibut) %>%
   dplyr::arrange(station)
 # First time running, called the above countData2020_NEW to check remaining data didn't change:
-#expect_equal(countData2020, filter(countData2020_NEW, spNameIPHC !=
+# expect_equal(countData2020, filter(countData2020_NEW, spNameIPHC !=
 #                                                      "Pacific Halibut"))
+```
+
+Note that for 2021 this does give zeros for Pacific Halibut (only species that
+will have a zero, because we have a value for each station because zero counts are in
+the original `sets_raw`):
+```{r countData}
+summary(dplyr::filter(countData2021,
+                      spNameIPHC == "Pacific Halibut"))
+unique(dplyr::filter(countData2021, specCount == 0)$spNameIPHC)
 ```
 
 ## Check species names
@@ -721,6 +737,7 @@ check_iphc_spp_name(countData2020)
 Of these, only the Thornyhead and Blackspotted Rockfish are likely of interest
 (Issues #17 and #18). And maybe the sharks.
 
+TODO: See earlier regarding Sun Sea Star
 
 ## Save data sets
 
