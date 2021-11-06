@@ -22,3 +22,4 @@ vignettes/data_for_all_species.Rmd
 
 vignettes/HG-herring-predators-data/
 vignettes/HG-herring-predators-results/
+^\.github$

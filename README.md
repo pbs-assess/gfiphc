@@ -3,6 +3,7 @@
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.com/pbs-assess/gfiphc.svg?branch=master)](https://travis-ci.com/pbs-assess/gfiphc)
 
+[![R-CMD-check](https://github.com/pbs-assess/gfiphc/workflows/R-CMD-check/badge.svg)](https://github.com/pbs-assess/gfiphc/actions)
 <!-- badges: end -->
 
 [If the badge above says `build error` you can probably ignore it and install
