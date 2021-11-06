@@ -15,9 +15,9 @@ load_all()
 #  include new year), run these two lines (with 2021 replaced by current year)
 yyr_test <- get_all_iphc_set_counts("yelloweye rockfish")
 tail(yyr_test)                                # confirms latest year gets extracted
-expect_equal(dplyr::filter(yyr_test, year < 2021),
-             yelloweye_rockfish$set_counts)   # this will fail once the saved
-                                              # yelloweye_rockfish is updated below
+testthat::expect_equal(dplyr::filter(yyr_test, year < 2021),
+                       yelloweye_rockfish$set_counts)   # this will fail once the saved
+                                                        # yelloweye_rockfish is updated below
 
 
 # Set-level information from GFBio
@@ -73,3 +73,5 @@ yelloweye_rockfish <- readRDS("yelloweye-rockfish.rds")
 
 usethis::use_data(yelloweye_rockfish,
                   overwrite = TRUE)
+
+# Re-run the first expect_equal on yelloweye and it should fail.
