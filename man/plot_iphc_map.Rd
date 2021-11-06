@@ -72,7 +72,7 @@ create new map using \code{plot_BC()}}
 specficied area, as indicated by TRUE/FALSE in \code{set_counts_of_sp$in_area}}
 
 \item{indicate_standard}{indicate whether or not station is part of the
-standard stations or an expansion (in 2018, 2020, and maybe later), as
+standard stations or an expansion (in 2018, 2020, and later), as
 indicated by Y/N in \code{set_counts_of_sp$standard}}
 
 \item{...}{extra arguments to \code{par()}}

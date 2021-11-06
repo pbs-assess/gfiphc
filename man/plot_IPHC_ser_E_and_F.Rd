@@ -15,7 +15,7 @@ plot_IPHC_ser_E_and_F(
   ser_E_and_F,
   series_longest = NULL,
   plot_type = "E",
-  x_lim = c(1995, as.integer(format(Sys.Date(), "\%Y")) - 1),
+  x_lim = c(1995, 2021),
   y_lim = NULL,
   shift = 0.15,
   tck_length = -0.02,

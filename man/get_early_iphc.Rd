@@ -30,7 +30,7 @@ in our list of Type A or Type B species given in gfsynopsis.}
 \item{ignore_obvious}{Whether or not to ignore some obvious non-groundfish
 species (listed in function) when countData is NULL.}
 
-\item{year}{year of interest}
+\item{year}{year of interest, must be 2013, 2020 or 2021}
 }
 \value{
 IPHC species common name, or NA if species is not in IPHC data
@@ -121,7 +121,9 @@ Note that 1996 is based on all hooks being enumerated while
 1997-2002 is for first 20 only.
 
 When only first 20 hooks were evaluated, the data are in here (not
-GFbio). See \code{data-raw/iphc-2020-data.Rmd} for details to extract the data
+GFbio). See \code{data-raw/iphc-2020-data.Rmd} and updated
+\code{data-raw/iphc-2020-data.Rmd}
+for details to extract the data
 from the IPHC website and include in this pacakge. This function should then
 work for all such years, since the data will be saved in the correct format.
 Was \code{get_iphc_2013()} but generalising for future years.
