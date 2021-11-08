@@ -206,7 +206,8 @@ For 2021 note that there is sporadic coverage off the west coast of Vancouver
 Island, with some of the usual stations being surveyed. In previous years it was
 all or nothing. This will affect the results of Series C and D (see README), and
 so whether or not the resulting Series AB can be considered representative for
-the whole coast. Series AB does not include the west coast of Vancouver Island.
+the whole coast. Series AB does not include the west coast of Vancouver
+Island.
 
 Unusable stations are determined by the IPHC and any data are excluded from our
 calculations. The horizontal line is the cut-off for calculations for different
