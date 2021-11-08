@@ -239,8 +239,8 @@ plot_iphc_map <- function(set_counts_of_sp,
 ##' \dontrun{
 ##' #
 ##' }
-plot_BC <- function(xlim = c(-134,-124),
-                   ylim = c(48,54.6),
+plot_BC <- function(xlim = c(-134,-123),
+                   ylim = c(48, 55.4),
                    zlev = seq(200,1200,200),
                    showBathymetry = FALSE,
                    ...)

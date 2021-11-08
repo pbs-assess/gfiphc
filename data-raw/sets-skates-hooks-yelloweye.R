@@ -75,3 +75,25 @@ usethis::use_data(yelloweye_rockfish,
                   overwrite = TRUE)
 
 # Re-run the first expect_equal on yelloweye and it should fail.
+
+# Check that plot_BC default lat contains the range of latitudes (mainly not larger than the max latitude ,since I'd
+# missed that 2018 had gone further north), and also range of longitudes:
+formals(plot_BC)$ylim     # should be c(48, 55.4), not easy to check as not retured as numeric
+
+if(max(yelloweye_rockfish$set_counts$lat) > 55.4){
+  stop("Need to increase default max of ylim in plot_BC to account for northern stations. And change it in this check also.")
+}
+if(min(yelloweye_rockfish$set_counts$lat) < 48){
+  stop("Need to decrease default min of ylim in plot_BC to account for southern stations. And change it in this check also.")
+}
+
+# Longitude - in 2018 I thought not to show the expanded Strait of Georgia
+# stations, but best to show them all.
+formals(plot_BC)$xlim     # should be c(-134,-123), not easy to check as not retured as numeric
+
+if(max(yelloweye_rockfish$set_counts$lon) > -123){
+  stop("Need to increase default max of xlim in plot_BC to account for eastern stations. And change it in this check also.")
+}
+if(min(yelloweye_rockfish$set_counts$lon) < -134){
+  stop("Need to decrease default min of xlim in plot_BC to account for western stations. And change it in this check also.")
+}
