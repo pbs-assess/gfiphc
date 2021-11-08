@@ -60,3 +60,6 @@ See vignette for example.
 Calculate Series EF (Series E with 1995 and 1996 appropriately scaled from
 Series F)
 }
+\author{
+Andrew Edwards
+}

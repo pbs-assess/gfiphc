@@ -148,6 +148,8 @@ calc_iphc_ser_E_and_F <- function(set_counts,
 ##'   years then F is always returned.
 ##'
 ##' See vignette for example.
+##' @export
+##' @author Andrew Edwards
 calc_iphc_ser_EF <- function(series_all,
                              return_F_if_same_length = TRUE) {
   years_EF <- intersect(series_all$ser_E$year,
