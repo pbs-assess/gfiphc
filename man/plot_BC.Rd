@@ -5,8 +5,8 @@
 \title{Map for BC coast, adapted from an example in Rowan Haigh's TESA course}
 \usage{
 plot_BC(
-  xlim = c(-134, -124),
-  ylim = c(48, 54.6),
+  xlim = c(-134, -123),
+  ylim = c(48, 55.4),
   zlev = seq(200, 1200, 200),
   showBathymetry = FALSE,
   ...

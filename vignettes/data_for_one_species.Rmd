@@ -215,7 +215,7 @@ Series (see the synopsis Research Document). Note that the `sp_short_name`
 argument is only for the legend, the first argument needs to contain the data
 for the species of interest.
 
-To see a movie of the station locations through time:
+To see a movie of the station locations through time (a panel plot is shown shortly):
 
 ![IPHC-stations-movie-1995-2021.gif](IPHC-stations-movie-1995-2021.gif).
 
@@ -231,6 +231,22 @@ for(i in unique(sp_set_counts$set_counts$year)){
   plot_iphc_map(sp_set_counts$set_counts,
                 sp_short_name = sp_short_name,
                 years = i)
+}
+```
+
+A panel plot of all years is:
+```{r, fig.width = 10, fig.height = 30}
+years_to_plot <- unique(sp_set_counts$set_counts$year)
+par(mfrow = c(ceiling(length(years_to_plot) / 3),
+              3))
+
+for(i in years_to_plot){
+  plot_iphc_map(sp_set_counts$set_counts,
+                sp_short_name = sp_short_name,
+                years = i,
+                mar_val =   c(1.8, 2, 2.0, 0.5),
+                include_legend = (i == years_to_plot[1]) # only first panel
+                )
 }
 ```
 

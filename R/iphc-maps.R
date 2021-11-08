@@ -43,6 +43,7 @@
 ##' @param indicate_standard indicate whether or not station is part of the
 ##'   standard stations or an expansion (in 2018, 2020, and later), as
 ##'   indicated by Y/N in `set_counts_of_sp$standard`
+##' @param include_legend whether to include legend or not (TRUE/FALSE)
 ##' @param ... extra arguments to `par()`
 ##' @return A map of the IPHC survey stations for that year and species, with a
 ##'   legend describing the points.
@@ -93,6 +94,7 @@ plot_iphc_map <- function(set_counts_of_sp,
                           add_to_existing = FALSE,
                           indicate_in_area = FALSE,
                           indicate_standard = TRUE,
+                          include_legend = TRUE,
                           ...
                           ){
   par(mar = mar_val,
@@ -205,11 +207,13 @@ plot_iphc_map <- function(set_counts_of_sp,
     legend_col <- c(legend_col, "black")
   }
 
-  legend("bottomleft",
-         legend = legend_text,
-         pch = legend_pch,
-         pt.cex = legend_cex,
-         col = legend_col)
+  if(include_legend){
+    legend("bottomleft",
+           legend = legend_text,
+           pch = legend_pch,
+           pt.cex = legend_cex,
+           col = legend_col)
+  }
 
   # This is keeping in Series A or not - could just draw the horizontal line every time
   #points(lat~lon,
