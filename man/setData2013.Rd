@@ -11,7 +11,8 @@ A tibble:
 \item{station}{station name}
 \item{lat}{latitude of station}
 \item{lon}{longitude of station}
-\item{avgDepth}{average depth of set}
+\item{avgDepth}{average depth of set - NOTE: have not double checked if fathoms
+(like later years) or metres}
 \item{effSkateIPHC}{effective skate number of the set, as calculated by IPHC}
 \item{E_it20}{effective skate number of the set based on the first 20 hooks
 only, calculated as the (number of hooks observed)/

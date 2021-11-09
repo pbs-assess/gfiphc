@@ -99,7 +99,8 @@
 #'   \item{station}{station name}
 #'   \item{lat}{latitude of station}
 #'   \item{lon}{longitude of station}
-#'   \item{avgDepth}{average depth of set}
+#'   \item{avgDepth}{average depth of set - NOTE: have not double checked if fathoms
+#'  (like later years) or metres}
 #'   \item{effSkateIPHC}{effective skate number of the set, as calculated by IPHC}
 #'   \item{E_it20}{effective skate number of the set based on the first 20 hooks
 #'     only, calculated as the (number of hooks observed)/
@@ -128,7 +129,8 @@
 #'   \item{set}{set number within a trip (double check that)}
 #'   \item{lat}{latitude of station}
 #'   \item{lon}{longitude of station}
-#'   \item{depthAvge}{average depth of set}
+#'   \item{depthAvge}{average depth of set - NOTE: have not double checked if fathoms
+#'  (like later years) or metres}
 #'   \item{spCodeIPHC}{species code as used by the IPHC}
 #'   \item{spNameIPHC}{species name as used by the IPHC}
 #'   \item{E_it}{effective skate number of the set, as calculated by IPHC (based on
