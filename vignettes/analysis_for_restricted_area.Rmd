@@ -107,23 +107,25 @@ plot_iphc_map(sp_set_counts_with_area,
               indicate_in_area = TRUE)
 ```
 
-2020 (and 2018) had expanded (non-standard) stations, which are shown as crosses:
-```{r area2020, results = FALSE}
-plot_BC(main = "All 2020 stations")
+2021 (and 2018 and 2020) had expanded (non-standard) stations, which are shown as crosses:
+```{r area2021, results = FALSE}
+plot_BC(main = "All 2021 stations")
 
 PBSmapping::addPolys(HG_herring_pred_area,
                      col = "pink")
 
 plot_iphc_map(sp_set_counts_with_area,
               sp = NULL,
-              years = 2020,
+              years = 2021,
               lat_cut_off = NULL,
               add_to_existing = TRUE,
               indicate_in_area = TRUE)
 ```
 
 Make a movie to check each year:
-![IPHC-stations-HG-area-movie-1995-2020.gif](IPHC-stations-HG-area-movie-1995-2020.gif).
+
+![IPHC-stations-HG-area-movie-1995-2021.gif](IPHC-stations-HG-area-movie-1995-2021.gif).
+
 
 As for `data_for_one_species` vignette, the movie is saved and the code is
 given here but not run:
