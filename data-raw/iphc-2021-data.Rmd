@@ -470,12 +470,42 @@ legend("bottomleft",
 ```
 
 So there are six 2021 stations that have never been fished before! That map
-shows that we should call the five northern ones non-standard also, to exclude
-from the standard Series A-F analyses. Maybe zoom in on the one off the
-northwest of Vancouer Island:
+suggests that we should call the five northern ones non-standard also, to exclude
+from the standard Series A-F analyses.
+
+However, Ann-Marie Huang thinks that
+these stations may have been fished before but considered as part of Area 2C
+(Alaskan waters). Some waters around there are claimed by both Canada and the
+US; there's a clear map and explanation in [Canada's Unresolved Maritime
+Boundaries
+(clickable)](https://www.dur.ac.uk/resources/ibru/publications/full/bsb5-3_gray.pdf),
+which is linked from [this Wikipedia article on Dixon
+Entrance](https://en.wikipedia.org/wiki/Dixon_Entrance).
+So there may be earlier data, which are not in gfiphc because such stations
+would not have been considered Area 2B, which is the area for which the IPHC
+sent DFO data in the past (and which I used here for recent years to extract
+from their website). So there may be data available, and if needed it will have
+to be obtained. Here we will call those five northern newly-fished stations
+`non-standard`.
+
+For the sixth station off the northwest of Vancouer Island, zooming in and
+including the Scott Islands [Rockfish Conservation Area
+(clickable)](https://www.pac.dfo-mpo.gc.ca/fm-gp/maps-cartes/rca-acs/rca-acs/north-nord/ScottIslandsChart3744-eng.html)
+as a blue rectangle shows:
 ```{r map2021onlyzoom, out.width = '120%', fig.align = "center"}
 plot_BC(xlim = c(-130, -127),
         ylim = c(50, 52))
+
+scott_island_RCA_lon <- -c(128 + 56.5/60, 128 + 33/60)
+scott_island_RCA_lat <- c(50 + 45/60, 50 + 52/60)
+
+# rect(xleft, ybottom, xright, ytop, density = NULL, angle = 45,
+rect(scott_island_RCA_lon[1],
+     scott_island_RCA_lat[1],
+     scott_island_RCA_lon[2],
+     scott_island_RCA_lat[2],
+     border = "blue")
+
 points(lat~lon,
        data = stations_in_2021_only,
        col = "black",
@@ -495,20 +525,28 @@ legend("bottomleft",
        col = c("black", "red"),
        pt.cex = c(1, 0.4))
 ```
+So the new station is just outside the RCA. Presumably in previous years the RCA
+was avoided as the grid would have put a station in the RCA, close to (or even
+on) Lanz Island.
 
-So that precise location was clearly avoided in the past (exactly spaced grid
-implies it would be on a small island called Lanz Island), but it's not exactly
-moving into new territory. It is station 2257 (see above), with a depth of only
-40~m (I think it's metres), which is not an outlier. For example, for 2013
+It is station 2257 (see above), with a depth of only
+40 fathoms, which is not an outlier. For example, for 2013
 (depth data for all years is not in gfiphc I don't think):
 ```{r depth2013}
 sort(setData2013$avgDepth)
 ```
-So let's call it a standard station, as it's in a survey area and not
-ridiculously shallow.
+However, since it is a new station and not been used before, we will flag it as
+`non-standard` (as used for the Series A-F analyses). Also Dana Haggarty says
+that there is good habitat right close to those islands, but not great further
+away, and she has used Remotely Operated Vehicles there -- it's all
+sand/gravel/cobble with massive sand waves from the crazy exposure, but perhaps
+there are pockets of good habitat. So either
+way (close to an RCA so may be expected to be good for rockfish at least, or not
+great rockfish habitat) it shouldn't really be included for rockfish species,
+and in general should be excluded since a new station.
 
 So - retain the 2018 definitions of standard stations (as we did for 2020),
-and call any new 2021 stations non-standard, except for 2257:
+and call all six 2021 stations non-standard:
 ```{r corrected}
 sets_simp_std_corrected <- sets_simp_std
 summary(as.factor(sets_simp_std_corrected$standard))
@@ -517,7 +555,6 @@ sets_simp_std_corrected$standard[sets_simp_std_corrected$station %in%
                                  not_std_in_2018_but_std_in_2021] <- "N"
 sets_simp_std_corrected$standard[sets_simp_std_corrected$station %in%
                                  stations_in_2021_only$station] <- "N"
-sets_simp_std_corrected$standard[sets_simp_std_corrected$station == "2257"] <- "Y"
 summary(as.factor(sets_simp_std_corrected$standard))
 # cbind(sets_simp_std$standard, sets_simp_std_corrected$standard) # to check them
 ```
@@ -532,7 +569,7 @@ dplyr::filter(hooks_with_bait$set_counts,
   unique()
 ```
 Note 2021 won't show up here until .rda objects are resaved in package, at the
-end of this .pdf.
+end of this .pdf (so it will if this .Rmd has already been run, as it has in 2021).
 
 So here are the final station designations for 2021:
 ```{r map2021final}
@@ -542,7 +579,8 @@ plot_iphc_map(sets_simp_std_corrected,
               indicate_standard = TRUE)
 ```
 Can see that they did 10 random stations off WCVI that we're calling
-non-standard (because they were never fished before 2018).
+non-standard (because they were never fished before 2018). Which is a bit of a
+shame as there are only 16 stations left off WCVI for 2021.
 
 2020 (no need to change for 2021): So check which functions need changing, since they create a 'standard'
 column. These do not need changing: `get_iphc_hooks()` and `get_iphc_skates_info`.
