@@ -249,13 +249,16 @@ definitions of standard, so doing that next.
 
 The definition of 'standard grid' changed from 2018 (when
 first needed due to the expanded grid) to 2020 (and 2021). Simply equating them as above is
-not sufficient. For 2021 we so far have:
+not sufficient. For 2021 we so far have this:
 ```{r map2021}
 plot_iphc_map(sets_simp_std,
               sp = NULL,
               years = 2021,
               indicate_standard = TRUE)
 ```
+So no stations are marked as being outside the standard grid, even though some
+are clearly new -- the ones in the north have never been fished before (see the
+one-species vignette, though I'll investigate that here).
 
 This next section was to first figure out the twice-fished station `2343` in 2020, and to
 replicate that original analysis (station ends up being non-standard later), so
@@ -304,7 +307,11 @@ enough to worry about greatly, and 2021 has kind of done a few of those. The
 2021 ones way in in the inlets are not currently flagged as non-standard but
 will be below (using the 2018 definitions). In fact no stations are flagged for
 2021 as non-standard. And the other main issue is that 2021 is doing a random
-sample of WCVI stations (some of which will become non-standard).
+sample of WCVI stations (some of which will become non-standard). AND that there
+are new stations in the north (and maybe elsewhere) that have never been fished
+before (as I discovered when updating the one-species vignette and redefining
+the default axes limits for `plot_BC()`; the version before updating that isaved
+as iphc-2021-data-all-2021-stations.pdf`). Will examine those shortly.
 
 Need to look and plot values:
 ```{r standardornot}
@@ -419,15 +426,98 @@ dplyr::filter(hooks_with_bait_revert$set_counts,
 ```
 For 2020 I worked out it was only fished in 2018 and 2020 so we defined it as non-standard.
 
-So, the conclusion from this section is that we should retain the 2018
+So, the conclusion from this section so far is that we should retain the 2018
 definitions of standard stations, not the new ones defined in
-2021, as we did for 2020:
+2021, as we did for 2020.
+
+Doing that shortly (in `sets_simp_std_corrected`), but first also look for any
+new 2021 stations. I hadn't expected any but saw them when doing the one-species
+vignette, so had to come back to redo this.
+
+```{r stations2021only}
+# yelloweye_rockfish$set_counts is saved in gfiphc, already has 2021 data
+#  because I had to come back to redo this .pdf after updating the data, hence
+#  need the <2021 here; station codes do change over time, but I think are
+#  recently consistent
+previous_stations <- dplyr::filter(yelloweye_rockfish$set_counts,
+                                   year < 2021)$station %>%
+                     unique()
+stations_in_2021_only <- dplyr::filter(sets_2021,
+                                       !(station %in% previous_stations))
+stations_in_2021_only
+```
+and plot those stations:
+```{r map2021only, out.width = '120%', fig.align = "center"}
+plot_BC()
+points(lat~lon,
+       data = stations_in_2021_only,
+       col = "black",
+       pch = 15)
+
+points(lat~lon,
+       data = dplyr::filter(yelloweye_rockfish$set_counts,
+                            year < 2021),
+       col = "red",
+       pch = 20,
+       cex = 0.4)
+
+legend("bottomleft",
+       legend = c("Station numbers appearing only in 2021 and never before",
+                  "Stations from all previous years"),
+       pch = c(15, 20),
+       col = c("black", "red"),
+       pt.cex = c(1, 0.4))
+```
+
+So there are six 2021 stations that have never been fished before! That map
+shows that we should call the five northern ones non-standard also, to exclude
+from the standard Series A-F analyses. Maybe zoom in on the one off the
+northwest of Vancouer Island:
+```{r map2021onlyzoom, out.width = '120%', fig.align = "center"}
+plot_BC(xlim = c(-130, -127),
+        ylim = c(50, 52))
+points(lat~lon,
+       data = stations_in_2021_only,
+       col = "black",
+       pch = 15)
+
+points(lat~lon,
+       data = dplyr::filter(yelloweye_rockfish$set_counts,
+                            year < 2021),
+       col = "red",
+       pch = 20,
+       cex = 0.4)
+
+legend("bottomleft",
+       legend = c("Station numbers appearing only in 2021 and never before",
+                  "Stations from all previous years"),
+       pch = c(15, 20),
+       col = c("black", "red"),
+       pt.cex = c(1, 0.4))
+```
+
+So that precise location was clearly avoided in the past (exactly spaced grid
+implies it would be on a small island called Lanz Island), but it's not exactly
+moving into new territory. It is station 2257 (see above), with a depth of only
+40~m (I think it's metres), which is not an outlier. For example, for 2013
+(depth data for all years is not in gfiphc I don't think):
+```{r depth2013}
+sort(setData2013$avgDepth)
+```
+So let's call it a standard station, as it's in a survey area and not
+ridiculously shallow.
+
+So - retain the 2018 definitions of standard stations (as we did for 2020),
+and call any new 2021 stations non-standard, except for 2257:
 ```{r corrected}
 sets_simp_std_corrected <- sets_simp_std
 summary(as.factor(sets_simp_std_corrected$standard))
 
 sets_simp_std_corrected$standard[sets_simp_std_corrected$station %in%
                                  not_std_in_2018_but_std_in_2021] <- "N"
+sets_simp_std_corrected$standard[sets_simp_std_corrected$station %in%
+                                 stations_in_2021_only$station] <- "N"
+sets_simp_std_corrected$standard[sets_simp_std_corrected$station == "2257"] <- "Y"
 summary(as.factor(sets_simp_std_corrected$standard))
 # cbind(sets_simp_std$standard, sets_simp_std_corrected$standard) # to check them
 ```
