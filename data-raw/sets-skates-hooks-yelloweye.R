@@ -28,8 +28,9 @@ sets_other_years_update <- get_iphc_sets_info()
                                        # Should not change if new data are in gfiphc:
 testthat::expect_equal(sets_other_years,
                        sets_other_years_update)
-# That didn't give an error for 2021 (as expected), but Git still thinks sets_other_years gets
-#  updated here:
+# That didn't give an error for 2021 (as expected), but the first run through
+# Git did still think sets_other_years got updated here, but second time (after
+# fixing the six new stations issue) it didn't - maybe just something to do with usethis.
 sets_other_years <- sets_other_years_update
 usethis::use_data(sets_other_years,
                   overwrite = TRUE)
