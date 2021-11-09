@@ -32,7 +32,7 @@ the data look potentially useful, just do, for example,
 `iphc_get_calc_plot_full("bocaccio")`. If the resulting series looks useful then
 repeat this vignette for your species of interest to understand the results.
 
-Even quicker version -- all the most recent data are now downloaded, analysed
+Even quicker version for a quick look at results -- all the most recent data are now downloaded, analysed
 and the results shown (though not saved anywhere due to size). See the All Species link on the
 main [README](https://github.com/pbs-assess/gfiphc).
 
@@ -207,7 +207,9 @@ Island, with some of the usual stations being surveyed. In previous years it was
 all or nothing. This will affect the results of Series C and D (see README), and
 so whether or not the resulting Series AB can be considered representative for
 the whole coast. Series AB does not include the west coast of Vancouver
-Island.
+Island. For 2021 there are also six stations that were never previously fished
+and so we call these non-standard -- see brief mention in the README and
+[iphc-2021-data.pdf](../data-raw/iphc-2021-data.pdf) for full details.
 
 Unusable stations are determined by the IPHC and any data are excluded from our
 calculations. The horizontal line is the cut-off for calculations for different
@@ -249,6 +251,9 @@ for(i in years_to_plot){
                 )
 }
 ```
+For 2021, as mentioned above, there are six that were never fished before and we define as
+non-standard: five in the far north and one off the northwest tip of Vancouver Island (the latter
+would have been in a Rockfish Conservation Area according to the grid pattern).
 
 To see the stations without reference to any species:
 ```{r, fig.height = 6}
@@ -271,7 +276,7 @@ plot_iphc_map(hooks_with_bait$set_counts,
 
 ## Expanded survey grid in 2018, 2020, and 2021
 
-In the above movie you see that the spatial coverage of sets changed in 2018,
+In the above movie and panel plot you see that the spatial coverage of sets changed in 2018,
 2020, and 2021 due to the expanded survey grid that year that involved sets at extra stations:
 ```{r plotsets, fig.height = 4}
 sets_each_year <- sp_set_counts$set_counts %>%
@@ -283,7 +288,9 @@ plot(sets_each_year$year, sets_each_year$total, type = "o",
 ```
 
 The extra stations are identified in `gfiphc` as *not* standard (`standard` is `N`), with `Y` being the
-standard stations (see `data-raw/iphc-2020-data.R` for explanation of why we
+standard stations (see [iphc-2020-data.pdf](../data-raw/iphc-2020-data.pdf) and
+[iphc-2021-data.pdf](../data-raw/iphc-2021-data.pdf)
+for explanation of why we
 changed the values for some stations from the IPHC raw data -- the IPHC called
 some of the new ones `standard`, even though they hadn't been used before). Removing the
 non-standard stations brings the number of sets in 2018 and 2020 into line with
@@ -306,7 +313,7 @@ filter(sp_set_counts$set_counts, standard == "N") %>%
   unique()
 ```
 
-So use `filter(..., standard == "Y", usable == "Y")` for analyses (to also include
+So we use `filter(..., standard == "Y", usable == "Y")` for analyses (to also include
 only the usable stations).
 
 ## Calculate longest time series possible for the full coast
