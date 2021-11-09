@@ -19,8 +19,10 @@ knitr::opts_chunk$set(
 
 This vignette extracts, analyses, saves and plots the data for all (>100) species for the
 gfsynopsis reports, plus "hooks with bait" considered as a species. It only
-works for users with access to the GFBio database at the Pacific Biological
-Station, or if you have the retrieved data cached locally (in default directory `all-species-data/`.
+runs for users with access to the GFBio database at the Pacific Biological
+Station, or if you have the retrieved data cached locally (in default directory
+`all-species-data/`. Species names are now searchable in the resulting .html
+file (that you may well be reading now).
 
 ```{r setup, message = FALSE, results = FALSE}
 library(gfiphc)
@@ -46,12 +48,12 @@ instead of Series AB.
 
 Change the options to use the cached data and cached results (for example, set
 both to `FALSE` when first running):
-```{r extract, warning = FALSE, results = FALSE}
+```{r extract, warning = FALSE, results = TRUE}
 for(sp in sp_vec){      # increment these to test, done up to number shown
   iphc_get_calc_plot_full(sp,
                           cached_data = TRUE,    # TRUE if data already saved
                           cached_results = TRUE, # TRUE if results already saved
-                          print_sp_name = FALSE,
+                          print_sp_name = TRUE,
                           path_data = "all-species-data",
                           path_results = "all-species-results")
 }
