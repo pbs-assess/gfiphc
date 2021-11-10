@@ -101,7 +101,7 @@ with numbers in parentheses indicating the number of years for which data for ea
 For any spatiotemporal analyses, note that there the IPHC assign a "don't use for spatiotemporal models" code for
 each set, so look into that if necessary.
 
-## Instructions for updating gfiphc with new data each year
+## Instructions for importing and checking new data into gfiphc each year and re-running the vignettes
 
 For 2020 and 2021, only the first 20 hooks were evaluated from each skate. So, like for 2013, the data have been included in this package. For future years, copy the code `data-raw/iphc-2021-data.Rmd` (and rename for a new year) and follow the instructions for downloading the data from the IPHC website, checking the data, and saving it formatted for this package. The results [iphc-2020-data.pdf](data-raw/iphc-2020-data.pdf) and [iphc-2021-data.pdf](data-raw/iphc-2021-data.pdf) are also available for easier reading (only commit a final version of future .pdf's, not as you are working on it).
 
@@ -135,9 +135,9 @@ So, for 2022:
 
 If you use this package please cite it as it is helpful for maintaining it:
 
-Edwards, A.M., S.C. Anderson, E.A. Keppel and C.Grandin (2021). gfiphc: Data Extraction and Analysis for Groundfish Data from the IPHC Longline Survey in BC. R package version 1.0.0.
+Edwards, A.M., S.C. Anderson, E.A. Keppel and C.Grandin (2021). gfiphc: Data Extraction and Analysis for Groundfish Data from the IPHC Longline Survey in BC. R package version 1.1.0. Available from https://github.com/pbs-assess/gfiphc.
 
-Check `citation("gfiphc")` for the latest version number, and for the bibtex entry (you have to manually add the year).
+Check `citation("gfiphc")` for the latest version number and for the bibtex entry (though you have to manually add the year and the website given above).
 
 ## Issues, problems
 
