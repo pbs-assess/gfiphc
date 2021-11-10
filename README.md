@@ -120,13 +120,11 @@ So, for 2022:
 
 1. Re-run (line by line to check) `data-raw/sets-skates-hooks-yelloweye.R` to save some more new data into package.
 
-1. GOT TO HERE
-
-1. Go through and rerun the vignettes (first copying old results into `vignettes-results-XXXX-data/`, XXXX is previous last year of data, to keep if needed), adapting any called functions or printed results as necessary to include latest year of data, making sure the latest year is included and the maps make sense.
+1. Go through and rerun the vignettes (first copying old results into `vignettes-results-XXXX-data/`, XXXX is previous last year of data, to keep if needed), adapting any called functions or printed results as necessary to include latest year of data, making sure the latest year is included and the maps make sense. Need `install(build_vignettes = FALSE)` first as they use the library version.
 
 1. May have to repeat this process as necessary. For example, in 2020 I saved the data, but then kept examining it in `data-raw/iphc-2020-data.Rmd`, realising needed to change a `standard` designation in `setDataExpansion`, so then had to rerun all of these steps to update all .rda files. In 2021 I hadn't originally noticed the six extra stations (I thought they were doing a subset, not expanding a a bit), so had to go back to step 1 and expand the default northern extent of all maps and assign the new stations as `non-standard`.
 
-1. Re-run `data-raw/iphc-****-data.Rmd` again to use all the finalised saved data, and commit its .pdf file.
+1. Re-run `data-raw/iphc-****-data.Rmd` again to use all the finalised saved data, and commit its .pdf file. GOT TO HERE
 
 1. Update the two tables above of what data are available each year and what Series can be made, checking with vignettes. Add notes as necessary.
  
