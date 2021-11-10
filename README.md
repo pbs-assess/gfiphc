@@ -21,7 +21,9 @@ Users outside of PBS can request someone at PBS to extract the data (try Andrew 
 
 ## A quick look
 
-To see the available data for your particular species of interest, look at the saved [All species](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/data_for_all_species.html) vignette, and scroll down to the species (the order is the same as in [Anderson et al., 2019](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2019/2019_041-eng.html)). If there are no time series shown, or there are but they have lots of zeros, then you can conclude that the survey does not really catch your species of interest (unless you want to look at occasional observations). If the data do look useful then you'll likely want install and understand the package.
+To see the available data for your particular species of interest, look at the saved [All species](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/data_for_all_species.html) vignette, and scroll down to or search for the species (the order is the same as in [Anderson et al., 2019](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2019/2019_041-eng.html)). If there are no time series shown, or there are but they have lots of zeros, then you can conclude that the survey does not really catch your species of interest (unless you want to look at occasional observations). If the data do look useful then you'll likely want install and understand the package.
+
+If you are interested in species that may be occasionally caught but are not listed in the [All species](http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/data_for_all_species.html) vignette then install the package and run `check_iphc_spp_name(ignore_obvious=FALSE)` to see if they appear. If so it means there are some data available but not fully incorporated into gfiphc yet - please make a GitHub Issue and I'll look into it.
 
 ## Vignettes
 
@@ -47,12 +49,13 @@ Redbanded Rockfsh [(Edwards et al. 2017)](https://www.dfo-mpo.gc.ca/csas-sccs/Pu
 
 Updates since the 2019 synopsis report include
 
-- splitting the original functions out of `gfplot` and into their own package `gfiphc`
-- vignettes and better documentation
-- Series A-D automatically exclude the expanded grid stations for 2018 (these were included in the original synopsis report)
-- 2019 data are now in GFBio and automatically extracted in the queries here
-- 2020 data are included in `gfiphc` since only the first 20 hooks of each skate were enumerated (and previous years in GFBio had all hooks enumerated).
+- splitting the original functions out of `gfplot` and into their own package `gfiphc`.
+- vignettes and better documentation.
+- Series A-D automatically exclude the expanded grid stations for 2018 (these were included in the original synopsis report).
+- 2019 data are now in GFBio and automatically extracted in the queries here.
+- 2020 and 2021 data are included in `gfiphc` since only the first 20 hooks of each skate were enumerated (and previous years in GFBio had all hooks enumerated).
 - 2020 data included also used an expanded grid, defined slightly differently to the expanded grid in 2018. We have stuck with the 2018 definition of which stations are not part of the standard grid. See [iphc-2020-data.pdf](data-raw/iphc-2020-data.pdf), and it's associated `.Rmd` if desired, for details. Also see that for instructions on extracting future years' data from the new IPHC data website. See the IPHC website for full details on survey protocols -- note that fishing in 2020 was mostly in July and August, whereas it is usually May to August.
+- 2021 included six extra new stations that had never been fished before; these are excluded in [iphc-2021-data.pdf](data-raw/iphc-2021-data.pdf).
 - the boostrapping now uses 10,000 bootstrap samples instead of 1000, as it made a difference for some species.
 
 Note that the analyses still exclude hook competition, but we are working on that (using outputs from `gfiphc`).
@@ -76,9 +79,10 @@ A particular issue is that the data resolution is not the same across the years.
 |2018         |All (+ expansions stns)   |Hook-by-hook       |DFO database GFBio     |Y      |
 |2019         |All                       |Hook-by-hook       |DFO database GFBio     |Y      |
 |2020         |First 20 of each skate    |Set-by-set         |gfiphc package         |N      |
+|2021         |First 20 of each skate    |Set-by-set         |gfiphc package         |Y (reduced)      
 
 <!-- for putting back into gfsynopsis, note that 2018 is now separated out) -->
-In 2018 there were extra expansion stations surveyed (see the vignettes), and in 2020 only the first 20 hooks were enumerated. For 2020, the data were downloaded from the IPHC website and included in the package (see below).
+In 2018 there were extra expansion stations surveyed (see the vignettes), and in 2020 only the first 20 hooks were enumerated. For 2020 and 2021, the data were downloaded from the IPHC website and included in the package (see below). For 2021 the waters off the WCVI were surveyed, but only a subsample of stations were surveyed. This does not affect the Series A, B, and AB calculations, but would affect the Series D and CD calculations (we assume 2021 still surveys the full coast), and will slightly affect the determination of whether or not Series AB (usually the longest series that can be constructed) can be considered representative of the full coast. Newer methods are being developed that will deal with such subsampling and so it has not yet been dealt with here. 
 
 The structure of the data in GFBio is described by [Cooke and Olsen (2020)](https://waves-vagues.dfo-mpo.gc.ca/Library/40879100.pdf), but gfiphc's R functions and built-in SQL queries mean that gfiphc users do not need to have knowledge of GFBio.
 
@@ -88,23 +92,23 @@ Due to the differing data-collection protocols, we developed different ways to o
 
 |                                | Only north of WCVI | Full coast | Restricted area of interest |
 |--------------------------------|--------------------|------------|-----------------------------|
-| First 20 hooks from each skate | A (24)             | D (20)     | E                           |
+| First 20 hooks from each skate | A (25)             | D (21)     | E                           |
 | All hooks from each skate      | B (18)             | C (16)     | F                           |
 
-with numbers in parentheses indicating the number of years for which data for each Series are available. For E and F this depends on the particular area of interest.
+with numbers in parentheses indicating the number of years for which data for each Series are available (updated for 2021). For E and F this depends on the particular area of interest.
 
 For any spatiotemporal analyses, note that there the IPHC assign a "don't use for spatiotemporal models" code for
 each set, so look into that if necessary.
 
 ## Updating with new data each year
 
-For 2020, only the first 20 hooks were evaluated from each skate. So, like for 2013, the data have been included in this package. For future years, copy the code `data-raw/iphc-2020-data.Rmd` (and rename for a new year) and follow the instructions for downloading the data from the IPHC website, checking the data, and saving it formatted for this package. The results [iphc-2020-data.pdf](data-raw/iphc-2020-data.pdf) is also available for easier reading (only commit a final version of future .pdf's, not as you are working on it).
+For 2020 and 2021, only the first 20 hooks were evaluated from each skate. So, like for 2013, the data have been included in this package. For future years, copy the code `data-raw/iphc-2021-data.Rmd` (and rename for a new year) and follow the instructions for downloading the data from the IPHC website, checking the data, and saving it formatted for this package. The results [iphc-2020-data.pdf](data-raw/iphc-2020-data.pdf) and [iphc-2021-data.pdf](data-raw/iphc-2021-data.pdf) are also available for easier reading (only commit a final version of future .pdf's, not as you are working on it).
 
-So:
+So, for 2022:
 
-1. Adapt `data-raw/iphc-2020-data.Rmd` as just described.
+1. Adapt `data-raw/iphc-2021-data.Rmd` as just described.
 
-1. Create/adapt new functions to include the data in the calculations. For data in GFbio this should be automatic, else see what was done just after commit a5ecd2a for 2020, or (easier) see these notes made updated in 2021:
+1. Create/adapt new functions to include the data in the calculations. For data in GFbio this should be automatic, else see what was done just after commit a5ecd2a for 2020, or (easier) see these notes updated in 2021:
 
 1. Further files in `R/` that need checking (search through for most recent year and update; I checked all `R/` files in 2021 and these are the ones; this could be automated but it's actually good to look through the code each year:
 
@@ -120,11 +124,11 @@ So:
 
 1. Go through and rerun the vignettes (first copying old results into `vignettes-results-XXXX-data/`, XXXX is previous last year of data, to keep if needed), adapting any called functions or printed results as necessary to include latest year of data, making sure the latest year is included and the maps make sense.
 
-1. May have to repeat this process as necessary. For example, in 2020 I saved the data, but then kept examining it in `data-raw/iphc-2020-data.Rmd`, realising need to change a `standard` designation in `setDataExpansion`, so then had to rerun all of these steps to update all .rda files.
+1. May have to repeat this process as necessary. For example, in 2020 I saved the data, but then kept examining it in `data-raw/iphc-2020-data.Rmd`, realising needed to change a `standard` designation in `setDataExpansion`, so then had to rerun all of these steps to update all .rda files. In 2021 I hadn't originally noticed the six extra stations (I thought they were doing a subset, not expanding a a bit), so had to go back to step 1 and expand the default northern extent of all maps and assign the new stations as `non-standard`.
 
 1. Re-run `data-raw/iphc-****-data.Rmd` again to use all the finalised saved data, and commit its .pdf file.
 
-1. Update the two tables above of what data are available each year and what Series can be made, checking with vignettes. Add notes as necessary (e.g. 2021 only subsampled off WCVI).
+1. Update the two tables above of what data are available each year and what Series can be made, checking with vignettes. Add notes as necessary.
  
 1. Update version number.
 
