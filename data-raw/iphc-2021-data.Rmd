@@ -637,6 +637,9 @@ Presumably Sun Sea Star and Sunflower Sea Star are the same. Will mention this l
 Note that halibut are not included in these counts:
 ```{r nohalibut}
 dplyr::filter(counts_raw, "Species Name" == "Pacific Halibut")
+# Should be: dplyr::filter(counts_raw, `Species Name` == as.character("Pacific
+#                          Halibut")) %>% as.data.frame()
+# Still 0 in 2021
 ```
 which I presume explains why
 total number of counts for a station does not add up to `HooksObserved`. See
