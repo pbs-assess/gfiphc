@@ -85,6 +85,8 @@ A particular issue is that the data resolution is not the same across the years.
 <!-- for putting back into gfsynopsis, note that 2018 is now separated out) -->
 In 2018 there were extra expansion stations surveyed (see the vignettes), and in 2020 only the first 20 hooks were enumerated. For 2020 and 2021, the data were downloaded from the IPHC website and included in the package (see below). For 2021 the waters off the WCVI were surveyed, but only a subsample of stations were surveyed. This does not affect the Series A, B, and AB calculations, but would affect the Series D and CD calculations (since we assume 2021 still surveys the full coast), and will slightly affect the determination of whether or not Series AB (usually the longest series that can be constructed) can be considered representative of the full coast. Newer methods are being developed that will deal with such subsampling and so it has not been further dealt with here. 
 
+Also for 2021 there were six new stations that have never been surveyed before. We declare these as `non-standard` in gfiphc for constructing the various Series, since they do not appear in previous years. Five stations are along the Alaskan border, extending further north than ever before, and the sixth is just outside the Scott Islands Rockfish Conservation Area off the northwest tip of Vancouver Island. See [iphc-2021-data.pdf](data-raw/iphc-2021-data.pdf) for maps and further details.
+
 The structure of the data in GFBio is described by [Cooke and Olsen (2020)](https://waves-vagues.dfo-mpo.gc.ca/Library/40879100.pdf), but gfiphc's R functions and built-in SQL queries mean that gfiphc users do not need to have knowledge of GFBio.
 
 ## Summary of Series that can be constructed
@@ -129,7 +131,7 @@ So, for 2022:
 
 1. Update the two tables above of what data are available each year and what Series can be made, checking with vignettes. Add notes as necessary.
  
-1. Update version number and email colleagues. <!-- Groundfish section, Maria, Joe, Jennifer, Beau, Elise, ... -->
+1. Update version number and email colleagues. <!-- Groundfish section, Maria, Joe, Jennifer, Beau, Elise, Ann-Marie, ... -->
 
 ## Citation
 
