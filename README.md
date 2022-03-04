@@ -131,7 +131,7 @@ So, for 2022:
 
 1. Update the two tables above of what data are available each year and what Series can be made, checking with vignettes. Add notes as necessary.
  
-1. Update version number and email colleagues. <!-- Groundfish section, Maria, Joe, Jennifer, Beau, Elise, Ann-Marie, ... -->
+1. Update version number and email colleagues. <!-- Groundfish section, Maria, Joe, Jennifer, Beau, Elise, Ann-Marie, Jackie, ... -->
 
 ## Citation
 
