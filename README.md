@@ -11,7 +11,7 @@ The gfiphc package contains functions for:
 - extracting data from the GFBio (GroundFish Biology) database, housed at the Pacific Biological Station, Nanaimo, BC, Canada
 - plotting maps (and movies) showing locations of stations each year
 - deriving relative biomass index trends from the IPHC survey for non-halibut groundfish species along the full BC coast, taking into account the changing survey methodologies and using consistent published methods
-- input into the [groundfish synopsis report by Anderson et al. (2019)](https://github.com/pbs-assess/gfsynopsis) for over 100 species of BC groundfish, which is to be updated every couple of years
+- input into the [groundfish synopsis report by Anderson et al. (2019)](https://github.com/pbs-assess/gfsynopsis) for over 100 species of BC groundfish; the functions allow the report to be updated every few years, with [the first update including all data up to 2021](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ScR-RS/2022/2022_020-eng.html)
 - generating trends for a group of species (e.g. "skates combined")
 - deriving relative biomass index trends for a specified area within BC waters, again taking into account the changing survey methodologies.
 
