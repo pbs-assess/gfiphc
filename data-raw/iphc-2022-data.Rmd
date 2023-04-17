@@ -1,0 +1,967 @@
+---
+title: "Check the 2021 data and incorporate it into gfiphc"
+author: "Andrew Edwards"
+output: pdf_document
+fontsize: 12pt
+date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = ">",
+  fig.width = 10,
+  fig.height = 8
+)
+```
+
+In 2021 (as for 2020) only the first 20 hooks were evaluated, so those data are not easily imported into
+GFBio. Going to incorporate into gfiphc here. Likely need this as a template for
+future years: resave this file with new year, and change all 2021's to the
+subsequent year, go through the code somewhat manually to check the output
+as you go along (in Emacs do Alt-query-replace to change years but read
+carefully as going along), and then finally render the full document to make the
+.pdf. This code includes some
+manual checks to make sure the data look
+okay. The planned stations for the 2021 survey are shown in this [IPHC
+sampling manual (click here)](https://www.iphc.int/uploads/pdf/fiss/2021/iphc-2021-fiss-stations.pdf);
+page 23 has Vancouver [Island] Outside, showing that not all stations were
+intended to be fished there.
+
+For comparison first look at 2013 data included in gfiphc:
+<!-- Based on iphc2013data.Rnw -->
+```{r setup}
+load_all()
+setData2013
+countData2013
+```
+
+We want to get the new data into the same format as those (columns with same
+names and classes, even though in retrospect some classes aren't ideally
+chosen, but also retaining retrieved and observed hooks for the set data). Two
+data sets are
+needed because later gfiphc code summarises catches of a particular species at the
+station level, and needs to create counts of zeros for the species of interest
+(and such zeros are not included in IPHC output).
+
+## Set-level information
+
+For 2020, Maria was sent the file `2020 IPHCtoDFO_dataExtraction-Maria.xls` for set
+details, but this is multiple sheets and more complex than needed. So I tried
+extracting directly from the IPHC website (which they want us to do in the future
+anyway), using the following instructions, which worked for 2020 and 2021:
+
+Go to https://www.iphc.int/data/fiss-data-query and select the following options:
+
+1. Year Range -- 2021 to 2021.
+
+2. Area 2B
+
+3. Purpose Codes -- All
+
+4. IPHC Charter Regions -- All
+
+5. Maps -- Nothing
+
+6. Select non-Pacific halibut species -- deselect All.
+
+Download tab on bottom right (see instructions above question 4), and select
+CrossTab. Select "Set and Pacific Halibut data" and .xlsx format (I tried .csv
+format but it didn't save with commas, strangely). Save in this
+folder as `set-and-halibut-data-2021.xlsx`. Open in Excel and Export as .csv, `set-and-halibut-data-2021.csv`,
+and when trying to quit Excel say no to save changes (not sure if that matters).
+
+Repeat but with all non-halibut data (select All in number 6), and save as
+`non-halibut-data-2021.xlsx` and export as .csv in Excel,
+`non-halibut-data-2021.csv`. Importantly, this file
+(but not the first one) contains the numbers of observed hooks, needed in our
+calculations.
+
+Load data for new year:
+```{r loadsetdata}
+sets_raw <- readr::read_csv("set-and-halibut-data-2021.csv") %>%
+  dplyr::mutate_if(is.character, factor)
+```
+
+Now load the original 2020 data (do not change the 2020 here) to then test that the column
+names and types do not change in future years, and then check columns match `sets_raw`:
+```{r load2020setdata}
+sets_raw_2020 <- readr::read_csv("set-and-halibut-data-2020.csv") %>%
+  dplyr::mutate_if(is.character, factor)
+
+# For 2021 these were different - uncomment for future for first test
+# testthat::expect_equal(names(sets_raw_2020),
+#                        names(sets_raw))
+
+# testthat::expect_equal(sapply(sets_raw_2020, typeof),
+#                        sapply(sets_raw, typeof))
+
+# Columns in 2020 not in new data:
+setdiff(names(sets_raw_2020), names(sets_raw))
+
+# Columns in new data not in 2020:
+setdiff(names(sets_raw), names(sets_raw_2020))
+
+# For 2021 looks like Purpose became Purpose Code, but are the same type:
+summary(sets_raw_2020$Purpose)
+summary(sets_raw$"Purpose Code")
+testthat::expect_equal(typeof(sets_raw_2020$Purpose),
+                       typeof(sets_raw$"Purpose Code"))
+```
+
+Those extra columns in 2021 look related to oceanographic data, beyond the scope
+of gfiphc, so can just ignore shortly.
+
+Want to check the overlapping columns have the same type:
+```{r overlappingcols}
+overlap_col_names <- intersect(names(sets_raw_2020),
+                               names(sets_raw))
+# testthat::expect_equal(sapply(dplyr::select(sets_raw_2020,
+#                                            overlap_col_names),
+#                              typeof),
+#                       sapply(dplyr::select(sets_raw,
+#                                            overlap_col_names),
+#                              typeof))
+# Error: sapply(dplyr::select(sets_raw_2020, overlap_col_names), typeof) not equal to sapply(dplyr::select(sets_raw, overlap_col_names), typeof).
+# 1/32 mismatches
+# x[12]: "logical"
+# y[12]: "integer"
+dplyr::select(sets_raw_2020,
+              overlap_col_names[12])
+dplyr::select(sets_raw,
+              overlap_col_names[12])
+```
+These are all NA's anyway (see below) and don't get saved, so no worries.
+
+
+```{r newsetdata}
+sets_raw
+summary(sets_raw)
+testthat::expect_equal(unique(sets_raw$"IPHC Reg Area"),
+                       as.factor("2B")) # Check just BC
+testthat::expect_equal(unique(sets_raw$Year), 2021)
+testthat::expect_equal(length(unique(sets_raw$Station)),
+                       length(sets_raw$Station))
+```
+
+### Understand any issues raised above
+
+Uncomment those three `testthat` commands when looking at new data each year. If
+any of fail then have to comment it out and figure out what it means here.
+
+This is for 2020 (check for future years), to look for station(s) that was
+fished twice. Not really needed for 2021 since that third test passed, but
+`twice_fished` gets used later, so do evaluate here:
+```{r understand}
+length(unique(sets_raw$Station))
+length(sets_raw$Station)
+dplyr::count(sets_raw, Station) %>% dplyr::filter(n > 1)
+twice_fished <- dplyr::count(sets_raw, Station) %>%
+  dplyr::filter(n > 1) %>%
+  dplyr::select(Station) %>%
+  as.numeric()
+twice_fished
+# If there's more than a single station then adapt later code
+#as.data.frame(dplyr::filter(sets_raw,
+#                            Station == twice_fished))
+
+```
+Not needed for 2021: So Station `r twice_fished` had two vessels fishing the same station (which the code below
+originally caused a total of four rows for that station, explaining the 200 rows
+I had in original `setData2020` before fixing the issue). Interestingly the
+halibut catches were almost double for one vessel than the other (but were 6
+days apart):
+
+2020: Note that one of those entries has 'Vessel code' HAN, but HAN only appears once
+in the whole data set (as seen in `summary(sets_raw)` above.
+
+For 2021, just noting that two vessels were used, and these are different to those in 2020 (for which HAN then
+got excluded anyway):
+```{r duplicate}
+summary(sets_raw$"Vessel code")
+summary(sets_raw_2020$"Vessel code")
+```
+
+2020: So given we want to exclude one of the duplicates, makes sense to exclude
+HAN. (Also, Dana mentioned some gear comparison studies for 2020).
+
+Simplify down to what's needed and rename, based on `iphc2013data.Rnw` (need
+to include the 'purpose' column, unlike 2013):
+```{r simplify}
+# sets_simp <- dplyr::filter(sets_raw, `Vessel code` != "HAN") %>%
+sets_simp <- dplyr::select(sets_raw,
+                           year = Year,
+                           station = Station,
+                           lat = "MidLat fished",
+                           lon = "MidLon fished",
+                           avgDepth = "AvgDepth (fm)",
+                           skatesHauled = "No. skates hauled",
+                           effSkateIPHC = "Effective skates hauled",
+                           soakTimeMinutes = "Soak time (min.)",  # Joe might want
+                           usable = Eff,
+                           purpose = "Purpose Code",
+                           U32halibut = "U32 Pacific halibut count",
+                           O32halibut = "O32 Pacific halibut count") %>%
+  arrange(station) %>%
+  dplyr::mutate(year = as.integer(year),
+                station = as.character(station),
+                avgDepth = as.integer(avgDepth),
+                usable = as.character(usable))
+sets_simp
+```
+
+## Standard grid or not
+
+Need to change purpose to `standard` (`Y/N`) to match 2018 data (`Y` for the
+standard grid). In the raw 2020 data, `Purpose` took three values that we
+converted to `standard` to save in the package:
+```{r purpose2020}
+summary(sets_raw_2020$Purpose)
+summary(setData2020$standard)
+```
+
+For 2021 we have all as Standard Grid, which gets corrected (some stations are
+non-standard) in the next section.
+```{r purpose}
+summary(sets_simp$purpose)
+
+sets_simp_std <- dplyr::mutate(sets_simp,
+                               standard_tmp = (purpose == "Standard Grid"))
+                               # was grid in 2020, Grid in 2021
+
+standard <- as.character(sets_simp_std$standard_tmp)  # to get the right length
+standard[sets_simp_std$standard_tmp] = "Y"
+standard[!sets_simp_std$standard_tmp] = "N"
+length(standard)
+
+sets_simp_std <- cbind(sets_simp_std,
+                   standard) %>%
+  as_tibble() %>%
+  dplyr::select(-c("standard_tmp"))
+summary(sets_simp_std)
+unique(sets_simp_std$standard)
+```
+
+So they are all classified as standard. For 2020 we stuck with the 2018
+definitions of standard, so doing that next.
+
+## Look at data and show map to understand changing definition of standard station from 2018 to 2020.
+
+The definition of 'standard grid' changed from 2018 (when
+first needed due to the expanded grid) to 2020 (and 2021). Simply equating them as above is
+not sufficient. For 2021 we so far have this:
+```{r map2021}
+plot_iphc_map(sets_simp_std,
+              sp = NULL,
+              years = 2021,
+              indicate_standard = TRUE)
+```
+So no stations are marked as being outside the standard grid, even though some
+are clearly new -- the ones in the north have never been fished before (see the
+one-species vignette, though I'll investigate that here).
+
+This next section was to first figure out the twice-fished station `2343` in 2020, and to
+replicate that original analysis (station ends up being non-standard later), so
+mostly commented out except first bit which is used later so keeping in case
+need in future years:
+```{r revert}
+hooks_with_bait_revert <- hooks_with_bait
+
+# This should be commented out for 2021 survey analysis in iphc-2021-data.Rmd,
+#  since the problem is presumably fixed. This is to revert back to the original
+#  problem, for which 2343 was called standard in 2018 but we changed it. Map on
+#  page 10 of iphc-2020-data.pdf has this station (second one down off
+#  north-east tip of Haida Gwaii) as non-standard in 2018 but not 2020.
+# hooks_with_bait_revert$set_counts[hooks_with_bait_revert$set_counts$year == 2018 &
+#                            hooks_with_bait_revert$set_counts$station == 2343,
+#                            ]$standard = "Y"
+
+#filter(hooks_with_bait$set_counts, year == 2018, station == 2343) %>%
+#  as.data.frame()      # saved version
+#filter(hooks_with_bait_revert$set_counts, year == 2018, station == 2343) %>%
+#  as.data.frame()      # reverted version
+
+```
+
+Now to figure out standard/non-standard stations. Plotting four years, with crosses showing 'non-standard'. (2021 is coloured
+different since no hooks with bait data yet, but the important bit is the crosses).
+```{r maps}
+sets_2021 <- dplyr::select(sets_simp_std,
+                           -c(U32halibut, O32halibut))
+                           # else not the same structure as sets_2018, below
+
+plot_iphc_map_panel(hooks_with_bait$set_counts,
+                    sp = "Hooks with bait",
+                    years = 2018:2020,
+                    indicate_standard = TRUE)
+
+
+plot_iphc_map(sets_2021,
+              sp = NULL,
+              years = 2021,
+              indicate_standard = TRUE)
+```
+
+Can see that 2020 has a few less stations just north of Vancouver Island, but not
+enough to worry about greatly, and 2021 has kind of done a few of those. The
+2021 ones way in in the inlets are not currently flagged as non-standard but
+will be below (using the 2018 definitions). In fact no stations are flagged for
+2021 as non-standard. And the other main issue is that 2021 is doing a random
+sample of WCVI stations (some of which will become non-standard). AND that there
+are new stations in the north (and maybe elsewhere) that have never been fished
+before (as I discovered when updating the one-species vignette and redefining
+the default axes limits for `plot_BC()`; the version before updating that isaved
+as iphc-2021-data-all-2021-stations.pdf`). Will examine those shortly.
+
+Need to look and plot values:
+```{r standardornot}
+sets_2018 <- filter(hooks_with_bait_revert$set_counts,
+                    year == 2018)
+not_std_2018 <- filter(sets_2018,
+                       standard == "N")$station
+
+not_std_2021 <- filter(sets_2021,
+                       standard == "N")$station
+
+# Not standard in both:
+not_std_2018_and_2021 <- intersect(not_std_2018, not_std_2021)
+not_std_2018_and_2021
+
+length(not_std_2018)
+length(not_std_2021)
+length(not_std_2018_and_2021)
+
+# 2018 has some east of the map, all non-standard:
+filter(hooks_with_bait_revert$set_counts, year == 2018, lon > -124)$standard
+nrow(filter(hooks_with_bait_revert$set_counts, year == 2018, lon > -124))
+
+std_in_2018_but_not_std_in_2021 <- intersect(filter(sets_2018,
+                                                    standard == "Y")$station,
+                                             not_std_2021)
+std_in_2018_but_not_std_in_2021
+
+not_std_in_2018_but_std_in_2021 <- intersect(not_std_2018,
+                                             filter(sets_2021,
+                                                    standard == "Y")$station)
+not_std_in_2018_but_std_in_2021
+
+# setdiff(x, y) - elements in x but not in y
+# setdiff(not_std_2018, not_std_2020) - but 2020 fewer coverage so misleading
+```
+
+Plot stations not standard in 2018 but standard in 2021, and vice versa, using
+each years' lats and lons (to verify that they all still agree -- i.e., that station
+numbers have consistent lats and lons), and show 2019 data to check no 'usual'
+stations are non-standard in 2018 or 2021. Also (for 2021) adding all stations,
+since this will clearly show the random sampling off WCVI:
+```{r mapstandard, out.width = '120%', fig.align = "center"}
+plot_BC()
+points(lat~lon,
+       data = filter(sets_2018,
+                     station %in% not_std_in_2018_but_std_in_2021),
+       col="red",
+       pch = 19)
+
+# Do the same but using 2021 station co-ordinates - should overlap:
+points(lat~lon,
+       data = filter(sets_2021,
+                     station %in% not_std_in_2018_but_std_in_2021),
+       col="blue",
+       pch = 3)
+
+# And for 2020 showed the single station std in 2018 but not 2020, for 2021
+# there are none:
+points(lat~lon,
+       data = filter(sets_2018,
+                     station %in% std_in_2018_but_not_std_in_2021),
+       col="red",
+       pch = 17)
+points(lat~lon,
+       data = filter(sets_2021,
+                     station %in% std_in_2018_but_not_std_in_2021),
+       col="blue",
+       pch = 1,
+       cex = 2)
+
+
+# Now show all 2019 stations:
+points(lat~lon,
+       data = filter(hooks_with_bait_revert$set_counts,
+                     year == 2019),
+       col="darkgreen",
+       pch = 0)
+
+# Add all 2021 stations as a small black dot
+points(lat~lon,
+       data = sets_2021,
+       col="black",
+       pch = 20,
+       cex = 0.8)
+
+legend("bottomleft",
+       legend = c("Not std 2018 but std 2021 (2018 co-ords)",
+                  "Not std 2018 but std 2021 (2021 co-ords)",
+                  "Std 2018 but not std 2021 (2018 co-ords)",
+                  "Std 2018 but not std 2021 (2021 co-ords)",
+                  "All 2019 stations",
+                  "All 2021 stations"),
+             pch = c(19, 3, 17, 1, 0, 20),
+             pt.cex = c(1, 1, 1, 2, 1, 0.8),
+             col = c("red", "blue", "red", "blue", "darkgreen", "black"))
+```
+So the co-ordinates look close enough (red circles and blue crosses overlap),
+none were defined as non-standard in 2021 so there are no red triangles or blue
+circles, and the green squares for 2019 stations correctly do not overlap with
+the non-standard 2018 stations. Black dots (2021 stations) with no green squares
+off WCVI clearly shows the reduced coverage there.
+
+2020 only (there were no non-standard stations defined in raw data for 2021):
+Check if the one standard station in 2018 but not in 2020 (not fished at all in 2019)
+appears in any earlier years:
+```{r checkearly, eval=FALSE}
+# Fails (so not evaluated here) since empty in 2021, and this is corrected
+dplyr::filter(hooks_with_bait_revert$set_counts,
+              station == std_in_2018_but_not_std_in_2021) %>%
+  as.data.frame()
+```
+For 2020 I worked out it was only fished in 2018 and 2020 so we defined it as non-standard.
+
+So, the conclusion from this section so far is that we should retain the 2018
+definitions of standard stations, not the new ones defined in
+2021, as we did for 2020.
+
+Doing that shortly (in `sets_simp_std_corrected`), but first also look for any
+new 2021 stations. I hadn't expected any but saw them when doing the one-species
+vignette, so had to come back to redo this.
+
+```{r stations2021only}
+# yelloweye_rockfish$set_counts is saved in gfiphc, already has 2021 data
+#  because I had to come back to redo this .pdf after updating the data, hence
+#  need the <2021 here; station codes do change over time, but I think are
+#  recently consistent
+previous_stations <- dplyr::filter(yelloweye_rockfish$set_counts,
+                                   year < 2021)$station %>%
+                     unique()
+stations_in_2021_only <- dplyr::filter(sets_2021,
+                                       !(station %in% previous_stations))
+stations_in_2021_only
+```
+and plot those stations:
+```{r map2021only, out.width = '120%', fig.align = "center"}
+plot_BC()
+points(lat~lon,
+       data = stations_in_2021_only,
+       col = "black",
+       pch = 15)
+
+points(lat~lon,
+       data = dplyr::filter(yelloweye_rockfish$set_counts,
+                            year < 2021),
+       col = "red",
+       pch = 20,
+       cex = 0.4)
+
+legend("bottomleft",
+       legend = c("Station numbers appearing only in 2021 and never before",
+                  "Stations from all previous years"),
+       pch = c(15, 20),
+       col = c("black", "red"),
+       pt.cex = c(1, 0.4))
+```
+
+So there are six 2021 stations that have never been fished before! That map
+suggests that we should call the five northern ones non-standard also, to exclude
+from the standard Series A-F analyses.
+
+However, Ann-Marie Huang thinks that
+these stations may have been fished before but considered as part of Area 2C
+(Alaskan waters). Some waters around there are claimed by both Canada and the
+US; there's a clear map and explanation in [Canada's Unresolved Maritime
+Boundaries
+(clickable)](https://www.dur.ac.uk/resources/ibru/publications/full/bsb5-3_gray.pdf),
+which is linked from [this Wikipedia article on Dixon
+Entrance](https://en.wikipedia.org/wiki/Dixon_Entrance).
+So there may be earlier data, which are not in gfiphc because such stations
+would not have been considered Area 2B, which is the area for which the IPHC
+sent DFO data in the past (and which I used here for recent years to extract
+from their website). So there may be data available, and if needed it will have
+to be obtained. Here we will call those five northern newly-fished stations
+`non-standard`.
+
+For the sixth station off the northwest of Vancouer Island, zooming in and
+including the Scott Islands [Rockfish Conservation Area
+(clickable)](https://www.pac.dfo-mpo.gc.ca/fm-gp/maps-cartes/rca-acs/rca-acs/north-nord/ScottIslandsChart3744-eng.html)
+as a blue rectangle shows:
+```{r map2021onlyzoom, out.width = '120%', fig.align = "center"}
+plot_BC(xlim = c(-130, -127),
+        ylim = c(50, 52))
+
+scott_island_RCA_lon <- -c(128 + 56.5/60, 128 + 33/60)
+scott_island_RCA_lat <- c(50 + 45/60, 50 + 52/60)
+
+# rect(xleft, ybottom, xright, ytop, density = NULL, angle = 45,
+rect(scott_island_RCA_lon[1],
+     scott_island_RCA_lat[1],
+     scott_island_RCA_lon[2],
+     scott_island_RCA_lat[2],
+     border = "blue")
+
+points(lat~lon,
+       data = stations_in_2021_only,
+       col = "black",
+       pch = 15)
+
+points(lat~lon,
+       data = dplyr::filter(yelloweye_rockfish$set_counts,
+                            year < 2021),
+       col = "red",
+       pch = 20,
+       cex = 0.4)
+
+legend("bottomleft",
+       legend = c("Station numbers appearing only in 2021 and never before",
+                  "Stations from all previous years"),
+       pch = c(15, 20),
+       col = c("black", "red"),
+       pt.cex = c(1, 0.4))
+```
+So the new station is just outside the RCA. Presumably in previous years the RCA
+was avoided as the grid would have put a station in the RCA, close to (or even
+on) Lanz Island.
+
+It is station 2257 (see above), with a depth of only
+40 fathoms, which is not an outlier. For example, for 2013
+(depth data for all years is not in gfiphc I don't think):
+```{r depth2013}
+sort(setData2013$avgDepth)
+```
+However, since it is a new station and not been used before, we will flag it as
+`non-standard` (as used for the Series A-F analyses). Also Dana Haggarty says
+that there is good habitat right close to those islands, but not great further
+away, and she has used Remotely Operated Vehicles there -- it's all
+sand/gravel/cobble with massive sand waves from the crazy exposure, but perhaps
+there are pockets of good habitat. So either
+way (close to an RCA so may be expected to be good for rockfish at least, or not
+great rockfish habitat) it shouldn't really be included for rockfish species,
+and in general should be excluded since a new station.
+
+So - retain the 2018 definitions of standard stations (as we did for 2020),
+and call all six 2021 stations non-standard:
+```{r corrected}
+sets_simp_std_corrected <- sets_simp_std
+summary(as.factor(sets_simp_std_corrected$standard))
+
+sets_simp_std_corrected$standard[sets_simp_std_corrected$station %in%
+                                 not_std_in_2018_but_std_in_2021] <- "N"
+sets_simp_std_corrected$standard[sets_simp_std_corrected$station %in%
+                                 stations_in_2021_only$station] <- "N"
+summary(as.factor(sets_simp_std_corrected$standard))
+# cbind(sets_simp_std$standard, sets_simp_std_corrected$standard) # to check them
+```
+
+Think I hadn't originally defined them as factors in early code, so keeping them
+as characters now. Just to vefify that none of the 2018 non-standard stations
+were fished before 2018:
+```{r checknon}
+dplyr::filter(hooks_with_bait$set_counts,
+              station %in% not_std_2018) %>%
+  dplyr::select(year) %>%
+  unique()
+```
+Note 2021 won't show up here until .rda objects are resaved in package, at the
+end of this .pdf (so it will if this .Rmd has already been run, as it has in 2021).
+
+So here are the final station designations for 2021:
+```{r map2021final}
+plot_iphc_map(sets_simp_std_corrected,
+              sp = NULL,
+              years = 2021,
+              indicate_standard = TRUE)
+```
+Can see that they did 10 random stations off WCVI that we're calling
+non-standard (because they were never fished before 2018). Which is a bit of a
+shame as there are only 16 stations left off WCVI for 2021.
+
+2020 (no need to change for 2021): So check which functions need changing, since they create a 'standard'
+column. These do not need changing: `get_iphc_hooks()` and `get_iphc_skates_info`.
+
+2020: Then `get_iphc_sets_info()` does return `standard`, but the `standard`
+designation is not saved in GFBio it is saved in `setDataExpansion` in `gfiphc`.
+So just need to add a line in `IPHC-stations-expanded.R` and then re-save all
+.rda files. Fixed that, now recreating all .rda files, as per the README.
+
+## Species counts
+
+Now get the species counts into the desired format (to match `countData2013`
+shown earlier). First check that the column names and types haven't changed
+(they did for set data from 2020 to 2021):
+```{r countsnames}
+counts_raw_2020 <- readr::read_csv("non-halibut-data-2020.csv") %>%
+  dplyr::mutate_if(is.character, factor)
+
+counts_raw <- readr::read_csv("non-halibut-data-2021.csv") %>%
+  dplyr::mutate_if(is.character, factor)
+
+testthat::expect_equal(names(counts_raw_2020),
+                       names(counts_raw))
+
+testthat::expect_equal(sapply(counts_raw_2020, typeof),
+                       sapply(counts_raw, typeof))
+```
+Great, nothing changed in the structure.
+
+```{r counts}
+counts_raw
+summary(counts_raw)
+testthat::expect_equal(unique(counts_raw$Year), 2021)  # All 2021
+testthat::expect_equal(unique(counts_raw$SampleType), as.factor("20Hook")) # All 20Hook
+
+# This mismatches for 2020, not for 2021:
+testthat::expect_equal(length(unique(counts_raw$Station)),
+                       length(sets_raw$Station))
+
+unique(counts_raw$"Species Name")
+```
+
+Here's what was seen in 2020 but not 2021, and vice versa:
+```{r seenoneyear}
+# Seen in 2020 not 2021
+setdiff(unique(counts_raw_2020$"Species Name"),
+        unique(counts_raw$"Species Name"))
+# Seen in 2021 not 2020
+setdiff(unique(counts_raw$"Species Name"),
+        unique(counts_raw_2020$"Species Name"))
+```
+Presumably Sun Sea Star and Sunflower Sea Star are the same. Will mention this later on.
+
+Note that halibut are not included in these counts:
+```{r nohalibut}
+dplyr::filter(counts_raw, "Species Name" == "Pacific Halibut")
+# Should be: dplyr::filter(counts_raw, `Species Name` == as.character("Pacific
+#                          Halibut")) %>% as.data.frame()
+# Still 0 in 2021
+```
+which I presume explains why
+total number of counts for a station does not add up to `HooksObserved`. See
+later for halibut calculations.
+
+2020 only: Need to remove the HAN records for the twice-fished station, which turns out to
+be set number 4 for station 2104:
+```{r twicefished}
+dplyr::filter(counts_raw, Station == twice_fished) %>%
+  dplyr::select(c("Station", "Setno", "Species Name",
+                  "Number Observed")) %>%
+    as.data.frame()
+
+dplyr::filter(sets_raw, Station == twice_fished)
+```
+
+So for 2020 had to use that here to remove the species counts for that vessel (note that vessel
+code is not in `counts_raw`), just commenting that part out for 2021:
+```{r countcalcs}
+dplyr::filter(counts_raw,
+              Station == twice_fished & Setno == 4)
+
+# So just keep these:
+# dplyr::filter(counts_raw,
+#              !(Station == twice_fished & Setno == 4))
+
+#countData2020_no_halibut <- dplyr::filter(counts_raw,
+#                               !(Station == twice_fished & Setno == 4)) %>%
+# Seems that can't just keep using that even if twice_fished = NA
+countData2021_no_halibut <- counts_raw %>%
+  dplyr::select(year = Year,
+                station = Station,
+                spNameIPHC = "Species Name",
+                specCount = "Number Observed") %>%
+  arrange(station) %>%
+  dplyr::mutate(year = as.integer(year),
+                station = as.character(station),
+                spNameIPHC = as.character(spNameIPHC),
+                specCount = as.integer(specCount))
+
+testthat::expect_equal(names(countData2013), names(countData2021_no_halibut))
+countData2021_no_halibut
+summary(countData2021_no_halibut)
+```
+
+## Hooks observed and retrieved
+
+Now, obtain the numbers of hooks observed and retrieved from `counts_raw`, to
+then merge into the set details:
+```{r hookdetails}
+# hook_details <- dplyr::filter(counts_raw,
+#                               !(Station == twice_fished & Setno == 4)) %>%
+hook_details <- counts_raw %>%
+  dplyr::group_by(Station) %>%
+  dplyr::summarise(year = unique(Year),
+                   hooksRetr = unique(HooksRetrieved),
+                   hooksObs = unique(HooksObserved)) %>%
+  dplyr::rename(station = Station) %>%
+  dplyr::ungroup() %>%
+  arrange(station) %>%
+  dplyr::mutate(year = as.integer(year),
+                station = as.character(station))
+
+hook_details
+
+testthat::expect_equal(sets_simp_std_corrected$station, hook_details$station)
+```
+
+So now need to get the hook details into the set details, and keep columns as
+for `setData2013` but also with `standard`, and may as well keep `hooksRetr` and
+`hooksObs`:
+```{r merge}
+setData2021 <- dplyr::left_join(sets_simp_std_corrected,
+                                hook_details,
+                                by = c("year", "station")) %>%
+  dplyr::mutate(E_it20 = effSkateIPHC * hooksObs / hooksRetr) %>%
+  dplyr::select(year,
+                station,
+                lat,
+                lon,
+                avgDepth,
+                effSkateIPHC,
+                E_it20,
+                usable,
+                standard,
+                hooksRetr,
+                hooksObs) %>%
+  dplyr::mutate(year = as.integer(year),
+                station = as.character(station),
+                avgDepth = as.integer(avgDepth),
+                usable = as.character(usable),
+                standard = as.factor(standard))
+setData2021
+testthat::expect_equal(names(setData2013), names(setData2021)[1:ncol(setData2013)])
+summary(setData2021)
+```
+
+## Pacific Halibut counts
+
+As noted above, the data extraction for the counts is for all non-halibut
+species. We still want the halibut counts for just the first 20 hooks -- the
+`data_for_all_species` vignette (for data up to 2019) shows that the 20-hook and full hook counts
+(Series A and B) are very similar when rescaled, and the rescaling is miniscule
+with $G_A / G_B = 1.005$. So this justifies sticking with 20-hook counts for
+halibut, even though the full data are available for all sets, given it is a
+halibut survey. (Using all hooks for all years could be done, but would be a lot
+of new code).
+
+There are two options for getting halibut counts for the first 20 hooks (given
+we don't have hook-by-hook data, though it could probably be obtained just maybe
+not from the IPHC website).
+
+### Option 1.
+
+Take the halibut counts for all the hooks (which we have in `sets_raw` and
+subsequent objects) and create `N_it20_halibut_est = E_it20 / E_it *
+N_it`, or equivalently just `N_it20_halibut_est = hooksObs / hooksRetr *
+N_it`. Note that observed refers to observed for non-halibut species
+(presumably `hooksRetr` works for halibut). Not
+strictly the first 20 hooks, but is a rescaling. But will not guarantee integer values.
+
+```{r sethalibut}
+setData2021_and_halibut <-
+  dplyr::left_join(setData2021,
+                   dplyr::select(sets_simp_std_corrected,
+                                 c(station,
+                                   U32halibut,
+                                   O32halibut)),
+                   by = "station") %>%
+  dplyr::mutate(N_it_halibut = U32halibut + O32halibut,
+                N_it20_halibut_opt_1 = hooksObs / hooksRetr * N_it_halibut)
+setData2021_and_halibut %>% dplyr::select(station,
+                                          N_it_halibut,
+                                          N_it20_halibut_opt_1)
+```
+
+### Option 2.
+
+Add all the 20-hook counts for a set (which include `Hook with Skin` etc.) and compare
+   with `hooksObs`. The latter is higher (or equal), and the difference is halibut
+   (as the only **non** non-halibut` species). Compare with the results from
+   option 1. If close then use option 2, since it will be just be halibut counts
+   and gives an integer number, and is based on the first 20 hooks.
+
+Add counts for each set:
+```{r countsmaybe}
+counts_20 <- countData2021_no_halibut %>%
+  dplyr::group_by(station) %>%
+  dplyr::summarise(non_halibut = sum(specCount)) %>%
+  dplyr::ungroup()
+counts_20
+```
+
+Now join the two options together to calculate `N_it20_halibut_opt_2` and then
+compare the two estimates of `N_it20_halibut`:
+```{r compare}
+compare <-
+  dplyr::left_join(setData2021_and_halibut,
+                   counts_20,
+                   by = "station") %>%
+  dplyr::mutate(N_it20_halibut_opt_2 = hooksObs - non_halibut,
+                N_it20_opt_1_over_opt_2 = N_it20_halibut_opt_1 / N_it20_halibut_opt_2) %>%
+  dplyr::select(year,
+                station,
+                usable,
+                N_it20_halibut_opt_1,
+                N_it20_halibut_opt_2,
+                N_it20_opt_1_over_opt_2)
+compare$spNameIPHC <- "Pacific Halibut"
+compare
+
+plot(compare$N_it20_halibut_opt_1, compare$N_it20_halibut_opt_2)
+abline(a = 0, b = 1)
+
+cor(compare$N_it20_halibut_opt_1,
+    compare$N_it20_halibut_opt_2)
+```
+So this is the right approach and correlation coefficient is high, though
+numbers not quite as close as may have thought. But these data are used for
+aggregating across all stations in a year
+(and any further analyses on halibut for management purposes should be done
+using the full halibut data
+anyway -- we wouldn't really need that). And the means aren't too bad:
+```{r means}
+mean(compare$N_it20_halibut_opt_1)
+mean(compare$N_it20_halibut_opt_2)
+```
+
+So either of these would work. So use option 2 since gives an integer count:
+```{r combine}
+compare$N_it20_halibut_opt_2
+countData2021_halibut <- dplyr::select(compare,
+                                       year,
+                                       station,
+                                       spNameIPHC,
+                                       specCount = N_it20_halibut_opt_2) %>%
+  dplyr::mutate(specCount = as.integer(specCount))
+countData2021 <- rbind(countData2021_no_halibut,
+                       countData2021_halibut) %>%
+  dplyr::arrange(station)
+# First time running, called the above countData2020_NEW to check remaining data didn't change:
+# expect_equal(countData2020, filter(countData2020_NEW, spNameIPHC !=
+#                                                      "Pacific Halibut"))
+```
+
+Note that for 2021 this does give zeros for Pacific Halibut (the only species that
+will have a zero, because we have a value for each station because zero counts are in
+the original `sets_raw`):
+```{r countData}
+summary(dplyr::filter(countData2021,
+                      spNameIPHC == "Pacific Halibut"))
+unique(dplyr::filter(countData2021, specCount == 0)$spNameIPHC)
+```
+
+## Check species names
+
+The file `inst/extdata/iphc-spp-names.csv` contains species common names (as
+used for gfsynopsis, and a few extra like `unidentified skate`) and the IPHC
+common name. The function `check_iphc_spp_name()` has a list of non-groundfish
+species that are automatically ignored. These first results are from running
+these functions *before* updating anything, so the results are hardwired
+here (chunks are not evaluated). Then we update the species list and re-run the functions.
+
+These are IPHC names that are not given in `iphc-spp-names.csv` (automatically ignoring
+obvious ones that are listed in the function), for years up to 2020 (since not
+updated code yet):
+```{r notconverted, eval=FALSE}
+check_iphc_spp_name()
+##  [1] "Unidentified Shark"          "Unident. Rockfish"
+##  [3] "unident. thornyhead (Idiot)" "Grenadier (Rattails)"
+##  [5] "Miscellaneous Shark"         "Eelpout"
+##  [7] "unident. Roundfish"          "unident. Sculpin"
+##  [9] "Unident. Flatfish"           "Greenland Turbot"
+## [11] "unident. Hagfish"            "Starry Skate"
+## [13] "Black Skate"                 "Brittle Star"
+## [15] "Glass Sponge"                "Basketstar"
+## [17] "Blackspotted Rockfish"
+```
+
+These are the ones just for the new 2021 data:
+```{r justnew, eval=FALSE}
+check_iphc_spp_name(countData2021)
+##  [1] "Basketstar"                   "unident. thornyhead (Idiot)"
+##  [3] "Sandpaper Skate"              "Sea Whip"
+##  [5] "Stylaster campylecus (coral)" "Brittle Star"
+##  [7] "unident. Sculpin"             "Glass Sponge"
+##  [9] "Sun Sea Star"                 "Salmon Shark"
+## [11] "Jellyfish"                    "Great Sculpin"
+## [13] "Cabezon"                      "Unident. Salmon"
+## [15] "Unident. Rockfish"            "unident. organic matter"
+## [17] "Dungeness Crab"               "Blackspotted Rockfish"
+```
+There were only six for 2020 though (a lot more for 2021):
+```{r new2020, eval=FALSE}
+check_iphc_spp_name(countData2020)
+## [1] "unident. thornyhead (Idiot)" "Brittle Star"
+## [3] "Glass Sponge"                "Basketstar"
+## [5] "Blackspotted Rockfish"       "unident. Sculpin"
+```
+
+For 2020 I said that only the Thornyhead and Blackspotted Rockfish are likely of
+interest (Issues #17 and #18). And the sharks from the earlir list. So look at just the new ones in 2021 that
+aren't in 2020 or any previous year:
+
+```{r new2021, eval =FALSE}
+setdiff(check_iphc_spp_name(countData2021),
+        check_iphc_spp_name())
+# Before updating anything this gives:
+# [1] "Sandpaper Skate"              "Sea Whip"
+# [3] "Stylaster campylecus (coral)" "Sun Sea Star"
+# [5] "Salmon Shark"                 "Jellyfish"
+# [7] "Great Sculpin"                "Cabezon"
+# [9] "Unident. Salmon"              "unident. organic matter"
+# [11] "Dungeness Crab"
+```
+
+Of these, Sandpaper Skate, Salmon Shark, Great Sculpin, and Cabezon are in gfsynopsis but have not been
+designated an `iphc_common_name` in `iphc-spp-names.csv` (have to do that manually). Though Sandpaper Skate,
+Salmon Shark, and Great Sculpin do show up has having IPHC data in 2019 gfsynopsis report,
+but looks like only data from GFBio, looking carefully at the
+`data_for_all_species` vignette for 2020:
+http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/vignettes/data_for_all_species.html
+They did not have 2020 IPHC data, but do for 2021 (GS had 1995 and 1996 as zeros;
+don't think others did). Cabezon has no previous data.
+
+So, need to add those species to `iphc-spp-names.csv`, which may discover some
+old data for those years when I redo the vignettes, as it seems strange that
+they never seem to show up in the 20-hook-only data, just in GFBio.
+
+Also add these to the `ignore_obvious` list in `check_iphc_spp_name()`:
+
+"Sea Whip",
+"Stylaster campylecus (coral)",
+"Sun Sea Star",
+"Jellyfish",
+"Unident. Salmon",
+"unident. organic matter",
+"Dungeness Crab"
+
+That list already had Sunflower Sea Star in it, presumably the same as Sun Sea
+Star.
+
+Then redoing those above commands with updated code gives this, where some
+species are returned because they are not non-groundfish ones (or Brittle Star
+or Glass Sponge which we also kept in the past) that we want to automatically ignore:
+```{r updatedspnames}
+check_iphc_spp_name(countData2021)
+# That still retains some we may want to think about further at some point, but
+#  these are all in the overall list for all years:
+setdiff(check_iphc_spp_name(countData2021),
+        check_iphc_spp_name())
+check_iphc_spp_name()
+```
+
+## Save data sets
+
+```{r savedata}
+usethis::use_data(countData2021,
+                  overwrite = TRUE)
+
+usethis::use_data(setData2021,
+                  overwrite = TRUE)
+```
+
+Add descriptions for new years in `R/data.R`.
