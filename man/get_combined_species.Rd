@@ -29,14 +29,14 @@ list with  tibble \code{set_counts} (same format as for individual
 species) that contains year, station name, lat, lon, and
 \itemize{
 \item E_it - effective skate number for that station, based on all hooks (so
-NA for 1997-2002, 2013, 2020, 2021),
+NA for 1997-2002, 2013, 2020, 2021, 2022),
 \item N_it...NUM - number of 'species' caught on all hooks, so NA for
-1997-2002, 2013, 2020, 2021, where NUM is the column number appended by dplyr within this
+1997-2002, 2013, 2020, 2021, 2022, where NUM is the column number appended by dplyr within this
 function,
 \item N_it_sum - sum of \code{N_it...NUM}, with NA's removed (treated as zeros)
 TODO: say what happens if some have NA
 \item C_it_sum - catch rate of all 'species' as number per effective skate,
-based on all hooks, so NA for 1997-2002, 2013, 2020, 2021
+based on all hooks, so NA for 1997-2002, 2013, 2020, 2021, 2022
 \item E_it20 - effective skate number for that station, based on first 20
 hooks, so NA for 1995 and 1996,
 \item N_it20...NUM number of 'species' caught in first 20 hooks, so NA for

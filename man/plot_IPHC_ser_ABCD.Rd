@@ -7,7 +7,7 @@
 plot_IPHC_ser_ABCD(
   series_ABCD_full,
   plot_type = "AB",
-  x_lim = c(1995, 2021),
+  x_lim = c(1995, 2022),
   y_lim = NULL,
   shift = 0.15,
   tck_length = -0.02,

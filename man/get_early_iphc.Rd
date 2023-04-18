@@ -30,7 +30,7 @@ in our list of Type A or Type B species given in gfsynopsis.}
 \item{ignore_obvious}{Whether or not to ignore some obvious non-groundfish
 species (listed in function) when countData is NULL.}
 
-\item{year}{year of interest, must be 2013, 2020 or 2021}
+\item{year}{year of interest, must be 2013, 2020, 2021, or 2022}
 }
 \value{
 IPHC species common name, or NA if species is not in IPHC data

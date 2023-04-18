@@ -55,7 +55,7 @@
 plot_IPHC_ser_E_and_F <- function(ser_E_and_F,
                                   series_longest = NULL,
                                  plot_type = "E",    # change back to default as EF
-                                 x_lim = c(1995, 2021),
+                                 x_lim = c(1995, 2022),
                                  y_lim = NULL,
                                  shift = 0.15,
                                  tck_length = -0.02,
@@ -322,7 +322,7 @@ plot_IPHC_ser_four_panels <- function(ser_E_and_F,
 ##' }
 plot_IPHC_ser_ABCD <- function(series_ABCD_full,
                                plot_type = "AB",
-                               x_lim = c(1995, 2021),
+                               x_lim = c(1995, 2022),
                                   # standard across species
                                y_lim = NULL,
                                shift = 0.15,
