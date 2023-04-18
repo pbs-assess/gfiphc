@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-First read the survey section of the latest IPHC report **
+First read the survey section of the latest IPHC report
 ([here](https://iphc.int/library/documents/category/annual-reports)) for background if it's
 published (2022 report published 28th
 March 2023). In 2022 (as for 2020 and 2021) only the first 20 hooks were
@@ -33,7 +33,10 @@ page 4 again has Vancouver [Island] Outside, showing that not all stations were
 intended to be fished there. The 2022 annual report notes issues with the survey
 (such as ship availability due to higher Sablefish quota, crew availability)
 that may have reduced the number of stations, though this was referring to the
-full survey so need to do the maps here to understand. **
+full survey so need to do the maps here to understand. After doing these
+analyses there are 171 usable stations in 2022, though only 113 are standard;
+some being up in inlets, but for spatiotemporal analyses we can include the
+useful non-standard ones.
 
 For comparison first look at 2013 data included in gfiphc:
 <!-- Based on iphc2013data.Rnw -->
@@ -660,9 +663,10 @@ setdiff(unique(counts_raw_2020$"Species Name"),
 setdiff(unique(counts_raw$"Species Name"),
         unique(counts_raw_2020$"Species Name"))
 ```
-201: Presumably Sun Sea Star and Sunflower Sea Star are the same. Will mention this later on.
+2021: Presumably Sun Sea Star and Sunflower Sea Star are the same. Will mention this later on.
 
-**Work out what to do with all those new ones.
+2022: Updated the csv file to include Rosethorn and Red Irish Lord, the rest are
+all dealt with.
 
 Note that halibut are not included in these counts:
 ```{r nohalibut}
@@ -936,7 +940,7 @@ For 2020 I said that only the Thornyhead and Blackspotted Rockfish are likely of
 interest (Issues #17 and #18). And the sharks from the earlier list. So look at just the new ones in 2022 that
 aren't in 2020 or any previous year (switch this to `eval=TRUE`, paste results
 in, then set back to `eval=FALSE`, or maybe try leaving as it should
-automatically give `character(0)` once fixed (as it does for 2021)**:
+automatically give `character(0)` once fixed (as it does for 2021):
 
 ```{r new2022, eval = TRUE}
 setdiff(check_iphc_spp_name(countData2022),
@@ -954,7 +958,7 @@ http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/v
 They did not have 2020 IPHC data, but do for 2021 (GS had 1995 and 1996 as zeros;
 don't think others did). Cabezon has no previous data.
 
-**So, need to add those species to `iphc-spp-names.csv`, which may discover some
+So, in 2021 added those species to `iphc-spp-names.csv`, which may discover some
 old data for those years when I redo the vignettes, as it seems strange that
 they never seem to show up in the 20-hook-only data, just in GFBio.
 
@@ -974,7 +978,7 @@ Star.
 2022: The `setdiff()` just gave `"Rosethorn Rockfish" "Red Irish Lord"` which do
 appear in latest synopsis report with older IPHC data, which I presume is why I
 just need to update `iphc-spp-names.csv` for which we have `NA` and `*****` as
-their IPHC names. Doing that, and rerunning the `setdiff()` should give an empty
+their IPHC names. Doing that, and rerunning the `setdiff()` now correctly gives an empty
 result (above and then here also):
 
 Then redoing those above commands with updated code gives this, where some
@@ -991,8 +995,7 @@ check_iphc_spp_name()
 
 ## Save data sets
 
-**NOT EVALUATING YET UNTIL GONE THROUGH pdf
-```{r savedata, eval=FALSE}
+```{r savedata, eval=TRUE}
 usethis::use_data(countData2022,
                   overwrite = TRUE)
 
