@@ -15,7 +15,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-In 2022 (as for 2020 and 2021) only the first 20 hooks were evaluated, so those data are not easily imported into
+First read the survey section of the latest IPHC report **
+([here](https://iphc.int/library/documents/category/annual-reports)) for background if it's
+published (2022 report published 28th
+March 2023). In 2022 (as for 2020 and 2021) only the first 20 hooks were
+evaluated, so those data are not easily imported into
 GFBio. Going to incorporate into gfiphc here. Likely need this as a template for
 future years: resave this file with new year, and change all 2022's to the
 subsequent year, go through the code somewhat manually to check the output
@@ -29,7 +33,7 @@ page 4 again has Vancouver [Island] Outside, showing that not all stations were
 intended to be fished there. The 2022 annual report notes issues with the survey
 (such as ship availability due to higher Sablefish quota, crew availability)
 that may have reduced the number of stations, though this was referring to the
-full survey so need to do the maps here to undersatnd.
+full survey so need to do the maps here to understand. **
 
 For comparison first look at 2013 data included in gfiphc:
 <!-- Based on iphc2013data.Rnw -->
@@ -295,7 +299,7 @@ hooks_with_bait_revert <- hooks_with_bait
 ```
 
 Now to figure out standard/non-standard stations. Plotting four years, with crosses showing 'non-standard'. (2022 is coloured
-different (empty it seems) since no hooks with bait data yet, but the important bit is the crosses).
+different since no hooks with bait data yet, but the important bit is the crosses).
 ```{r maps}
 sets_2022 <- dplyr::select(sets_simp_std,
                            -c(U32halibut, O32halibut))
@@ -424,9 +428,8 @@ legend("bottomleft",
 So the co-ordinates look close enough (red circles and blue crosses overlap),
 none were defined as non-standard in 2022 (or 2021 before) so there are no red triangles or blue
 circles, and the green squares for 2019 stations correctly do not overlap with
-the non-standard 2018 stations. Black dots (2022 stations) with no green squares
-off WCVI clearly shows the reduced coverage there (presumably that should say
-empty green squares with no black dots - similar for 2021 and 2022).
+the non-standard 2018 stations. Empty green squares with no black dots (2022 stations)
+off WCVI clearly shows the reduced coverage there (similar for 2021 and 2022).
 
 2020 only (there were no non-standard stations defined in raw data for 2021 or 2022):
 Check if the one standard station in 2018 but not in 2020 (not fished at all in 2019)
@@ -506,7 +509,7 @@ to be obtained. Here we will call those five northern newly-fished stations
 2021: For the sixth station off the northwest of Vancouer Island, zooming in and
 including the Scott Islands [Rockfish Conservation Area
 (clickable)](https://www.pac.dfo-mpo.gc.ca/fm-gp/maps-cartes/rca-acs/rca-acs/north-nord/ScottIslandsChart3744-eng.html)
-as a blue rectangle shows ... (see saved .pdf).
+as a blue rectangle shows (see saved 2021 .pdf, and rectangle in next map).
 
 2022: The two new ones are also off the northwest of Vancouver Island, so zoom in:
 ```{r map2022onlyzoom, out.width = '120%', fig.align = "center"}
@@ -889,7 +892,8 @@ used for gfsynopsis, and a few extra like `unidentified skate`) and the IPHC
 common name. The function `check_iphc_spp_name()` has a list of non-groundfish
 species that are automatically ignored. These first results are from running
 these functions *before* updating anything, so the results are hardwired
-here (chunks are not evaluated). Then we update the species list and re-run the functions.
+here (chunks are not evaluated); so set `eval=TRUE` then back to `eval=FALSE`;
+then we update the species list and re-run the functions.
 
 These are IPHC names that are not given in `iphc-spp-names.csv` (automatically ignoring
 obvious ones that are listed in the function), for years up to 2020 (since not
@@ -930,21 +934,16 @@ check_iphc_spp_name(countData2020)
 
 For 2020 I said that only the Thornyhead and Blackspotted Rockfish are likely of
 interest (Issues #17 and #18). And the sharks from the earlier list. So look at just the new ones in 2022 that
-aren't in 2020 or any previous year:
+aren't in 2020 or any previous year (switch this to `eval=TRUE`, paste results
+in, then set back to `eval=FALSE`, or maybe try leaving as it should
+automatically give `character(0)` once fixed (as it does for 2021)**:
 
-```{r new2022, eval =FALSE}
+```{r new2022, eval = TRUE}
 setdiff(check_iphc_spp_name(countData2022),
         check_iphc_spp_name())
 # Before updating anything this gives:
-# [1] "Sandpaper Skate"              "Sea Whip"
-# [3] "Stylaster campylecus (coral)" "Sun Sea Star"
-# [5] "Salmon Shark"                 "Jellyfish"
-# [7] "Great Sculpin"                "Cabezon"
-# [9] "Unident. Salmon"              "unident. organic matter"
-# [11] "Dungeness Crab"
+# [1] "Rosethorn Rockfish" "Red Irish Lord"
 ```
-
-**HERE to do when building pdf
 
 2021: Of these, Sandpaper Skate, Salmon Shark, Great Sculpin, and Cabezon are in gfsynopsis but have not been
 designated an `iphc_common_name` in `iphc-spp-names.csv` (have to do that manually). Though Sandpaper Skate,
@@ -971,6 +970,12 @@ they never seem to show up in the 20-hook-only data, just in GFBio.
 
 That list already had Sunflower Sea Star in it, presumably the same as Sun Sea
 Star.
+
+2022: The `setdiff()` just gave `"Rosethorn Rockfish" "Red Irish Lord"` which do
+appear in latest synopsis report with older IPHC data, which I presume is why I
+just need to update `iphc-spp-names.csv` for which we have `NA` and `*****` as
+their IPHC names. Doing that, and rerunning the `setdiff()` should give an empty
+result (above and then here also):
 
 Then redoing those above commands with updated code gives this, where some
 species are returned because they are not non-groundfish ones (or Brittle Star
