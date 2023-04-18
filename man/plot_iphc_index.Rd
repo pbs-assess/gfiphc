@@ -2,7 +2,16 @@
 % Please edit documentation in R/calc-iphc-ser.R
 \name{plot_iphc_index}
 \alias{plot_iphc_index}
-\title{Plot just the IPHC survey index, though works for all surveys - WON'T
+\title{These next two functions are originally from gfsynopsis, but now that
+uses the same approach to plot all surveys (nothing special about iphc);
+the IPHC results are wrangled into the same format as for the
+others surveys. So these two functions are somewhat redundant, but leaving here in
+case someone wants to create the gfsynopsis-style plots for just IPHC
+data, by uncommenting the iphc_plot part of plot_iphc_index(). Note this
+would then require gfplot (which requires many more packages). So maybe
+adapt the function below outside of gfiphc, to keep dependencies down for
+gfiphc (thank you!).
+Plot just the IPHC survey index, though works for all surveys - WON'T
 CURRENTLY WORK as commenting out reference to gfplot, need to move that
 function here but want to test first. Moving to gfsynopsis or gfplot.}
 \usage{

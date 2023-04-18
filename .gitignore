@@ -34,3 +34,5 @@ vignettes/*.7z
 
 *.xlsx
 vignettes/vignettes-results-2020-data/
+/data-raw/non-halibut-data-2022.csv
+/data-raw/set-and-halibut-data-2022.csv

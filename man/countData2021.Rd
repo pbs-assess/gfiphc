@@ -3,27 +3,32 @@
 \docType{data}
 \name{countData2021}
 \alias{countData2021}
-\title{Count data for 2021 IPHC survey (following 2020 approach since 20-hooks again)}
+\alias{countData2022}
+\title{Count data for 2021 and 2022 IPHC survey (following 2020 approach since 20-hooks again)}
 \format{
 A tibble:
 \describe{
 
-\item{year}{2021 for this data set}
+\item{year}{2021 or 2022}
 \item{station}{station name}
 \item{spNameIPHC}{species name for the counts for that set}
 \item{specCount}{count of that species for that set}
 }
+
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 1542 rows and 4 columns.
 }
 \source{
 See \code{data-raw/iphc-2021-data.Rmd} and saved
 \code{data-raw/iphc-2021-data.pdf} for full details and how data were
-extracted from IPHC website.
+extracted from IPHC website, and similar for 2022.
 }
 \usage{
 countData2021
+
+countData2022
 }
 \description{
-A dataset containing counts of each species for each
-station for the 2021 IPHC survey.
+Datasets containing counts of each species for each
+station for the 2021 (\code{countData2021}) and 2022 (\code{countData2022}) IPHC surveys.
 }
 \keyword{datasets}

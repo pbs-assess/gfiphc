@@ -66,7 +66,7 @@ whiskers for confidence intervals}
 \item{...}{further arguments to \code{gplots::plotCI}}
 }
 \value{
-
+Single plot for Series A, B, C, D, or combination of two
 }
 \description{
 Plotting series.

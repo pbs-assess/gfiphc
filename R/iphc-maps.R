@@ -357,7 +357,7 @@ add_stations <- function(set_counts_of_sp_one_year,
 ##' @param years_to_show see vector of years to show one map for each year
 ##' @param par_mfrow two-value vector (rows by columns) for `par(mfrow = par_mfrow)`
 ##' @param ... further arguments to `plot_iphc_map()`
-##' @return
+##' @return Panel of maps
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples

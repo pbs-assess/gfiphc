@@ -71,7 +71,7 @@ whiskers for confidence intervals}
 \item{...}{further arguments to \code{gplots::plotCI}}
 }
 \value{
-
+Single plot for Series E, F, or EF
 }
 \description{
 Plotting function for objects of class \verb{IPHC_ser_E_and F} and also

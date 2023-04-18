@@ -24,7 +24,7 @@ plot_iphc_map_panel(
 \item{...}{further arguments to \code{plot_iphc_map()}}
 }
 \value{
-
+Panel of maps
 }
 \description{
 Plot a panel of maps

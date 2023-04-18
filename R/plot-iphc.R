@@ -44,7 +44,7 @@
 ##' @param shift if plotting two then shift Series E to left and F to right by
 ##'   `shift` amount
 ##' @param tck_length small tickmark lengths
-##' @return
+##' @return Single plot for Series E, F, or EF
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples
@@ -313,7 +313,7 @@ plot_IPHC_ser_four_panels <- function(ser_E_and_F,
 ##' @param shift if plotting two then shift Series X to left and Y to right by
 ##'   `shift` amount
 ##' @param tck_length small tickmark lengths
-##' @return
+##' @return Single plot for Series A, B, C, D, or combination of two
 ##' @export
 ##' @author Andrew Edwards
 ##' @examples

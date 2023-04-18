@@ -3,11 +3,12 @@
 \docType{data}
 \name{setData2021}
 \alias{setData2021}
-\title{Station data for 2021 IPHC survey (following 2020 approach since 20-hooks again)}
+\alias{setData2022}
+\title{Station data for 2021 and 2022 IPHC surveys (following 2020 approach since 20-hooks again)}
 \format{
 A tibble:
 \describe{
-\item{year}{2021 for this data set}
+\item{year}{2021 or 2022}
 \item{station}{station name}
 \item{lat}{latitude of station}
 \item{lon}{longitude of station}
@@ -24,16 +25,22 @@ expanded grid}
 \item{hooksObs}{number of hooks observed for that set (already used to
 calculate \code{E_it20}, but saving anyway)}
 }
+
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 174 rows and 11 columns.
 }
 \source{
 See \code{data-raw/iphc-2021-data.Rmd} and \code{data-raw/iphc-2021-data.pdf}
-for full details and how data were extracted from IPHC website.
+for full details and how data were extracted from IPHC website, and similar
+files for 2022.
 }
 \usage{
 setData2021
+
+setData2022
 }
 \description{
-A dataset containing details of the stations for the 2021
-IPHC survey; one set was deployed at each station.
+A dataset containing details of the stations for the 2021 (\code{setData2021}) and
+2022 (\code{setData2022})
+IPHC surveys; one set was deployed at each station.
 }
 \keyword{datasets}
