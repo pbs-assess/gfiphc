@@ -51,42 +51,6 @@ needed because later gfiphc code summarises catches of a particular species at t
 station level, and needs to create counts of zeros for the species of interest
 (and such zeros are not included in IPHC output).
 
-## Standard grid or not
-
-Need to change purpose to `standard` (`Y/N`) to match 2018 data (`Y` for the
-standard grid). In the raw 2020 data, `Purpose` took three values that we
-converted to `standard` to save in the package:
-```{r purpose2020}
-summary(sets_raw_2020$Purpose)
-summary(setData2020$standard)
-```
-
-For 2021 and 2022 we have all as Standard Grid, which gets corrected (some stations are
-non-standard) in the next section.
-```{r purpose}
-summary(sets_simp$purpose)
-
-sets_simp_std <- dplyr::mutate(sets_simp,
-                               standard_tmp = (purpose == "Standard Grid"))
-                               # was grid in 2020, Grid in 2021, "Standard Grid"
-                               # in 2022
-
-standard <- as.character(sets_simp_std$standard_tmp)  # to get the right length
-standard[sets_simp_std$standard_tmp] = "Y"
-standard[!sets_simp_std$standard_tmp] = "N"
-length(standard)
-
-sets_simp_std <- cbind(sets_simp_std,
-                   standard) %>%
-  as_tibble() %>%
-  dplyr::select(-c("standard_tmp"))
-summary(sets_simp_std)
-unique(sets_simp_std$standard)
-```
-
-So they are all classified as standard. For 2020 we stuck with the 2018
-definitions of standard, so doing that next.
-
 ## Set-level information
 
 For 2020, Maria was sent the file `2020 IPHCtoDFO_dataExtraction-Maria.xls` for set
@@ -258,6 +222,42 @@ sets_simp <- dplyr::select(sets_raw,
                 usable = as.character(usable))
 sets_simp
 ```
+
+## Standard grid or not
+
+Need to change purpose to `standard` (`Y/N`) to match 2018 data (`Y` for the
+standard grid). In the raw 2020 data, `Purpose` took three values that we
+converted to `standard` to save in the package:
+```{r purpose2020}
+summary(sets_raw_2020$Purpose)
+summary(setData2020$standard)
+```
+
+For 2021 and 2022 we have all as Standard Grid, which gets corrected (some stations are
+non-standard) in the next section.
+```{r purpose}
+summary(sets_simp$purpose)
+
+sets_simp_std <- dplyr::mutate(sets_simp,
+                               standard_tmp = (purpose == "Standard Grid"))
+                               # was grid in 2020, Grid in 2021, "Standard Grid"
+                               # in 2022
+
+standard <- as.character(sets_simp_std$standard_tmp)  # to get the right length
+standard[sets_simp_std$standard_tmp] = "Y"
+standard[!sets_simp_std$standard_tmp] = "N"
+length(standard)
+
+sets_simp_std <- cbind(sets_simp_std,
+                   standard) %>%
+  as_tibble() %>%
+  dplyr::select(-c("standard_tmp"))
+summary(sets_simp_std)
+unique(sets_simp_std$standard)
+```
+
+So they are all classified as standard. For 2020 we stuck with the 2018
+definitions of standard, so doing that next.
 
 ## Look at data and show map to understand changing definition of standard station from 2018 to 2020.
 
