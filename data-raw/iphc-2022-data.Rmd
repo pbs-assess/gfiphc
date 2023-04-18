@@ -447,8 +447,6 @@ Doing that shortly (in `sets_simp_std_corrected`), but first also look for any
 new 2022 stations. I hadn't expected any in 2021 but saw them when doing the one-species
 vignette, so had to come back to redo this.
 
-**HERE
-
 ```{r stations2022only}
 # For 2021: yelloweye_rockfish$set_counts is saved in gfiphc, already has 2021 data
 #  because I had to come back to redo this .pdf after updating the data, hence
@@ -570,18 +568,18 @@ and in general should be excluded since a new station.
 2022: Given so close to shore and not close to previous stations, will call
 these two new 2022 stations non-standard also.
 
-**GOT TO HERE, not changed 2021->2022 below here.
 
-So - retain the 2018 definitions of standard stations (as we did for 2020),
-and call all six 2021 stations non-standard:
+
+So - retain the 2018 definitions of standard stations (as we did for 2020 and 2021),
+and call both new 2022 stations non-standard (like we did for the six new 2021 stations):
 ```{r corrected}
 sets_simp_std_corrected <- sets_simp_std
 summary(as.factor(sets_simp_std_corrected$standard))
 
 sets_simp_std_corrected$standard[sets_simp_std_corrected$station %in%
-                                 not_std_in_2018_but_std_in_2021] <- "N"
+                                 not_std_in_2018_but_std_in_2022] <- "N"
 sets_simp_std_corrected$standard[sets_simp_std_corrected$station %in%
-                                 stations_in_2021_only$station] <- "N"
+                                 stations_in_2022_only$station] <- "N"
 summary(as.factor(sets_simp_std_corrected$standard))
 # cbind(sets_simp_std$standard, sets_simp_std_corrected$standard) # to check them
 ```
@@ -595,21 +593,21 @@ dplyr::filter(hooks_with_bait$set_counts,
   dplyr::select(year) %>%
   unique()
 ```
-Note 2021 won't show up here until .rda objects are resaved in package, at the
-end of this .pdf (so it will if this .Rmd has already been run, as it has in 2021).
+Note 2022 won't show up here until .rda objects are resaved in package, at the
+end of this .pdf (so it will if this .Rmd has already been run, as it had in 2021).
 
-So here are the final station designations for 2021:
-```{r map2021final}
+So here are the final station designations for 2022:
+```{r map2022final}
 plot_iphc_map(sets_simp_std_corrected,
               sp = NULL,
-              years = 2021,
+              years = 2022,
               indicate_standard = TRUE)
 ```
-Can see that they did 10 random stations off WCVI that we're calling
-non-standard (because they were never fished before 2018). Which is a bit of a
-shame as there are only 16 stations left off WCVI for 2021.
+Can see that they did 6 random stations off WCVI that we're calling
+non-standard (because they were never fished before 2018; was 10 for 2021). Which is a bit of a
+shame as there are only 19 stations left off WCVI for 2022 (16 for 2022).
 
-2020 (no need to change for 2021): So check which functions need changing, since they create a 'standard'
+2020 (no need to change for 2021 or 2022): So check which functions need changing, since they create a 'standard'
 column. These do not need changing: `get_iphc_hooks()` and `get_iphc_skates_info`.
 
 2020: Then `get_iphc_sets_info()` does return `standard`, but the `standard`
@@ -621,12 +619,12 @@ So just need to add a line in `IPHC-stations-expanded.R` and then re-save all
 
 Now get the species counts into the desired format (to match `countData2013`
 shown earlier). First check that the column names and types haven't changed
-(they did for set data from 2020 to 2021):
+(they did for set data from 2020 to 2021; no change here for 2022):
 ```{r countsnames}
 counts_raw_2020 <- readr::read_csv("non-halibut-data-2020.csv") %>%
   dplyr::mutate_if(is.character, factor)
 
-counts_raw <- readr::read_csv("non-halibut-data-2021.csv") %>%
+counts_raw <- readr::read_csv("non-halibut-data-2022.csv") %>%
   dplyr::mutate_if(is.character, factor)
 
 testthat::expect_equal(names(counts_raw_2020),
@@ -635,38 +633,40 @@ testthat::expect_equal(names(counts_raw_2020),
 testthat::expect_equal(sapply(counts_raw_2020, typeof),
                        sapply(counts_raw, typeof))
 ```
-Great, nothing changed in the structure.
+Great, nothing changed in the structure for 2022.
 
 ```{r counts}
 counts_raw
 summary(counts_raw)
-testthat::expect_equal(unique(counts_raw$Year), 2021)  # All 2021
+testthat::expect_equal(unique(counts_raw$Year), 2022)  # All 2022
 testthat::expect_equal(unique(counts_raw$SampleType), as.factor("20Hook")) # All 20Hook
 
-# This mismatches for 2020, not for 2021:
+# This mismatches for 2020, not for 2021 or 2022:
 testthat::expect_equal(length(unique(counts_raw$Station)),
                        length(sets_raw$Station))
 
 unique(counts_raw$"Species Name")
 ```
 
-Here's what was seen in 2020 but not 2021, and vice versa:
+Here's what was seen in 2020 but not 2022, and vice versa:
 ```{r seenoneyear}
-# Seen in 2020 not 2021
+# Seen in 2020 not 2022
 setdiff(unique(counts_raw_2020$"Species Name"),
         unique(counts_raw$"Species Name"))
-# Seen in 2021 not 2020
+# Seen in 2022 not 2020
 setdiff(unique(counts_raw$"Species Name"),
         unique(counts_raw_2020$"Species Name"))
 ```
-Presumably Sun Sea Star and Sunflower Sea Star are the same. Will mention this later on.
+201: Presumably Sun Sea Star and Sunflower Sea Star are the same. Will mention this later on.
+
+**Work out what to do with all those new ones.
 
 Note that halibut are not included in these counts:
 ```{r nohalibut}
 dplyr::filter(counts_raw, "Species Name" == "Pacific Halibut")
 # Should be: dplyr::filter(counts_raw, `Species Name` == as.character("Pacific
 #                          Halibut")) %>% as.data.frame()
-# Still 0 in 2021
+# Still 0 in 2021 and 2022
 ```
 which I presume explains why
 total number of counts for a station does not add up to `HooksObserved`. See
@@ -684,7 +684,7 @@ dplyr::filter(sets_raw, Station == twice_fished)
 ```
 
 So for 2020 had to use that here to remove the species counts for that vessel (note that vessel
-code is not in `counts_raw`), just commenting that part out for 2021:
+code is not in `counts_raw`), just commenting that part out for 2021 and 2022:
 ```{r countcalcs}
 dplyr::filter(counts_raw,
               Station == twice_fished & Setno == 4)
@@ -696,7 +696,7 @@ dplyr::filter(counts_raw,
 #countData2020_no_halibut <- dplyr::filter(counts_raw,
 #                               !(Station == twice_fished & Setno == 4)) %>%
 # Seems that can't just keep using that even if twice_fished = NA
-countData2021_no_halibut <- counts_raw %>%
+countData2022_no_halibut <- counts_raw %>%
   dplyr::select(year = Year,
                 station = Station,
                 spNameIPHC = "Species Name",
@@ -707,9 +707,9 @@ countData2021_no_halibut <- counts_raw %>%
                 spNameIPHC = as.character(spNameIPHC),
                 specCount = as.integer(specCount))
 
-testthat::expect_equal(names(countData2013), names(countData2021_no_halibut))
-countData2021_no_halibut
-summary(countData2021_no_halibut)
+testthat::expect_equal(names(countData2013), names(countData2022_no_halibut))
+countData2022_no_halibut
+summary(countData2022_no_halibut)
 ```
 
 ## Hooks observed and retrieved
@@ -739,7 +739,7 @@ So now need to get the hook details into the set details, and keep columns as
 for `setData2013` but also with `standard`, and may as well keep `hooksRetr` and
 `hooksObs`:
 ```{r merge}
-setData2021 <- dplyr::left_join(sets_simp_std_corrected,
+setData2022 <- dplyr::left_join(sets_simp_std_corrected,
                                 hook_details,
                                 by = c("year", "station")) %>%
   dplyr::mutate(E_it20 = effSkateIPHC * hooksObs / hooksRetr) %>%
@@ -759,9 +759,9 @@ setData2021 <- dplyr::left_join(sets_simp_std_corrected,
                 avgDepth = as.integer(avgDepth),
                 usable = as.character(usable),
                 standard = as.factor(standard))
-setData2021
-testthat::expect_equal(names(setData2013), names(setData2021)[1:ncol(setData2013)])
-summary(setData2021)
+setData2022
+testthat::expect_equal(names(setData2013), names(setData2022)[1:ncol(setData2013)])
+summary(setData2022)
 ```
 
 ## Pacific Halibut counts
@@ -789,8 +789,8 @@ N_it`. Note that observed refers to observed for non-halibut species
 strictly the first 20 hooks, but is a rescaling. But will not guarantee integer values.
 
 ```{r sethalibut}
-setData2021_and_halibut <-
-  dplyr::left_join(setData2021,
+setData2022_and_halibut <-
+  dplyr::left_join(setData2022,
                    dplyr::select(sets_simp_std_corrected,
                                  c(station,
                                    U32halibut,
@@ -798,7 +798,7 @@ setData2021_and_halibut <-
                    by = "station") %>%
   dplyr::mutate(N_it_halibut = U32halibut + O32halibut,
                 N_it20_halibut_opt_1 = hooksObs / hooksRetr * N_it_halibut)
-setData2021_and_halibut %>% dplyr::select(station,
+setData2022_and_halibut %>% dplyr::select(station,
                                           N_it_halibut,
                                           N_it20_halibut_opt_1)
 ```
@@ -813,7 +813,7 @@ Add all the 20-hook counts for a set (which include `Hook with Skin` etc.) and c
 
 Add counts for each set:
 ```{r countsmaybe}
-counts_20 <- countData2021_no_halibut %>%
+counts_20 <- countData2022_no_halibut %>%
   dplyr::group_by(station) %>%
   dplyr::summarise(non_halibut = sum(specCount)) %>%
   dplyr::ungroup()
@@ -824,7 +824,7 @@ Now join the two options together to calculate `N_it20_halibut_opt_2` and then
 compare the two estimates of `N_it20_halibut`:
 ```{r compare}
 compare <-
-  dplyr::left_join(setData2021_and_halibut,
+  dplyr::left_join(setData2022_and_halibut,
                    counts_20,
                    by = "station") %>%
   dplyr::mutate(N_it20_halibut_opt_2 = hooksObs - non_halibut,
@@ -854,31 +854,32 @@ anyway -- we wouldn't really need that). And the means aren't too bad:
 mean(compare$N_it20_halibut_opt_1)
 mean(compare$N_it20_halibut_opt_2)
 ```
+(9.6 and 10.5 in 2021; 10.8 and 11.5 in 2022).
 
 So either of these would work. So use option 2 since gives an integer count:
 ```{r combine}
 compare$N_it20_halibut_opt_2
-countData2021_halibut <- dplyr::select(compare,
+countData2022_halibut <- dplyr::select(compare,
                                        year,
                                        station,
                                        spNameIPHC,
                                        specCount = N_it20_halibut_opt_2) %>%
   dplyr::mutate(specCount = as.integer(specCount))
-countData2021 <- rbind(countData2021_no_halibut,
-                       countData2021_halibut) %>%
+countData2022 <- rbind(countData2022_no_halibut,
+                       countData2022_halibut) %>%
   dplyr::arrange(station)
 # First time running, called the above countData2020_NEW to check remaining data didn't change:
 # expect_equal(countData2020, filter(countData2020_NEW, spNameIPHC !=
 #                                                      "Pacific Halibut"))
 ```
 
-Note that for 2021 this does give zeros for Pacific Halibut (the only species that
+Note that for 2021 and 2022 this does give zeros for Pacific Halibut (the only species that
 will have a zero, because we have a value for each station because zero counts are in
 the original `sets_raw`):
 ```{r countData}
-summary(dplyr::filter(countData2021,
+summary(dplyr::filter(countData2022,
                       spNameIPHC == "Pacific Halibut"))
-unique(dplyr::filter(countData2021, specCount == 0)$spNameIPHC)
+unique(dplyr::filter(countData2022, specCount == 0)$spNameIPHC)
 ```
 
 ## Check species names
@@ -906,9 +907,9 @@ check_iphc_spp_name()
 ## [17] "Blackspotted Rockfish"
 ```
 
-These are the ones just for the new 2021 data:
+These are the ones just for the new 2022 data:
 ```{r justnew, eval=FALSE}
-check_iphc_spp_name(countData2021)
+check_iphc_spp_name(countData2022)
 ##  [1] "Basketstar"                   "unident. thornyhead (Idiot)"
 ##  [3] "Sandpaper Skate"              "Sea Whip"
 ##  [5] "Stylaster campylecus (coral)" "Brittle Star"
@@ -928,11 +929,11 @@ check_iphc_spp_name(countData2020)
 ```
 
 For 2020 I said that only the Thornyhead and Blackspotted Rockfish are likely of
-interest (Issues #17 and #18). And the sharks from the earlir list. So look at just the new ones in 2021 that
+interest (Issues #17 and #18). And the sharks from the earlier list. So look at just the new ones in 2022 that
 aren't in 2020 or any previous year:
 
-```{r new2021, eval =FALSE}
-setdiff(check_iphc_spp_name(countData2021),
+```{r new2022, eval =FALSE}
+setdiff(check_iphc_spp_name(countData2022),
         check_iphc_spp_name())
 # Before updating anything this gives:
 # [1] "Sandpaper Skate"              "Sea Whip"
@@ -943,7 +944,9 @@ setdiff(check_iphc_spp_name(countData2021),
 # [11] "Dungeness Crab"
 ```
 
-Of these, Sandpaper Skate, Salmon Shark, Great Sculpin, and Cabezon are in gfsynopsis but have not been
+**HERE to do when building pdf
+
+2021: Of these, Sandpaper Skate, Salmon Shark, Great Sculpin, and Cabezon are in gfsynopsis but have not been
 designated an `iphc_common_name` in `iphc-spp-names.csv` (have to do that manually). Though Sandpaper Skate,
 Salmon Shark, and Great Sculpin do show up has having IPHC data in 2019 gfsynopsis report,
 but looks like only data from GFBio, looking carefully at the
@@ -952,11 +955,11 @@ http://htmlpreview.github.io/?https://github.com/pbs-assess/gfiphc/blob/master/v
 They did not have 2020 IPHC data, but do for 2021 (GS had 1995 and 1996 as zeros;
 don't think others did). Cabezon has no previous data.
 
-So, need to add those species to `iphc-spp-names.csv`, which may discover some
+**So, need to add those species to `iphc-spp-names.csv`, which may discover some
 old data for those years when I redo the vignettes, as it seems strange that
 they never seem to show up in the 20-hook-only data, just in GFBio.
 
-Also add these to the `ignore_obvious` list in `check_iphc_spp_name()`:
+2021: Also add these to the `ignore_obvious` list in `check_iphc_spp_name()`:
 
 "Sea Whip",
 "Stylaster campylecus (coral)",
@@ -973,21 +976,22 @@ Then redoing those above commands with updated code gives this, where some
 species are returned because they are not non-groundfish ones (or Brittle Star
 or Glass Sponge which we also kept in the past) that we want to automatically ignore:
 ```{r updatedspnames}
-check_iphc_spp_name(countData2021)
+check_iphc_spp_name(countData2022)
 # That still retains some we may want to think about further at some point, but
 #  these are all in the overall list for all years:
-setdiff(check_iphc_spp_name(countData2021),
+setdiff(check_iphc_spp_name(countData2022),
         check_iphc_spp_name())
 check_iphc_spp_name()
 ```
 
 ## Save data sets
 
-```{r savedata}
-usethis::use_data(countData2021,
+**NOT EVALUATING YET UNTIL GONE THROUGH pdf
+```{r savedata, eval=FALSE}
+usethis::use_data(countData2022,
                   overwrite = TRUE)
 
-usethis::use_data(setData2021,
+usethis::use_data(setData2022,
                   overwrite = TRUE)
 ```
 
