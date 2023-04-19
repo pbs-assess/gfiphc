@@ -47,7 +47,8 @@ species with low catch rates, it may make more sense to consider Series B
 instead of Series AB.
 
 Change the options to use the cached data and cached results (for example, set
-both to `FALSE` when first running):
+both to `FALSE` when first running; can see the files appearing in the cache
+folders species by species, took about an hour for 2022 data):
 ```{r extract, warning = FALSE, results = TRUE}
 for(sp in sp_vec){      # increment these to test, done up to number shown
   iphc_get_calc_plot_full(sp,
