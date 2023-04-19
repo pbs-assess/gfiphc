@@ -395,7 +395,7 @@ NULL
 
 #' Available counts of Yelloweye Rockfish, for each set for all years
 #'
-#' Extracts and calculates all avaiable counts, at the set level, of Yelloweye
+#' Calculated all avaiable counts, at the set level, of Yelloweye
 #'  Rockfish, as an example dataset (see vignettes).
 #'
 #' @format A `list` containing a single `tibble` called `set_counts`, with

@@ -12,10 +12,10 @@
 load_all()
 
 # Before running all this code (but after updating get_all_iphc_set_counts() to
-#  include new year), run these two lines (with 2021 replaced by current year)
+#  include new year), run these two lines (with 2022 replaced by current year)
 yyr_test <- get_all_iphc_set_counts("yelloweye rockfish")
 tail(yyr_test)                                # confirms latest year gets extracted
-testthat::expect_equal(dplyr::filter(yyr_test, year < 2021),
+testthat::expect_equal(dplyr::filter(yyr_test, year < 2022),
                        yelloweye_rockfish$set_counts)   # this will fail once the saved
                                                         # yelloweye_rockfish is updated below
 
@@ -28,9 +28,11 @@ sets_other_years_update <- get_iphc_sets_info()
                                        # Should not change if new data are in gfiphc:
 testthat::expect_equal(sets_other_years,
                        sets_other_years_update)
-# That didn't give an error for 2021 (as expected), but the first run through
+# That didn't give an error for 2021 or 2022 (as expected), but the first run through
 # Git did still think sets_other_years got updated here, but second time (after
-# fixing the six new stations issue) it didn't - maybe just something to do with usethis.
+# fixing the six new stations issue) it didn't - maybe just something to do with
+# usethis. .rda files are not too big so don't worry about it too much.
+# 2022 - nothing should have changed but Git still detects a change in sets_other_years.rda
 sets_other_years <- sets_other_years_update
 usethis::use_data(sets_other_years,
                   overwrite = TRUE)
@@ -58,7 +60,7 @@ cache_pbs_data_iphc("hook with bait")
                                        #  since the same function is used to
                                        #  obtain data for each species (and in
                                        #  particular is used in gfsynopsis).
-hooks_with_bait <- readRDS("hook-with-bait.rds")
+hooks_with_bait <- readRDS("hook-with-bait.rds")   # note hook/hooks to help distinguish
 
 usethis::use_data(hooks_with_bait,
                   overwrite = TRUE)

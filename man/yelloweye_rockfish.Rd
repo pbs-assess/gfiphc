@@ -15,7 +15,7 @@ Extracted from GFBio using \code{data-raw/sets-skates-hooks-yelloweye.R}.
 yelloweye_rockfish
 }
 \description{
-Extracts and calculates all avaiable counts, at the set level, of Yelloweye
+Calculated all avaiable counts, at the set level, of Yelloweye
 Rockfish, as an example dataset (see vignettes).
 }
 \keyword{datasets}
