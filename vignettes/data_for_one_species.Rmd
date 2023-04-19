@@ -128,6 +128,12 @@ Station details for 2021 survey:
 setData2021
 ```
 
+Station details for 2022 survey:
+```{r builtin5b}
+setData2022
+```
+
+
 Station details regarding expansion stations from 2018 (and some later years):
 ```{r builtin6}
 setDataExpansion
@@ -202,14 +208,15 @@ plot_iphc_map(sp_set_counts$set_counts,
               years = max(sp_set_counts$set_counts$year))
 ```
 
-For 2021 note that there is sporadic coverage off the west coast of Vancouver
+For 2022 (and 2021) note that there is sporadic coverage off the west coast of Vancouver
 Island, with some of the usual stations being surveyed. In previous years it was
 all or nothing. This will affect the results of Series C and D (see README), and
 so whether or not the resulting Series AB can be considered representative for
 the whole coast. Series AB does not include the west coast of Vancouver
-Island. For 2021 there are also six stations that were never previously fished
+Island. For 2022 there are also two stations (six in 2021) that were never previously fished
 and so we call these non-standard -- see brief mention in the README and
-[iphc-2021-data.pdf](../data-raw/iphc-2021-data.pdf) for full details.
+[iphc-2021-data.pdf](../data-raw/iphc-2021-data.pdf) and
+[iphc-2022-data.pdf](../data-raw/iphc-2022-data.pdf) for full details.
 
 Unusable stations are determined by the IPHC and any data are excluded from our
 calculations. The horizontal line is the cut-off for calculations for different
@@ -219,14 +226,14 @@ for the species of interest.
 
 To see a movie of the station locations through time (a panel plot is shown shortly):
 
-![IPHC-stations-movie-1995-2021.gif](IPHC-stations-movie-1995-2021.gif).
+![IPHC-stations-movie-1995-2022.gif](IPHC-stations-movie-1995-2022.gif).
 
 For reference, here is the code to build the movie, but it is commented out
 since it caused Travis (and now presumably GitHub Actions) to fail. Don't worry about that.
 If you do want to make a different movie,
 run this vignette code with the next commented line uncommented (you need to install the
 `gifski` R package and the Gifski program), right-click on the animation in the
-html viewer and save it with the above filename.
+html viewer and save it with the above filename (updated as appropriate).
 ```{r, eval=FALSE}
 # ```{r, animation.hook = 'gifski', interval = 1.5, fig.height = 6}
 for(i in unique(sp_set_counts$set_counts$year)){
@@ -253,9 +260,11 @@ for(i in years_to_plot){
 ```
 For 2021, as mentioned above, there are six that were never fished before and we define as
 non-standard: five in the far north and one off the northwest tip of Vancouver Island (the latter
-would have been in a Rockfish Conservation Area according to the grid pattern).
+would have been in a Rockfish Conservation Area according to the grid
+pattern). And for 2022 there are two close to the shore of northern Vancouver Island.
 
-To see the stations without reference to any species:
+To see the stations without reference to any species (these are the 2008
+stations, so think would be just the standard ones, can check code to confirm):
 ```{r, fig.height = 6}
 plot_iphc_map(sp_set_counts$set_counts,
               sp = NULL,
@@ -266,18 +275,18 @@ noting that you still need `sp_set_counts$set_counts` (for an arbitrary species)
 as an argument.
 
 Can also use `hooks_with_bait$set_counts` to see stations that came back with no
-bait (the legend will need adapting though; empty circles are no baits with
-hooks returned):
+bait (the legend will need adapting though; empty circles are no hook with
+bait returned):
 ```{r, fig.height = 6}
 plot_iphc_map(hooks_with_bait$set_counts,
               sp = "Hooks with bait",
               years = 2008)
 ```
 
-## Expanded survey grid in 2018, 2020, and 2021
+## Expanded survey grid in 2018, 2020-2022
 
 In the above movie and panel plot you see that the spatial coverage of sets changed in 2018,
-2020, and 2021 due to the expanded survey grid that year that involved sets at extra stations:
+2020-2022 due to the expanded survey grid that year that involved sets at extra stations:
 ```{r plotsets, fig.height = 4}
 sets_each_year <- sp_set_counts$set_counts %>%
   group_by(year) %>%
@@ -288,12 +297,13 @@ plot(sets_each_year$year, sets_each_year$total, type = "o",
 ```
 
 The extra stations are identified in `gfiphc` as *not* standard (`standard` is `N`), with `Y` being the
-standard stations (see [iphc-2020-data.pdf](../data-raw/iphc-2020-data.pdf) and
-[iphc-2021-data.pdf](../data-raw/iphc-2021-data.pdf)
+standard stations (see [iphc-2020-data.pdf](../data-raw/iphc-2020-data.pdf),
+[iphc-2021-data.pdf](../data-raw/iphc-2021-data.pdf), and
+[iphc-2022-data.pdf](../data-raw/iphc-2022-data.pdf)
 for explanation of why we
 changed the values for some stations from the IPHC raw data -- the IPHC called
 some of the new ones `standard`, even though they hadn't been used before). Removing the
-non-standard stations brings the number of sets in 2018 and 2020 into line with
+non-standard stations brings the number of sets in 2018 and 2020-2022 into line with
 other years, and so this should be done for most analyses:
 ```{r plotsetsstd, fig.height = 4}
 sets_each_year_standard <- sp_set_counts$set_counts %>%
@@ -305,6 +315,12 @@ plot(sets_each_year_standard$year, sets_each_year_standard$total, type = "o",
      xlab = "Year", ylab = "Sets each year", ylim = c(0, max(sets_each_year$total)))
 ```
 
+Except in recent years we have less stations after doing this, and 2022 is the
+lowest in the time series -- spatiotemporal
+methods could be used to include the new non-standard stations (though also
+check the above .pdfs for mention of the original column that says that some
+stations should not be used for spatio-temporal analyses).
+
 Note that the expansion (non-standard) stations only
 appear in recent years:
 ```{r checkexpansion}
@@ -313,7 +329,7 @@ filter(sp_set_counts$set_counts, standard == "N") %>%
   unique()
 ```
 
-So we use `filter(..., standard == "Y", usable == "Y")` for analyses (to also include
+So we use `filter(..., standard == "Y", usable == "Y")` for upcoming analyses (to also include
 only the usable stations).
 
 ## Calculate longest time series possible for the full coast
