@@ -107,16 +107,16 @@ plot_iphc_map(sp_set_counts_with_area,
               indicate_in_area = TRUE)
 ```
 
-2021 (and 2018 and 2020) had expanded (non-standard) stations, which are shown as crosses:
-```{r area2021, results = FALSE}
-plot_BC(main = "All 2021 stations")
+2022 (and 2018, 2020-2021) had expanded (non-standard) stations, which are shown as crosses:
+```{r area2022, results = FALSE}
+plot_BC(main = "All 2022 stations")
 
 PBSmapping::addPolys(HG_herring_pred_area,
                      col = "pink")
 
 plot_iphc_map(sp_set_counts_with_area,
               sp = NULL,
-              years = 2021,
+              years = 2022,
               lat_cut_off = NULL,
               add_to_existing = TRUE,
               indicate_in_area = TRUE)
@@ -124,8 +124,7 @@ plot_iphc_map(sp_set_counts_with_area,
 
 Make a movie to check each year:
 
-![IPHC-stations-HG-area-movie-1995-2021.gif](IPHC-stations-HG-area-movie-1995-2021.gif).
-
+![IPHC-stations-HG-area-movie-1995-2022.gif](IPHC-stations-HG-area-movie-1995-2022.gif).
 
 As for `data_for_one_species` vignette, the movie is saved and the code is
 given here but not run:
@@ -182,7 +181,7 @@ plot_IPHC_ser_four_panels(ser_E_and_F,
                           series_longest,
                           sp = sp)
 ```
-Comparing this figure with an earlier version (before excluding non-standard
+Comparing this figure in 2021 with an earlier version (before excluding non-standard
 stations), for 2020 (but not really 2018) excluding the non-standard
 stations increases the 2020 value somewhat. Interestingly, 2019 bootstrapped
 values change
