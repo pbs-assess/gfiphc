@@ -24,6 +24,12 @@ Station, or if you have the retrieved data cached locally (in default directory
 `all-species-data/`. Species names are now searchable in the resulting .html
 file (that you may well be reading now).
 
+These analyses ignore hook competition, though it is likely important given the
+final plot of the rate of hooks returned with bait (showing how this jumps
+around), and given our simulation results in [Watson et
+al. (2023)](https://cdnsciencepub.com/doi/full/10.1139/cjfas-2022-0159). We are
+looking at incorporating hook competition in the next groundfish synopsis report.
+
 ```{r setup, message = FALSE, results = FALSE}
 library(gfiphc)
 ```
