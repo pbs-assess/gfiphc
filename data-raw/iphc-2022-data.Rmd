@@ -458,9 +458,11 @@ vignette, so had to come back to redo this.
 #  because I had to come back to redo this .pdf after updating the data, hence
 #  need the <2021 here; station codes do change over time, but I think are
 #  recently consistent
-# For 2022 checking before saving any data into gfiphc.
-previous_stations <- yelloweye_rockfish$set_counts$station %>%
-  unique()
+# For 2022 checking before saving any data into gfiphc. Then rerunning (step 8
+# in README) so need the < 2022 here as package contains 2022 data
+previous_stations <- dplyr::filter(yelloweye_rockfish$set_counts,
+                                   year < 2022)$station %>%
+                     unique()
 
 stations_in_2022_only <- dplyr::filter(sets_2022,
                                        !(station %in% previous_stations))
@@ -475,7 +477,8 @@ points(lat~lon,
        pch = 15)
 
 points(lat~lon,
-       data = yelloweye_rockfish$set_counts,
+       data = dplyr::filter(yelloweye_rockfish$set_counts,
+                            year < 2022),
        col = "red",
        pch = 20,
        cex = 0.4)
