@@ -62,7 +62,7 @@ investigating this (in earlier versions of this vignette), am now including
 unidentified skate in the species list.
 
 Looking through 2019 synopsis report and the plots below (and a look at the
-data up to 2020), here are the decisions on including each skate species:
+data up to 2020; not doing again for 2022), here are the decisions on including each skate species:
 
  - Aleutian Skate: Looks like only enumerated explicitly since 2007, 2018 map
    shows mean 0.31 fish/skate. Include.
@@ -173,6 +173,10 @@ grep("skate", unique(countData2020$spNameIPHC)) # none
 # 2021 (not in GFbio), no unident. Skate (checking 'skate' and 'Skate'):
 unique(countData2021$spNameIPHC)[grep("Skate", unique(countData2021$spNameIPHC))]
 grep("skate", unique(countData2021$spNameIPHC)) # none
+
+# 2022 (not in GFbio), no unident. Skate (checking 'skate' and 'Skate'):
+unique(countData2022$spNameIPHC)[grep("Skate", unique(countData2022$spNameIPHC))]
+grep("skate", unique(countData2022$spNameIPHC)) # none
 ```
 
 So, given none in 2001 or 2002 and numbers of unidentified declined from 1996 to
@@ -217,16 +221,17 @@ skates_combined$set_counts %>%
   dplyr::summarise_all( ~ sum(is.na(.x))) %>%
   t()
 ```
-For 2021 these correctly change from the 2020 values (the 20-hook values don't
+For 2021: these correctly change from the 2020 values (the 20-hook values don't
 have more NA's than in 2020, but the all-hook values do, since we have no
 all-hook data in 2021), except for `N_it20.4` for Sandpaper Skate, which had
 1500 NA's in 2020 version but only 244 (same as some other species) in 2021
 version. Looking at the relevant figure above, this is because 1997-2002 and
 2013 are now zero when before they were NA, due to 2021 being the first
-time this species was seen in 20-hook data (and how the data get rolled up).
+time this species was seen in 20-hook data (and how the data get rolled up). Not
+checking for 2022.
 
 Note that by simply adding the counts of each skate species, we are
-implicitly assuming that selectivity is the same across skate species. So true
+implicitly assuming that selectivity is the same across skate species (kind of?). So true
 changes in relative abundance may not be accurately reflected in changes in the
 summed index.
 <!-- Started an example: We are summing relative indices, so if one species (call it 'roller skate') is twice as
