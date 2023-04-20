@@ -137,13 +137,13 @@ So, for 2021 I wrote this, and used for 2022:
 
 1. Update the two tables above of what data are available each year and what Series can be made, checking with vignettes. Add notes as necessary.
  
-1. Update version number and email colleagues. <!-- Groundfish section, Maria, Joe, Jennifer, Beau, Elise, Ann-Marie, Jackie, ... -->
+1. Update version number (1.2.0 has included the 2022 data) and email colleagues. <!-- Groundfish section, Maria, Jennifer, Beau, Elise, Ann-Marie, Jackie, ... -->
 
 ## Citation
 
 If you use this package please cite it as it is helpful for maintaining it:
 
-Edwards, A.M., S.C. Anderson, E.A. Keppel and C.Grandin (2023). gfiphc: Data Extraction and Analysis for Groundfish Data from the IPHC Longline Survey in BC. R package version 1.1.0. Available from https://github.com/pbs-assess/gfiphc.
+Edwards, A.M., S.C. Anderson, E.A. Keppel and C.Grandin (2023). gfiphc: Data Extraction and Analysis for Groundfish Data from the IPHC Longline Survey in BC. R package version 1.2.0. Available from https://github.com/pbs-assess/gfiphc.
 
 Check `citation("gfiphc")` for the latest version number and for the bibtex entry (though you have to manually add the year and the website given above).
 
