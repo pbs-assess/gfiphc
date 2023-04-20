@@ -47,7 +47,7 @@ devtools::install_github("pbs-assess/gfiphc")
 Methods are described in detail in Appendix G of the groundfish synopsis report [(Anderson et al. 2019)](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2019/2019_041-eng.html). The methods build on those developed for assessments of
 Redbanded Rockfsh [(Edwards et al. 2017)](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2017/2017_058-eng.html) and Yelloweye Rockfsh [(Yamanaka et al. 2018)](https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2018/2018_001-eng.html) . The Redbanded assessment was the first to develop an abundance index from the IPHC survey that went back to 1995, and included data up to 2012. For the Yelloweye assessment the methods were extended to demonstrate that the index based on waters north of Vancouver Island could be considered representative of the coastwide population. The synopsis report includes preliminary investigations into hook competition.
 
-Updates since the 2019 synopsis report include
+Updates since the 2019 synopsis report include the following, and are mostly noted in the updated report with 2021 data:
 
 - splitting the original functions out of `gfplot` and into their own package `gfiphc`.
 - vignettes and better documentation.
@@ -60,6 +60,11 @@ Updates since the 2019 synopsis report include
 - the boostrapping now uses 10,000 bootstrap samples instead of 1000, as it made a difference for some species.
 
 Note that the analyses still exclude hook competition, but we are working on that (using outputs from `gfiphc`).
+
+Updates since the report that had 2021 data are:
+
+- 2022 data included. The survey had two extra new stations that had never been fished before; these are excluded in [iphc-2022-data.pdf](data-raw/iphc-2022-data.pdf).
+
 
 ## Differing data-collection protocols
 
@@ -81,11 +86,12 @@ A particular issue is that the data resolution is not the same across the years.
 |2019         |All                       |Hook-by-hook       |DFO database GFBio     |Y      |
 |2020         |First 20 of each skate    |Set-by-set         |gfiphc package         |N      |
 |2021         |First 20 of each skate    |Set-by-set         |gfiphc package         |Y (reduced)      
+|2022         |First 20 of each skate    |Set-by-set         |gfiphc package         |Y (reduced)      
 
 <!-- for putting back into gfsynopsis, note that 2018 is now separated out) -->
-In 2018 there were extra expansion stations surveyed (see the vignettes), and in 2020 only the first 20 hooks were enumerated. For 2020 and 2021, the data were downloaded from the IPHC website and included in the package (see below). For 2021 the waters off the WCVI were surveyed, but only a subsample of stations were surveyed. This does not affect the Series A, B, and AB calculations, but would affect the Series D and CD calculations (since we assume 2021 still surveys the full coast), and will slightly affect the determination of whether or not Series AB (usually the longest series that can be constructed) can be considered representative of the full coast. Newer methods are being developed that will deal with such subsampling and so it has not been further dealt with here. 
+In 2018 there were extra expansion stations surveyed (see the vignettes), and in 2020 only the first 20 hooks were enumerated. For 2020-2022, the data were downloaded from the IPHC website and included in the package (see below). For 2021  and 2022 the waters off the WCVI were surveyed, but only a subsample of stations were surveyed. This does not affect the Series A, B, and AB calculations, but would affect the Series D and CD calculations (since we assume 2021 still surveys the full coast), and will slightly affect the determination of whether or not Series AB (usually the longest series that can be constructed) can be considered representative of the full coast. Newer methods are being developed that will deal with such subsampling and so it has not been further dealt with here. 
 
-Also for 2021 there were six new stations that have never been surveyed before. We declare these as `non-standard` in gfiphc for constructing the various Series, since they do not appear in previous years. Five stations are along the Alaskan border, extending further north than ever before, and the sixth is just outside the Scott Islands Rockfish Conservation Area off the northwest tip of Vancouver Island. See [iphc-2021-data.pdf](data-raw/iphc-2021-data.pdf) for maps and further details.
+Also for 2021 there were six new stations that have never been surveyed before. We declare these as `non-standard` in gfiphc for constructing the various Series, since they do not appear in previous years. Five stations are along the Alaskan border, extending further north than ever before, and the sixth is just outside the Scott Islands Rockfish Conservation Area off the northwest tip of Vancouver Island. See [iphc-2021-data.pdf](data-raw/iphc-2021-data.pdf) for maps and further details. For 2022 there were two new stations on the coast of northern tip of Vancouver Island, which we also declared as `non-standard`; see [iphc-2022-data.pdf](data-raw/iphc-2022-data.pdf) for maps and further details.
 
 The structure of the data in GFBio is described by [Cooke and Olsen (2020)](https://waves-vagues.dfo-mpo.gc.ca/Library/40879100.pdf), but gfiphc's R functions and built-in SQL queries mean that gfiphc users do not need to have knowledge of GFBio.
 
@@ -95,7 +101,7 @@ Due to the differing data-collection protocols, we developed different ways to o
 
 |                                | Only north of WCVI | Full coast | Restricted area of interest |
 |--------------------------------|--------------------|------------|-----------------------------|
-| First 20 hooks from each skate | A (25)             | D (21)     | E                           |
+| First 20 hooks from each skate | A (26)             | D (22)     | E                           |
 | All hooks from each skate      | B (18)             | C (16)     | F                           |
 
 with numbers in parentheses indicating the number of years for which data for each Series are available (updated for 2021). For E and F this depends on the particular area of interest.
@@ -105,9 +111,9 @@ each set, so look into that if necessary.
 
 ## Instructions for importing and checking new data into gfiphc each year and re-running the vignettes
 
-For 2020 and 2021, only the first 20 hooks were evaluated from each skate. So, like for 2013, the data have been included in this package. For future years, copy the code `data-raw/iphc-2021-data.Rmd` (and rename for a new year) and follow the instructions for downloading the data from the IPHC website, checking the data, and saving it formatted for this package. The results [iphc-2020-data.pdf](data-raw/iphc-2020-data.pdf) and [iphc-2021-data.pdf](data-raw/iphc-2021-data.pdf) are also available for easier reading (only commit a final version of future .pdf's, not as you are working on it).
+For 2020-2022, only the first 20 hooks were evaluated from each skate. So, like for 2013, the data have been included in this package. For future years, copy the code `data-raw/iphc-2022-data.Rmd` (and rename for a new year) and follow the instructions for downloading the data from the IPHC website, checking the data, and saving it formatted for this package. The results [iphc-2020-data.pdf](data-raw/iphc-2020-data.pdf), [iphc-2021-data.pdf](data-raw/iphc-2021-data.pdf), and [iphc-2022-data.pdf](data-raw/iphc-2022-data.pdf) are also available for easier reading (only commit a final version of future .pdf's, not as you are working on it).
 
-So, for 2022:
+So, for 2021 I wrote this, and used for 2022:
 
 1. Adapt `data-raw/iphc-2021-data.Rmd` as just described.
 
@@ -137,7 +143,7 @@ So, for 2022:
 
 If you use this package please cite it as it is helpful for maintaining it:
 
-Edwards, A.M., S.C. Anderson, E.A. Keppel and C.Grandin (2021). gfiphc: Data Extraction and Analysis for Groundfish Data from the IPHC Longline Survey in BC. R package version 1.1.0. Available from https://github.com/pbs-assess/gfiphc.
+Edwards, A.M., S.C. Anderson, E.A. Keppel and C.Grandin (2023). gfiphc: Data Extraction and Analysis for Groundfish Data from the IPHC Longline Survey in BC. R package version 1.1.0. Available from https://github.com/pbs-assess/gfiphc.
 
 Check `citation("gfiphc")` for the latest version number and for the bibtex entry (though you have to manually add the year and the website given above).
 
