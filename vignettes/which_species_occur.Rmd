@@ -29,7 +29,7 @@ Strait (for Dick Beamish).
 
 get all data for that year - can use my saved data but that's all by species, so
 will have to loop through and extract the values.
- filter by lat and lon
+ filter by station
  keep just those counts
 
 ```{r setup, results = FALSE}
@@ -67,33 +67,39 @@ stations_in_2017 <- filter(yelloweye_rockfish$set_counts,
 stations_in_2018 <- filter(yelloweye_rockfish$set_counts,
                            year == 2018)
 
-stations_only_2018 <- filter(stations_in_2018,
-                             !(station %in% stations_only_2017$station),
-                             lon > sog_lon_range[1],
-                             lat > sog_lat_range[1],
-                             lat < sog_lat_range[2],
-                             !(station %in% c("2206",
-                                            "2207",
-                                            "2209",
-                                            "2213",
-                                            "2217")))
+# Reduce to required stations, keeping yelloweye data for map plotting
+stations_only_2018_yelloweye <- filter(stations_in_2018,
+                                       !(station %in% stations_only_2017$station),
+                                       lon > sog_lon_range[1],
+                                       lat > sog_lat_range[1],
+                                       lat < sog_lat_range[2],
+                                       !(station %in% c("2206",
+                                                        "2207",
+                                                        "2209",
+                                                        "2213",
+                                                        "2217")))
+
+stations_only_2018 <- pull(stations_only_2018_yelloweye,
+                           station)
 
 # To originally figure out the above stations to exclude:
-# stations_only_2018 %>% arrange(lat) %>% select(station, lat, lon) %>% as.data.frame()
+# stations_only_2018_yelloweye %>% arrange(lat) %>% select(station, lat, lon)
+# %>% as.data.frame()
 stations_only_2018
 
 # Confirm they are all usable:
-expect_equal(stations_only_2018$usable, rep("Y", nrow(stations_only_2018)))
+expect_equal(stations_only_2018_yelloweye$usable,
+             rep("Y", nrow(stations_only_2018_yelloweye)))
 ```
 
-
+Now plot on a map
 
 ```{r map}
 plot_BC(xlim = sog_lon_range,
         ylim = sog_lat_range,
         main = "All 2018 stations in Strait of Georgia")
 
-plot_iphc_map(stations_only_2018,
+plot_iphc_map(stations_only_2018_yelloweye,
               sp_short_name = NULL,
               years = 2018,
               add_to_existing = TRUE,
@@ -101,17 +107,11 @@ plot_iphc_map(stations_only_2018,
               include_legend = FALSE)
 ```
 
-
-
-
-
-
-
 ## Load cached data and extract numbers for just the Strait
-
 
 Adapt this:
 
+```{r extract}
 for(sp in sp_vec){      # increment these to test, done up to number shown
   iphc_get_calc_plot_full(sp,
                           cached_data = TRUE,    # TRUE if data already saved
