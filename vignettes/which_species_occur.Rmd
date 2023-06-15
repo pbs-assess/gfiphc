@@ -37,9 +37,10 @@ load_all()
 # library(gfiphc)
 library(dplyr)
 
-path_data = "all-species-data"                 # folder where have already saved
+path_data = "all-species-data"          # folder where have already saved
                                         # extracted raw data
-# path_results = "HG-herring-predators-results"  # folder to save results
+path_results = "all-species-results"    # folder where have already saved
+                                        # results (think just time series though)
 ```
 
 ## Define species of interest (all in this case)
@@ -68,8 +69,8 @@ stations_in_2018 <- filter(yelloweye_rockfish$set_counts,
                            year == 2018)
 
 # Reduce to required stations, keeping yelloweye data for map plotting
-stations_only_2018_yelloweye <- filter(stations_in_2018,
-                                       !(station %in% stations_only_2017$station),
+stations_in_sog_yelloweye <- filter(stations_in_2018,
+                                       !(station %in% stations_in_2017$station),
                                        lon > sog_lon_range[1],
                                        lat > sog_lat_range[1],
                                        lat < sog_lat_range[2],
@@ -79,27 +80,26 @@ stations_only_2018_yelloweye <- filter(stations_in_2018,
                                                         "2213",
                                                         "2217")))
 
-stations_only_2018 <- pull(stations_only_2018_yelloweye,
+stations_in_sog <- pull(stations_in_sog_yelloweye,
                            station)
+stations_in_sog
 
 # To originally figure out the above stations to exclude:
-# stations_only_2018_yelloweye %>% arrange(lat) %>% select(station, lat, lon)
-# %>% as.data.frame()
-stations_only_2018
+# stations_in_sog_yelloweye %>% arrange(lat) %>% select(station, lat, lon) %>% as.data.frame()
 
 # Confirm they are all usable:
-expect_equal(stations_only_2018_yelloweye$usable,
-             rep("Y", nrow(stations_only_2018_yelloweye)))
+expect_equal(stations_in_sog_yelloweye$usable,
+             rep("Y", nrow(stations_in_sog_yelloweye)))
 ```
 
-Now plot on a map
+Now plot the Strait stations on a map
 
 ```{r map}
 plot_BC(xlim = sog_lon_range,
         ylim = sog_lat_range,
         main = "All 2018 stations in Strait of Georgia")
 
-plot_iphc_map(stations_only_2018_yelloweye,
+plot_iphc_map(stations_in_sog_yelloweye,
               sp_short_name = NULL,
               years = 2018,
               add_to_existing = TRUE,
@@ -109,10 +109,27 @@ plot_iphc_map(stations_only_2018_yelloweye,
 
 ## Load cached data and extract numbers for just the Strait
 
-Adapt this:
+Need to use raw data:
 
 ```{r extract}
-for(sp in sp_vec){      # increment these to test, done up to number shown
+for(sp in sp_vec[1]){      # increment these to test, done up to number shown
+
+  sp_set_counts <- readRDS(paste0(path_data, "/", sp_hyphenate(sp)))
+
+  sp_counts_in_sog_2018 <- filter(sp_set_counts$set_counts,
+                                  year == 2018,
+                                  station %in% stations_in_sog,
+                                  usable == "Y") %>%
+    select(station,
+           N_it,
+           C_it)
+
+  HERE append to a tibble, one row for each species, sum the N_it, average the C_it
+}
+
+
+
+
   iphc_get_calc_plot_full(sp,
                           cached_data = TRUE,    # TRUE if data already saved
                           cached_results = TRUE, # TRUE if results already saved
