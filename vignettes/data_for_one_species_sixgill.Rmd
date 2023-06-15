@@ -1,0 +1,376 @@
+---
+title: "Analyses for one species"
+author: "Andrew Edwards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Analyses for one species}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 6
+  )
+# install(build_vignettes = FALSE)  #to update locally when developing, to run:
+# rmarkdown::render("data_for_one_species.Rmd")
+```
+
+This vignette shows how to extract and analyse the data for a single
+species. Since the extraction from the GFBio database only works for users on
+the Pacific Biological Station network that have permission to access the
+database, an example data set for Yelloweye Rockfish is included in the
+package.
+
+Quick version -- there is a wrapper function, `iphc_get_calc_plot_full(sp)` that
+does all the extraction, calculations, and plotting for a given species. This
+vignette shows the details to aid understanding. So for a quick look to see if
+the data look potentially useful, just do, for example,
+`iphc_get_calc_plot_full("bocaccio")`. If the resulting series looks useful then
+repeat this vignette for your species of interest to understand the results.
+
+Even quicker version for a quick look at results -- all the most recent data are now downloaded, analysed
+and the results shown (though not saved anywhere due to size). See the All Species link on the
+main [README](https://github.com/pbs-assess/gfiphc).
+
+```{r setup, message = FALSE, results = FALSE}
+library(gfiphc)
+library(dplyr)    # To print tibble properly
+```
+
+<!-- Adapting code written by Andrew Edwards for Beau Doherty at Landmark -->
+<!-- Fisheries in March 2019 and updated in September 2019.-->
+<!-- Also using MEE_reproduce_2.Rmd vignette from sizeSpectra as a template -->
+
+## Data for species of interest
+
+Define common species name:
+```{r species}
+sp <- "bluntnose sixgill shark"
+sp_short_name <- "Bluntnose"  # short name for legends
+```
+
+It is worth checking that your species of interest is not in this
+list of IPHC species names that are in the IPHC data but not automatically
+extracted by this package (because the synopsis report did not look at it, or it is a
+general term such as `Eelpout`):
+```{r checkspecies}
+check_iphc_spp_name()
+```
+If you want to look for one of these species, then the common name and IPHC name
+need to be added to `inst/extdata/iphc-spp-names.csv`. There are also some
+non-groundfish species names, such as crabs, starfish and a Steller Sea Lion (!)
+that get automatically ignored in `check_iphc_spp_name()` -- type
+`check_iphc_spp_name` to see the function and the embedded list if you need to check.
+
+Someone at PBS has to run the next chunk of code to extract data from
+the GFBio database and send the external collaborator the resulting .rds file,
+which will have the format `species-name.rds`, e.g. `longnose-skate.rds`. As an
+example, the data for Yelloweye Rockfish have been extracted and included as
+data in the package. Hence this chunk is not evaluated for this vignette:
+```{r extract, eval = FALSE}
+# This chunk will only work within PBS
+# cache_pbs_data_iphc(sp)
+                                       # That creates species-name. [This is
+                                       #  what gfsynopsis::get_data_iphc() calls,
+                                       #  via gfsynopsis::get_data() in
+                                       #  report/make.R of gfsynopsis
+                                       #  repo.]. Note the argument can be a
+                                       #  vector species names to save multiple species.
+```
+
+Once an external person has the `species-name.rds` file, the two lines in the
+next chunk can be appropriately commented/uncommented to load the data. For this
+vignette we will use the Yelloweye Rockfish data included in the package:
+```{r loadrds}
+# Comment this out to analyse non-yelloweye data:
+# sp_set_counts <- yelloweye_rockfish
+
+# Uncomment this to analyse non-yelloweye data:
+sp_set_counts <- readRDS(paste0("all-species-data/", gsub(" ", "-", sp), ".rds"))
+```
+
+## Details for all skates and stations, and hooks returned with bait
+
+Other data sets are already built into the gfiphc package, the main ones are
+given here for reference.
+
+Locations and effective skate values of stations for the 1995 survey:
+```{r builtin}
+setData1995
+```
+
+Counts of each species at each station in 1995:
+```{r builtin2}
+countData1995
+```
+
+Catches at each station from 1996 to 2002:
+```{r builtin3}
+data1996to2002
+```
+
+Station details for 2013 survey:
+```{r builtin4}
+setData2013
+```
+
+Station details for 2020 survey:
+```{r builtin5}
+setData2020
+```
+
+Station details for 2021 survey:
+```{r builtin5a}
+setData2021
+```
+
+Station details for 2022 survey:
+```{r builtin5b}
+setData2022
+```
+
+
+Station details regarding expansion stations from 2018 (and some later years):
+```{r builtin6}
+setDataExpansion
+```
+
+The following data sets are extracted from GFBio but extracted at PBS and then included
+in the package (using `data-raw/sets-skates-hooks-yelloweye.R`), which will be
+run each year to update the data objects.
+
+Station details from GFBio for years not mentioned above:
+```{r builtinfromgfbio}
+sets_other_years
+```
+
+Skate-level details from GFBio (though such data are not available for years for
+which data are only available at the set-by-set level):
+```{r builtinfromgfbio2}
+skates_other_years
+```
+
+Counts of hooks returned with bait on them, for each set, for all years (note it
+is a list containing one tibble):
+```{r builtinfromgfbio3}
+hooks_with_bait
+```
+
+Counts of Yelloweye Rockfish on each set for all years (note it is a list containing one tibble):
+```{r builtinfromgfbio4}
+yelloweye_rockfish
+```
+
+See `?<dataset>` for details of each, and `data(package = "gfiphc")` for other
+data sets. Notation such as `E_it20` matches the write-up in the Groundfish
+Synopsis report.
+
+The formats are different to each other due to the data that are
+available. For example, there are no `hooksObserved` values available for 1995
+and 2013, which will complicate consideration of hook competition
+for those years. `setDataExpansion` is needed to identify stations in the expanded
+grid (that were not fished in previous years).
+
+Look at the data for the species of interest, which combines all the data for
+the species (built-in data sets plus data extracted from GFBio):
+```{r load}
+sp_set_counts
+                  # For each set, the calculatable catch rates for that
+                  #  species, plus lat and lon and whether the set is usable.
+                  # Includes the basic information for each set, with further
+                  #  details in the objects mentioned above.
+                  # See ?get_all_iphc_set_counts for full details.
+
+tail(sp_set_counts$set_counts)
+
+summary(sp_set_counts$set_counts)
+```
+
+## Maps of stations
+
+For a single year, and whether or not the survey caught the species of interest
+in that year:
+
+```{r onemap, fig.height = 6}
+plot_iphc_map(sp_set_counts$set_counts,
+              sp_short_name = sp_short_name,
+              years = 2008)
+```
+
+For the most recent year of data (see below for discussion):
+```{r latestyear, fig.height = 6}
+plot_iphc_map(sp_set_counts$set_counts,
+              sp_short_name = sp_short_name,
+              years = max(sp_set_counts$set_counts$year))
+```
+
+For 2022 (and 2021) note that there is sporadic coverage off the west coast of Vancouver
+Island, with some of the usual stations being surveyed. In previous years it was
+all or nothing. This will affect the results of Series C and D (see README), and
+so whether or not the resulting Series AB can be considered representative for
+the whole coast. Series AB does not include the west coast of Vancouver
+Island. For 2022 there are also two stations (six in 2021) that were never previously fished
+and so we call these non-standard -- see brief mention in the README and
+[iphc-2021-data.pdf](../data-raw/iphc-2021-data.pdf) and
+[iphc-2022-data.pdf](../data-raw/iphc-2022-data.pdf) for full details.
+
+Unusable stations are determined by the IPHC and any data are excluded from our
+calculations. The horizontal line is the cut-off for calculations for different
+Series (see the synopsis Research Document). Note that the `sp_short_name`
+argument is only for the legend, the first argument needs to contain the data
+for the species of interest.
+
+To see a movie of the station locations through time (a panel plot is shown shortly):
+
+
+For reference, here is the code to build the movie, but it is commented out
+since it caused Travis (and now presumably GitHub Actions) to fail. Don't worry about that.
+If you do want to make a different movie,
+run this vignette code with the next commented line uncommented (you need to install the
+`gifski` R package and the Gifski program), right-click on the animation in the
+html viewer and save it with the above filename (updated as appropriate).
+
+```{r, animation.hook = 'gifski', interval = 1.5, fig.height = 6}
+for(i in unique(sp_set_counts$set_counts$year)){
+  plot_iphc_map(sp_set_counts$set_counts,
+                sp_short_name = sp_short_name,
+                years = i)
+}
+```
+
+A panel plot of all years is:
+```{r, fig.width = 10, fig.height = 30}
+years_to_plot <- unique(sp_set_counts$set_counts$year)
+par(mfrow = c(ceiling(length(years_to_plot) / 3),
+              3))
+
+for(i in years_to_plot){
+  plot_iphc_map(sp_set_counts$set_counts,
+                sp_short_name = sp_short_name,
+                years = i,
+                mar_val =   c(1.8, 2, 2.0, 0.5),
+                include_legend = (i == years_to_plot[1]) # only first panel
+                )
+}
+```
+For 2021, as mentioned above, there are six that were never fished before and we define as
+non-standard: five in the far north and one off the northwest tip of Vancouver Island (the latter
+would have been in a Rockfish Conservation Area according to the grid
+pattern). And for 2022 there are two close to the shore of northern Vancouver Island.
+
+To see the stations without reference to any species (these are the 2008
+stations, so think would be just the standard ones, can check code to confirm):
+```{r, fig.height = 6}
+plot_iphc_map(sp_set_counts$set_counts,
+              sp = NULL,
+              years = 2008)
+```
+
+noting that you still need `sp_set_counts$set_counts` (for an arbitrary species)
+as an argument.
+
+Can also use `hooks_with_bait$set_counts` to see stations that came back with no
+bait (the legend will need adapting though; empty circles are no hook with
+bait returned):
+```{r, fig.height = 6}
+plot_iphc_map(hooks_with_bait$set_counts,
+              sp = "Hooks with bait",
+              years = 2008)
+```
+
+## Expanded survey grid in 2018, 2020-2022
+
+In the above movie and panel plot you see that the spatial coverage of sets changed in 2018,
+2020-2022 due to the expanded survey grid that year that involved sets at extra stations:
+```{r plotsets, fig.height = 4}
+sets_each_year <- sp_set_counts$set_counts %>%
+  group_by(year) %>%
+  summarise(total = n())
+
+plot(sets_each_year$year, sets_each_year$total, type = "o",
+     xlab = "Year", ylab = "Sets each year", ylim = c(0, max(sets_each_year$total)))
+```
+
+The extra stations are identified in `gfiphc` as *not* standard (`standard` is `N`), with `Y` being the
+standard stations (see [iphc-2020-data.pdf](../data-raw/iphc-2020-data.pdf),
+[iphc-2021-data.pdf](../data-raw/iphc-2021-data.pdf), and
+[iphc-2022-data.pdf](../data-raw/iphc-2022-data.pdf)
+for explanation of why we
+changed the values for some stations from the IPHC raw data -- the IPHC called
+some of the new ones `standard`, even though they hadn't been used before). Removing the
+non-standard stations brings the number of sets in 2018 and 2020-2022 into line with
+other years, and so this should be done for most analyses:
+```{r plotsetsstd, fig.height = 4}
+sets_each_year_standard <- sp_set_counts$set_counts %>%
+  filter(standard == "Y") %>%
+  group_by(year) %>%
+  summarise(total = n())
+
+plot(sets_each_year_standard$year, sets_each_year_standard$total, type = "o",
+     xlab = "Year", ylab = "Sets each year", ylim = c(0, max(sets_each_year$total)))
+```
+
+Except in recent years we have less stations after doing this, and 2022 is the
+lowest in the time series -- spatiotemporal
+methods could be used to include the new non-standard stations (though also
+check the above .pdfs for mention of the original column that says that some
+stations should not be used for spatio-temporal analyses).
+
+Note that the expansion (non-standard) stations only
+appear in recent years:
+```{r checkexpansion}
+filter(sp_set_counts$set_counts, standard == "N") %>%
+  select(year) %>%
+  unique()
+```
+
+So we use `filter(..., standard == "Y", usable == "Y")` for upcoming analyses (to also include
+only the usable stations).
+
+## Calculate longest time series possible for the full coast
+
+In Appendix G of the synopsis report we described analyses to calculate as long
+a time series as possible by combining data from years when only the first 20 hooks
+were enumerated for each skate (Series A) with data from years when all hooks could be enumerated
+from each skate (Series B); there are overlapping years when all hooks were
+enumerated and the data are available at the hook-by-hook level. The resulting
+Series AB applies only to the area north of WCVI, but was tested to see if it was
+representative of the whole coast by also calculating Series C and D.
+
+The function `calc_iphc_full_res()` does all the calculations in one step and
+saves all the output. See `?calc_iphc_full_res` for full details of the output,
+but basically `$ser_longest` is the longest time series that can be made for the
+species, with `$full_coast` indicating whether it can be considered
+representative of the full coast. Series A, B, C, and D are also given, along
+with geometric means and the test results comparing scaled series.
+
+```{r serABCD}
+series_ABCD_full <- calc_iphc_full_res(sp_set_counts$set_counts)
+series_ABCD_full
+```
+
+Now plot Series A and B and show their scaled versions and the resulting Series
+AB (bottom right), which is the longest series available and is considered
+applicable to the whole coast if `series_ABCD_full$full_coast` is `TRUE`:
+```{r serplot, fig.width = 10, fig.height = 8}
+plot_IPHC_ser_four_panels_ABCD(series_ABCD_full,
+                               sp = sp)
+series_ABCD_full$type
+series_ABCD_full$full_coast
+```
+
+Recall there is a wrapper function, `iphc_get_calc_plot_full(sp)`, mentioned at
+the start of this vignette.
+
+Note that the code may not yet fully account for all possibilities
+for the different Series, particularly for rarer species
+with, by definition, low count numbers. So do check that the output is
+sensible. The code may calculate a longest series, but it may not be
+ecologically useful. And a shorter series based on all years for which all hooks
+were counted (Series B) may be more useful than a longer one that uses only the
+first 20 hooks (Series A). In such cases maybe a Series BA could be implemented
+(use original Series B and then rescale Series A).
