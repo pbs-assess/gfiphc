@@ -20,17 +20,13 @@ knitr::opts_chunk$set(
 This vignette shows how to find out which species were caught in a given area
 during a given time.
 
-For this example, specifically asking what species were seen in the Strait of
+For this example, we are specifically asking what species were seen in the Strait of
 Georgia in 2018, the only year in which the IPHC survey went into the
-Strait (for Dick Beamish).
+Strait. Dick Beamish was asking, based on a hallway discussion originally
+motivated by divers filming Bluntnose Sixgill Shark in Port Alberni.
 
-
-
-
-get all data for that year - can use my saved data but that's all by species, so
-will have to loop through and extract the values.
- filter by station
- keep just those counts
+This vignette requires the data for each species to already be saved
+locally, by running the 'data for all species' vignette.
 
 ```{r setup, results = FALSE}
 load_all()
@@ -50,7 +46,7 @@ Want to check all species used in the groundfish synopsis report:
 sp_vec <- gfsynopsis::get_spp_names() %>%
   dplyr::arrange(species_code) %>%
   dplyr::pull(species_common_name)
-sp_vec
+# sp_vec
 ```
 
 ## Select only stations in Strait of Georgia
@@ -107,12 +103,25 @@ plot_iphc_map(stations_in_sog_yelloweye,
               include_legend = FALSE)
 ```
 
+The effective skate number for each station is essentially equivalent to the number of skates each
+of 100 hooks. For these `r nrow(stations_in_sog_yelloweye)`
+stations ranges from
+`r round(min(stations_in_sog_yelloweye$E_it), 3)` to
+`r round(max(stations_in_sog_yelloweye$E_it))`
+so the sampling was fairly consistent.
+
 ## Load cached data and extract numbers for just the Strait
 
 Need to use raw data:
 
 ```{r extract}
-for(sp in sp_vec[1]){      # increment these to test, done up to number shown
+species_in_sog_2018 <- tibble("species" = character(),
+                           "total_number_caught" = numeric(),
+                           "average_catch_rate" = numeric())
+
+species_not_in_sog_2018 <- character()
+
+for(sp in sp_vec){      # increment these to test, done up to number shown
 
   sp_set_counts <- readRDS(paste0(path_data, "/", sp_hyphenate(sp)))
 
@@ -124,133 +133,63 @@ for(sp in sp_vec[1]){      # increment these to test, done up to number shown
            N_it,
            C_it)
 
-  HERE append to a tibble, one row for each species, sum the N_it, average the C_it
+  if(nrow(sp_counts_in_sog_2018) == 0){
+    species_not_in_sog_2018 <- c(species_not_in_sog_2018,
+                                 sp)
+  } else {
+    if(max(sp_counts_in_sog_2018$N_it > 0)){
+      species_in_sog_2018 <- add_row(species_in_sog_2018,
+                                  "species" = sp,
+                                  "total_number_caught" = sum(sp_counts_in_sog_2018$N_it),
+                                  "average_catch_rate" = mean(sp_counts_in_sog_2018$C_it))
+    } else {
+      species_not_in_sog_2018 <- c(species_not_in_sog_2018,
+                                   sp)
+    }
+  }
 }
 
-
-
-
-  iphc_get_calc_plot_full(sp,
-                          cached_data = TRUE,    # TRUE if data already saved
-                          cached_results = TRUE, # TRUE if results already saved
-                          print_sp_name = TRUE,
-                          path_data = "all-species-data",
-                          path_results = "all-species-results")
-}
-
-
-
-```{r repeat, warning = FALSE, results = FALSE}
-cached_results = TRUE   # whether or not to use already-saved results (FALSE for
-                        # first run)
-for(sp in skate_sp){
-  assign(sp_hyphenate(sp,
-                      underscore = TRUE,
-                      area = TRUE),
-         iphc_get_calc_plot_area(sp,
-                                 cached_data = cached_data,
-                                 cached_results = cached_results,
-                                 path_data = path_data,
-                                 path_results = path_results))
-}
+species_in_sog_2018 <- arrange(species_in_sog_2018,
+                               desc(total_number_caught))
 ```
 
+## Results
 
-
-
-
-
-## Merge together skate species
-
-Now want to lump the skates in `skate_sp` together. Note that species counts get
-named as `N_it.1` etc. While each one has NA's, none of the summed `N_it_sum` or
-`N_it20_sum` do, because `get_combined_species()` ignores NA's when making the
-sums. This is always recalculated (in case earlier cached data have changed).
-
-```{r combine, warning = FALSE}
-sp <- "skates combined"
-skates_combined <- get_combined_species(sp_vec = skate_sp,
-                                        path = path_data,
-                                        save_RDS_name = sp_hyphenate(sp))
-summary(skates_combined$set_counts)
-
-# How many NA's in certain columns (none for N_it_sum or N_it20_sum
-skates_combined$set_counts %>%
-  dplyr::select(-c("station", "lat", "lon", "usable", "standard")) %>%
-  dplyr::summarise_all( ~ sum(is.na(.x))) %>%
-  t()
+So the species that were caught by the IPHC survey in 2018 in the Strait of
+Georgia were (ordered by numbers caught)
+```{r speciescaught}
+knitr::kable(species_in_sog_2018, digits = 3)
 ```
-For 2021: these correctly change from the 2020 values (the 20-hook values don't
-have more NA's than in 2020, but the all-hook values do, since we have no
-all-hook data in 2021), except for `N_it20.4` for Sandpaper Skate, which had
-1500 NA's in 2020 version but only 244 (same as some other species) in 2021
-version. Looking at the relevant figure above, this is because 1997-2002 and
-2013 are now zero when before they were NA, due to 2021 being the first
-time this species was seen in 20-hook data (and how the data get rolled up). Not
-checking for 2022.
+where the columns give the total number caught across all
+`r nrow(stations_in_sog_yelloweye)`
+stations, and the average catch rate
+(calculated as the catch rate per effective skate for each station, then
+averaged over stations). These calculations do not account for hook competition,
+competition between species for the bait on the finite number of hooks
+(but can be if really needed).
 
-Note that by simply adding the counts of each skate species, we are
-implicitly assuming that selectivity is the same across skate species (kind of?). So true
-changes in relative abundance may not be accurately reflected in changes in the
-summed index.
-<!-- Started an example: We are summing relative indices, so if one species (call it 'roller skate') is twice as
-abundant as another (call it 'ice skate') but
-has half the selectivity then their relative catch rates (fish per 100 hooks)
-will be equal at, say, 1 fish per 100 hooks, given a summed rate of 2 fish per
-100 hooks. But if roller skates double in abundance then ...  -->
+Clearly dogfish were caught in abundance, and Bluntnose Sixgill Shark were the
+second highest catch. And only three halibut were caught, which presumably
+explains why the IPHC haven't returned to the Strait since.
 
-Now use to calculate Series E, F and EF calculations for the restricted area:
-```{r combineEF, warning = FALSE, results = FALSE}
-assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
-       iphc_get_calc_plot_area(sp,
-                               cached_data = cached_data,
-                               cached_results = cached_results,
-                               path_data = path_data,
-                               path_results = path_results))
+The species that were not caught, are
+```{r speciesnotcaught}
+knitr::kable(species_not_in_sog_2018)
 ```
 
+This is checking all the species listed in the groundfish synopsis report, so includes some that we
+obviously don't expect to catch (such as Basking Shark).
 
-## Individual non-skate species
+## Save as .csv files
 
-Similarly for the other species:
-```{r showmult, warning = FALSE, results = FALSE}
-for(sp in sp_vec){
-  assign(sp_hyphenate(sp, underscore = TRUE, area = TRUE),
-         iphc_get_calc_plot_area(sp,
-                                 cached_data = cached_data,
-                                 cached_results = cached_results,
-                                 path_data = path_data,
-                                 path_results = path_results))
-}
+```{r save}
+write.csv(species_in_sog_2018,
+          "species-in-sog-2018.csv",
+          row.names = FALSE,
+          quote = FALSE)
+
+write.csv(species_not_in_sog_2018,
+          "species-not-in-sog-2018.csv",
+          row.names = FALSE,
+          quote = FALSE)
 ```
-
-## Format for Jennifer's EAFM summary
-
-Save annual indices (with uncertainty) for all species of interest, in the
-format for the HG herring predators' EAFM summary (some 2020 versions are in `for-jen-earlier-versions/`,
-each later year will be saved along with everything else in `vignettes-results-20**-data/`.
-
-```{r allsp}
-all_sp_longest <- list()
-sp_vec_and_combined_skates <- c(sp_vec, "skates combined")
-# Do this to easily create arguments for iphc_format_for_EAFM(); can't easily
-#  functionalise. Each element is names for the species, and is a tibble of
-#  longest time series.
-for(sp in sp_vec_and_combined_skates){
-  all_sp_longest[[sp]] <- get(paste0(sp_hyphenate(sp,
-                                                  underscore = TRUE,
-                                                  area = TRUE)))$series_longest$ser_longest
-}
-
-eafm_res <- iphc_format_for_EAFM(sp_vec_and_combined_skates,
-                                 path = path_results,
-                                 all_sp_longest) # also saves .csv, and .rds of
-                                                 #  all_sp_longest list
-
-eafm_res
-```
-
-Note that the analyses may not yet fully account for all possibilities (for all
-areas and species), particularly for rarer species. So do check that the output
-is sensible by inspecting the above time series figures. And the analyses do not
-(yet) include hook competition, which is currently being investigated.
