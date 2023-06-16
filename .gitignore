@@ -35,3 +35,5 @@ vignettes/vignettes-results-*-data/
 /data-raw/set-and-halibut-data-2022.csv
 
 *.xlsx
+/vignettes/species-in-sog-2018.csv
+/vignettes/species-not-in-sog-2018.csv
