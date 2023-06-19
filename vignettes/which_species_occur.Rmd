@@ -193,3 +193,27 @@ write.csv(species_not_in_sog_2018,
           row.names = FALSE,
           quote = FALSE)
 ```
+
+## Plot locations of catch for a specific species
+
+```{r locationsonespecies}
+sp <- "bluntnose sixgill shark"
+sp_short_name <- "Bluntnose"
+
+sp_set_counts <- readRDS(paste0(path_data, "/", sp_hyphenate(sp)))
+
+sp_counts_in_sog_2018 <- filter(sp_set_counts$set_counts,
+                                year == 2018,
+                                station %in% stations_in_sog,
+                                usable == "Y")
+
+plot_BC(xlim = sog_lon_range,
+        ylim = sog_lat_range,
+        main = "2018 stations in SoG that caught Bluntnose")
+
+plot_iphc_map(sp_counts_in_sog_2018,
+              sp_short_name = sp_short_name,
+              years = 2018,
+              add_to_existing = TRUE,
+              indicate_standard = FALSE)
+```
