@@ -327,14 +327,14 @@ check_iphc_spp_name <- function(countData = NULL, ignore_obvious = TRUE) {
     data_names_2013 <- unique(as.character(countData2013$spNameIPHC))
     data_names_2020 <- unique(as.character(countData2020$spNameIPHC))
     data_names_2021 <- unique(as.character(countData2021$spNameIPHC))
-    data_names_2022 <- unique(as.character(countData2022$spNameIPHC))
+    #data_names_2022 <- unique(as.character(countData2022$spNameIPHC))
     data_names_all <- c(
       data_names_1995,
       data_names_1996to2002,
       data_names_2013,
       data_names_2020,
-      data_names_2021,
-      data_names_2022
+      data_names_2021#,
+      #data_names_2022
     ) %>%
       unique()
     old_missing_names <- data_names_all[!(data_names_all %in%
@@ -559,7 +559,7 @@ get_iphc_1996to2002 <- function(species) {
 ##' @rdname get_early_iphc
 get_iphc_from_gfiphc <- function(species,
                                  year){
-  stopifnot(year %in% c(2013, 2020, 2021, 2022))  # update this each year
+  stopifnot(year %in% c(2013, 2020, 2021))  # update this each year
   iphc_spp_name <- get_iphc_spp_name(species)
 
   countData <- get(paste0("countData", year))
@@ -649,8 +649,8 @@ get_all_iphc_set_counts <- function(species) {
                          year = 2020),
     get_iphc_from_gfiphc(species,
                          year = 2021),
-    get_iphc_from_gfiphc(species,
-                         year = 2022),
+    # get_iphc_from_gfiphc(species,
+    #                      year = 2022),
     tidy_iphc_survey(
       get_iphc_hooks(species),
       get_iphc_skates_info(),
